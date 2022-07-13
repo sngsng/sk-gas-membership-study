@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    font-weight: normal;
+  }
+  body {
+    font-family: "NanumSquareRound", sans-serif;
+  }
+}
+
+.btn {
+  @apply rounded cursor-pointer border-1;
+}
+
+.btn-fill {
+  @apply text-white bg-blue border-blue active:bg-navy active:border-navy;
+}
+
+.btn-line {
+  @apply bg-white border-blue text-blue active:bg-gray250 active:text-gray650;
+}
+
+.btn-fill-disabled {
+  @apply text-black bg-gray250 border-gray250;
+}
+
+.btn-line-disabled {
+  @apply bg-white text-gray400 border-gray400;
+}
+
+.btn-extra {
+  @apply p-20 text-b1;
+}
+
+.btn-lage {
+  @apply p-12 text-b1;
+}
+
+.btn-regular {
+  @apply py-22 px-13 text-b2;
+}
+
+.btn-small {
+  @apply px-8 py-10 text-b2;
+}
+
+.label-input {
+  @apply px-16 py-20 font-normal text-black bg-white rounded outline-none border-1 text-b1 focus:border-blue;
+}
+
+.label-text {
+  @apply font-light text-b3;
+}
+
+.error {
+  @apply text-[#ff334b];
+}
+
+.success {
+  @apply text-blue;
+}
+
+.dot {
+  @apply before:content-['·'] before:absolute before:left-0 relative pl-10 text-b3 text-gray500;
+}
