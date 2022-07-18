@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { SignUpTermsList } from "../apis/common";
-import { CheckBoxOff, CheckOff } from "../assets";
+import { CheckBoxOff, CheckOff, CheckOn } from "../assets";
 import Terms from "../apis/common/types/responses/Terms";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
@@ -12,6 +13,8 @@ import ApiUrls from "../constants/api_urls";
 
 function AcceptTerms() {
   const navigate = useNavigate();
+  const [allCheck, setAllCheck] = useState(false);
+  const [checkList, setCheckList] = useState([]);
 
   const { data } = useQuery<Terms[], AxiosError>(
     ["getTermsList", urls.AccepTerms],
@@ -21,98 +24,27 @@ function AcceptTerms() {
     }
   );
 
-  // const OpenTermsDetail = async (body: TermsDetailBody) => {
-  //   const { cluTelgCtt } = await getTermsDetail(body);
-  //   push(urls.AcceptTermsDetail, {
-  //     state: {
-  //       cluTelgCtt,
-  //     },
-  //   });
-  // };
-
-  // console.log(OpenTermsDetail({{data[0].cluCd,data[0].cluVer}}));
-
-  // interface Data {
-  //   data: Terms[] | undefined;
-  // }
-
-  // console.log(data:Data);
-
-  // 도전하는 코드...
-  // type TermsList {
-
-  // }
-
-  // eslint-disable-next-line consistent-return
-  // const result = async () => {
-  //   try {
-  //     const data = await hmsRequest(ApiUrls.TERMS_LIST, {
-  //       svcCluFg: "01",
-  //     }).then((res) => {
-  //       return res;
-  //     });
-  //     console.log(data);
-  //     return data;
-  //   } catch (error) {
-  //     console.log(error);
+  // const handleSingleCheck = (checked, id) => {
+  //   if(checked) {
+  //     setCheckList([...checkList, id]);
+  //   } else {
+  //     setCheckList(checkList.filter((item)=> item !== id));
   //   }
   // };
 
-  // console.log("tt", result);
-
-  // const [termsList, setTermsList] = useState([]);
-
-  useEffect(() => {
-    // -- async 방식
-    // (async () => {
-    //   const { data } = await hmsRequest(ApiUrls.TERMS_LIST, {
-    //     svcCluFg: "01",
-    //   });
-    //   console.log(data.responseData.cluList);
-    //   setTermsList(data.responseData.cluList);
-    // })();
-    // -- .then 방식
-    hmsRequest(ApiUrls.TERMS_LIST, {
-      svcCluFg: "01",
-    }).then((res) => {
-      // setTermsList(res.data.responseData.cluList);
-    });
-  }, []);
-
-  // console.log(termsList);
-
-  //   const test = async () =>
-  //   axios({
-  //     method: "post",
-  //     url: "https://appdev.happylpg.com/apis/hmsmob/mbr/cluList",
-  //     headers: {
-  //       "Content-Type": "application/json;charset=utf-8",
-  //       Accept: "application/json;charset=utf-8",
-  //       "Cache-Control": "no-cache",
-  //     },
-  //     withCredentials: true,
-  //     data: {
-  //       serviceCode: "G002",
-  //       chnl: "02",
-  //       version: "1.0",
-  //       trcNo: "20220103100000123456",
-  //       requestData: {
-  //         svcCluFg: "01",
-  //       },
-  //     },
-  //   })
-  //     .then((res) => {
-  //       console.log(res.data.responseData.cluList);
-  //       return res.data.responseData.cluList;
-  //       setTermsList(res.data.responseData.cluList);
-  //     })
-  //     .catch((error) => {
-  //       console.log("로그인체크 실패", error);
-  //     });
-  // console.log(test);
+  // const handleAllCheck = (checked) => {
+  //   if(checked) {
+  //     console.log("!!!")
+  //     const idArray = [];
+  //     data?.forEach((dataItem) => idArray.push(dataItem.mndtAgrYn));
+  //     setCheckList(idArray);
+  //   } else {
+  //     setCheckList([]);
+  //   }
+  // }
 
   return (
-    <Layout isHeader isMenu={false} title="행복충전모바일 회원가입" backBtn>
+    <Layout isHeader title="행복충전모바일 회원가입" backBtn>
       <div className="p-20">
         <div className="text-center mb-160">
           <p className="mt-40 mb-6 font-bold text-h2">약관 동의가 필요해요</p>
@@ -123,8 +55,10 @@ function AcceptTerms() {
 
         <div
           className="flex items-center pb-20 mb-20 border-b-1 border-gray300"
-          role="button" // aria-hidden 을 쓰는게 좋은지 role=button을 쓰는게 좋은지 헷갈린다.
-          // onClick={() => {}} // 이부분은 Visible, non-interactive elements with click handlers must have at least one keyboard listener
+          aria-hidden="true"
+          onClick={() => {
+            console.log("전체 선택 해야된다.");
+          }}
         >
           <img src={CheckBoxOff} alt="전체동의" className="w-24 h-24 mr-10" />
           <p className="font-bold text-h2">전체 약관에 동의 합니다.</p>
@@ -132,28 +66,24 @@ function AcceptTerms() {
 
         <ul>
           {/* map 돌려야되는 부분 */}
-          {data?.map((item) => {
+          {data?.map((item, i) => {
             return (
-              <li className="flex mb-16 cursor-pointer last:mb-0">
+              <li
+                className="flex mb-16 cursor-pointer last:mb-0"
+                aria-hidden="true"
+                key={item.cluCd}
+                onClick={() => {
+                  console.log(i + 1);
+                }}
+              >
                 <div className="mr-10">
-                  <img src={CheckOff} alt="체크버튼" className="w-full" />
+                  <img
+                    src={true ? CheckOn : CheckOff}
+                    alt="체크버튼"
+                    className="w-full"
+                  />
                 </div>
-                <p
-                // onClick={() => {
-                //   OpenTermsDetail({
-                //     cluCd: item?.cluCd,
-                //     cluVer: item?.cluVer,
-                //   });
-                //   console.log(
-                //     OpenTermsDetail({
-                //       cluCd: item?.cluCd,
-                //       cluVer: item?.cluVer,
-                //     })
-                //   );
-                // }}
-                >
-                  {item.cluShrtCtt}
-                </p>
+                <p>{item.cluShrtCtt}</p>
               </li>
             );
           })}
