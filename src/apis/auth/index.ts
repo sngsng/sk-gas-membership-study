@@ -7,9 +7,6 @@ export const idCheckAPI = async (useId: TermsIdCheckBody) => {
   await hmsRequest(ApiUrls.TERMS_ID_CHECK, useId)
     .then((res) => {
       const { dupYn } = res.data.responseData;
-      const test = res.data.responseData.dupYn;
-      console.log(dupYn);
-      console.log("tset : ", test);
 
       if (dupYn === "Y") {
         alert("중복된 아이디 입니다.");
