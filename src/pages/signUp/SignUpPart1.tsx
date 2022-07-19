@@ -1,12 +1,13 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios from "axios";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { idCheckAPI } from "../../apis/auth";
 import TermsIdCheckBody from "../../apis/auth/types/requests/TermsIdCheckBody";
 import ApiUrls from "../../constants/api_urls";
+// import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import hmsRequest from "../../network";
 import cls from "../../util";
@@ -17,10 +18,15 @@ function SignUpPart1() {
   const [idCheckBtn, setIdCheckBtn] = useState(false);
   const [passwordCheck, setPasswordCheck] = useState(false);
   const [rePassWordCheck, setRePasswordCheck] = useState(false);
-  const [carNumberCheck, setCarNumberCheck] = useState(false);
   const [passWordCrossCheck, setPassWordCrossCheck] = useState(false);
-  // const [signPart1Btn, setSignPart1Btn] = useState(false);
+  const [carNumberCheck, setCarNumberCheck] = useState(false);
+  const [signPart1Btn, setSignPart1Btn] = useState(false);
+
   // 아이디 , 비밀번호 재입력 , 차량번호, 중복확인 이렇게 네가지가 값이 있을 경우에만 버튼 활성화
+
+  // useEffect(() => {
+  //   if()
+  // }, [signPart1Btn]);
 
   const [useId, setUserId] = useState("");
 
@@ -247,7 +253,7 @@ function SignUpPart1() {
           type="button"
           className={cls(
             "mt-30  btn-extra w-full",
-            false // 여기서 조건 줘서 스타일 수정
+            signPart1Btn // 여기서 조건 줘서 스타일 수정
               ? "cursor-pointer rounded border-1 btn-fill"
               : "btn-fill-disabled rounded "
           )}
