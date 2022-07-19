@@ -1,5 +1,6 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
@@ -10,11 +11,14 @@ function SignUpPart1() {
   const [idCheck, setIdCheck] = useState(false);
   const [idCheckBtn, setIdCheckBtn] = useState(false);
   const [passwordCheck, setPasswordCheck] = useState(false);
-  const [rePasswordCheck, setRePasswordCheck] = useState(false);
+  const [rePassWordCheck, setRePasswordCheck] = useState(false);
   const [carNumberCheck, setCarNumberCheck] = useState(false);
+  const [passWordCrossCheck, setPassWordCrossCheck] = useState(false);
+  // const [signPart1Btn, setSignPart1Btn] = useState(false);
+  // 아이디 , 비밀번호 재입력 , 차량번호, 중복확인 이렇게 네가지가 값이 있을 경우에만 버튼 활성화
 
   const idRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
+  const passWordRef = useRef<HTMLInputElement>(null);
   const rePassWordRef = useRef<HTMLInputElement>(null);
   const carNumberRef = useRef<HTMLInputElement>(null);
 
@@ -23,8 +27,8 @@ function SignUpPart1() {
   // chacge여서 계속 호출되는거 보기 싫음. (효율 나쁠꺼 같음)
   // input 값 한번에 관리 할수 있도록 하자!
   // 중복확인 api 버튼에 달아서 호출후 alert 띄우기
-  // ai
 
+  // 아이디 체크
   const handleIdCheck = () => {
     console.log(idRef.current?.value);
 
@@ -47,16 +51,17 @@ function SignUpPart1() {
     }
   };
 
+  // 비밀번호 체크
   const handlePasswordCheck = () => {
-    console.log(passwordRef.current?.value);
+    console.log(passWordRef.current?.value);
 
     const usePassWordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
 
     if (
-      (passwordRef.current?.value &&
-        usePassWordRegex.test(passwordRef.current.value)) ||
-      !passwordRef.current?.value
+      (passWordRef.current?.value &&
+        usePassWordRegex.test(passWordRef.current.value)) ||
+      !passWordRef.current?.value
     ) {
       setPasswordCheck(false);
     } else {
@@ -64,11 +69,13 @@ function SignUpPart1() {
     }
   };
 
+  // 비밀번호 재확인 체크
   const handleRePasswordCheck = () => {
     console.log(rePassWordRef.current?.value);
 
     const usePassWordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+
     if (
       (rePassWordRef.current?.value &&
         usePassWordRegex.test(rePassWordRef.current.value)) ||
@@ -78,8 +85,25 @@ function SignUpPart1() {
     } else {
       setRePasswordCheck(true);
     }
+
+    // 비밀번호 서로 같은지 체크하는 부분 = passWordCrossCheck
+    if (
+      passWordRef.current?.value &&
+      rePassWordRef.current?.value &&
+      passWordRef.current?.value !== rePassWordRef.current?.value &&
+      usePassWordRegex.test(rePassWordRef.current.value) &&
+      usePassWordRegex.test(passWordRef.current.value)
+    ) {
+      setPassWordCrossCheck(true);
+    } else if (
+      passWordRef.current?.value === rePassWordRef.current?.value ||
+      !usePassWordRegex.test(rePassWordRef.current?.value as string)
+    ) {
+      setPassWordCrossCheck(false);
+    }
   };
 
+  // 차량번호 체크
   const handleCarNumberCheck = () => {
     console.log(carNumberRef.current?.value);
 
@@ -149,7 +173,7 @@ function SignUpPart1() {
                 type="password"
                 name="password"
                 placeholder="비밀번호를 입력해주세요"
-                ref={passwordRef}
+                ref={passWordRef}
                 onChange={handlePasswordCheck}
                 onFocus={() => {
                   setPasswordCheck(false);
@@ -176,13 +200,22 @@ function SignUpPart1() {
                 onChange={handleRePasswordCheck}
                 onFocus={() => {
                   setRePasswordCheck(false);
+                  setPassWordCrossCheck(false);
                 }}
                 onBlur={handleRePasswordCheck}
               />
             </div>
-            {rePasswordCheck && (
+
+            {rePassWordCheck && (
               <p className="font-normal text-b3 text-red">
                 영문 대소문자, 숫자, 특수문자를 포함하여 8자 이상 입력해 주세요.
+              </p>
+            )}
+
+            {/* 비밀번호 서로 체크후 다를경우 경고 메시지 */}
+            {passWordCrossCheck && (
+              <p className="font-normal text-b3 text-red">
+                비밀번호가 일치하지 않습니다
               </p>
             )}
           </div>
@@ -216,6 +249,8 @@ function SignUpPart1() {
           className="w-full mt-30 btn btn-fill btn-fill-disabled btn-extra"
           // 정보 값이 없으면 버튼은 클릭시에 활성화 되면 안된다.
           type="button"
+          // input 값이 전부 "true"일 경우 버튼 활성화!
+          // css도 같이 만져줘야 된다.
           onClick={() => {
             navigate(urls.SignUpPart2);
           }}
