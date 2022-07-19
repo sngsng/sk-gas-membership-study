@@ -4,7 +4,7 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-// import { idCheckAPI } from "../../apis/auth";
+import { idCheckAPI } from "../../apis/auth";
 import TermsIdCheckBody from "../../apis/auth/types/requests/TermsIdCheckBody";
 import ApiUrls from "../../constants/api_urls";
 import Layout from "../../elements/Layout";
@@ -150,21 +150,7 @@ function SignUpPart1() {
                     : "btn-fill-disabled rounded "
                 )}
                 onClick={() => {
-                  console.log("api 호출후 dispatch 해줘야되는거 같은데..?");
-                  hmsRequest(ApiUrls.TERMS_ID_CHECK, { lognId: useId })
-                    .then((res) => {
-                      const { dupYn } = res.data.responseData;
-
-                      // dispatch 해줘야될듯.
-                      // 리듀서 설치 작업 필요!!
-                      // 함수 따로 빼야됨!!
-                      alert(
-                        dupYn === "Y"
-                          ? "중복된 아이디 입니다."
-                          : "사용가능한 아이디 입니다."
-                      );
-                    })
-                    .catch((err) => console.log(err));
+                  idCheckAPI({ lognId: useId });
                 }}
               >
                 중복확인
