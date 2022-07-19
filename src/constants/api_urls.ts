@@ -8,6 +8,7 @@ const ApiUrls = {
   // 약관목록 조회
   TERMS_LIST: "/mbr/cluList",
   TERMS_DETAIL_LIST: "/mbr/cluDet",
+  TERMS_ID_CHECK: "/mbr/chkDupLgnId",
 };
 
 export default ApiUrls;

@@ -1,9 +1,14 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
+import React, { useRef, useState } from "react";
+import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import urls from "../../constants/urls";
+// import { idCheckAPI } from "../../apis/auth";
+import TermsIdCheckBody from "../../apis/auth/types/requests/TermsIdCheckBody";
+import ApiUrls from "../../constants/api_urls";
 import Layout from "../../elements/Layout";
+import hmsRequest from "../../network";
 import cls from "../../util";
 
 function SignUpPart1() {
@@ -17,16 +22,12 @@ function SignUpPart1() {
   // const [signPart1Btn, setSignPart1Btn] = useState(false);
   // 아이디 , 비밀번호 재입력 , 차량번호, 중복확인 이렇게 네가지가 값이 있을 경우에만 버튼 활성화
 
+  const [useId, setUserId] = useState("");
+
   const idRef = useRef<HTMLInputElement>(null);
   const passWordRef = useRef<HTMLInputElement>(null);
   const rePassWordRef = useRef<HTMLInputElement>(null);
   const carNumberRef = useRef<HTMLInputElement>(null);
-
-  // 공통사항 포커스 해제 될때 함수 체크후 경고 문자 뜸.
-  // password랑 id 체크 함수를 따로 관리 해야될까??
-  // chacge여서 계속 호출되는거 보기 싫음. (효율 나쁠꺼 같음)
-  // input 값 한번에 관리 할수 있도록 하자!
-  // 중복확인 api 버튼에 달아서 호출후 alert 띄우기
 
   // 아이디 체크
   const handleIdCheck = () => {
@@ -36,16 +37,13 @@ function SignUpPart1() {
     const userIdRegex = /^[A-Za-z0-9]{5,20}$/i;
 
     // value가 있어야 되며, test를 통과할때
-
     if (!idRef.current?.value) {
       setIdCheck(false);
-      setIdCheckBtn(false);
     } else if (idRef.current?.value && userIdRegex.test(idRef.current?.value)) {
-      // 경고 문자를 안보이게 해주고, 버튼은 활성화 시켜준다.
       setIdCheck(false);
       setIdCheckBtn(true);
+      setUserId(idRef.current.value);
     } else {
-      // 경고 문자를 보여주고, 버튼을 비활성화 시켜준다.
       setIdCheck(true);
       setIdCheckBtn(false);
     }
@@ -152,7 +150,21 @@ function SignUpPart1() {
                     : "btn-fill-disabled rounded "
                 )}
                 onClick={() => {
-                  alert("로그인 중복 api 사용하기");
+                  console.log("api 호출후 dispatch 해줘야되는거 같은데..?");
+                  hmsRequest(ApiUrls.TERMS_ID_CHECK, { lognId: useId })
+                    .then((res) => {
+                      const { dupYn } = res.data.responseData;
+
+                      // dispatch 해줘야될듯.
+                      // 리듀서 설치 작업 필요!!
+                      // 함수 따로 빼야됨!!
+                      alert(
+                        dupYn === "Y"
+                          ? "중복된 아이디 입니다."
+                          : "사용가능한 아이디 입니다."
+                      );
+                    })
+                    .catch((err) => console.log(err));
                 }}
               >
                 중복확인
@@ -246,13 +258,18 @@ function SignUpPart1() {
         </div>
 
         <button
-          className="w-full mt-30 btn btn-fill btn-fill-disabled btn-extra"
-          // 정보 값이 없으면 버튼은 클릭시에 활성화 되면 안된다.
           type="button"
-          // input 값이 전부 "true"일 경우 버튼 활성화!
-          // css도 같이 만져줘야 된다.
+          className={cls(
+            "mt-30  btn-extra w-full",
+            false // 여기서 조건 줘서 스타일 수정
+              ? "cursor-pointer rounded border-1 btn-fill"
+              : "btn-fill-disabled rounded "
+          )}
+          // input 값이 전부 통과될 경우 버튼 활성화!
+          disabled={!idCheckBtn}
           onClick={() => {
-            navigate(urls.SignUpPart2);
+            // navigate(urls.SignUpPart2);
+            console.log("work");
           }}
         >
           다음

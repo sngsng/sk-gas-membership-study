@@ -34,6 +34,7 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
   };
 
   const trcNo = createTransactionNo();
+  console.log("trcNo : ", trcNo);
   const baseBody = {
     serviceCode: ServiceCode.SK_WEB,
     chnl: Channel.MOBILE_WEB,
@@ -41,6 +42,8 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
     trcNo,
     requestData: body,
   };
+
+  console.log("baseBody : ", baseBody);
 
   return axiosInstance.post(url, baseBody, config);
 };

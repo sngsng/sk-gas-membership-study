@@ -13,8 +13,8 @@ import ApiUrls from "../constants/api_urls";
 
 function AcceptTerms() {
   const navigate = useNavigate();
-  const [allCheck, setAllCheck] = useState(false);
-  const [checkList, setCheckList] = useState([]);
+  // const [allCheck, setAllCheck] = useState(false);
+  // const [checkList, setCheckList] = useState([]);
 
   const { data } = useQuery<Terms[], AxiosError>(
     ["getTermsList", urls.AccepTerms],
