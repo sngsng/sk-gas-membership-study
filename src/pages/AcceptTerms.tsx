@@ -55,14 +55,6 @@ import cls from "../util";
 // data.map((option) => <checkbox value={value} onChange={() => onChange(option))} checked={T/F} />);
 //                                              이렇게 하면 타고 들어가서 주는 방법인가보다~
 
-const line = 0;
-
-// 전체약관 동의 클릭시 값이 true로 바뀌고, 기존 배열에 들어있던 값을 초기화 시켜준후, 모든 id값을 넣어주면된다.
-// 반대일 경우, 기존 배열을 초기화 시켜주면 된다.
-
-// 배열에 모든값이 들어있으면, 버튼 스타일 바뀐다. (활성화)
-// => 필수값만 있을 경우에도 버튼 활성화.
-
 // findIndex...
 
 function AcceptTerms() {
