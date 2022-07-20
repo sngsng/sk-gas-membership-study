@@ -4,12 +4,11 @@ import { AxiosError } from "axios";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { SignUpTermsList } from "../apis/common";
-import { CheckBoxOff, CheckOff, CheckOn } from "../assets";
+import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../assets";
 import Terms from "../apis/common/types/responses/Terms";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
-import hmsRequest from "../network";
-import ApiUrls from "../constants/api_urls";
+import cls from "../util";
 
 // const data = [
 //   {
@@ -56,13 +55,19 @@ import ApiUrls from "../constants/api_urls";
 // data.map((option) => <checkbox value={value} onChange={() => onChange(option))} checked={T/F} />);
 //                                              이렇게 하면 타고 들어가서 주는 방법인가보다~
 
-// 일단 클릭시 배열에 추가하는 로직 ()
+const line = 0;
+
+// 전체약관 동의 클릭시 값이 true로 바뀌고, 기존 배열에 들어있던 값을 초기화 시켜준후, 모든 id값을 넣어주면된다.
+// 반대일 경우, 기존 배열을 초기화 시켜주면 된다.
+
+// 배열에 모든값이 들어있으면, 버튼 스타일 바뀐다. (활성화)
+// => 필수값만 있을 경우에도 버튼 활성화.
+
+// findIndex...
 
 function AcceptTerms() {
   const navigate = useNavigate();
-  // const [allCheck, setAllCheck] = useState(false);
-
-  // 이게 기준이되는 배열이라고 생각하자.
+  const [allCheck, setAllCheck] = useState(false);
   const [checkList, setCheckList] = useState<any>([]);
 
   const { data } = useQuery<Terms[], AxiosError>(
@@ -73,13 +78,34 @@ function AcceptTerms() {
     }
   );
 
-  const changeHandel = (check: boolean, id: string) => {
+  useEffect(() => {
+    if (
+      checkList.length === 7 ||
+      (checkList.includes("SG000001") &&
+        checkList.includes("SG000003") &&
+        checkList.includes("OCB00002") &&
+        checkList.includes("SC140114"))
+    ) {
+      setAllCheck(true);
+    }
+  }, [checkList]);
+
+  const changeHandel = (check: boolean, id: string | undefined) => {
     if (check) {
-      // true일 경우 받은 id 값을 추가 해주는데, 기존 배열에 있는 값을 가져와 거기에 추가해주는 방식.
       setCheckList([...checkList, id]);
     } else {
-      // false일 경우 받은 id 값과 다른 것들만 필터해서 반환한다.
       setCheckList(checkList.filter((i: string) => i !== id));
+    }
+  };
+
+  const allCheckHandel = () => {
+    if (allCheck === false) {
+      setCheckList([]);
+      setAllCheck(true);
+      setCheckList(data?.map((i) => i.cluCd));
+    } else {
+      setAllCheck(false);
+      setCheckList([]);
     }
   };
 
@@ -97,15 +123,18 @@ function AcceptTerms() {
           className="flex items-center pb-20 mb-20 border-b-1 border-gray300"
           aria-hidden="true"
           onClick={() => {
-            console.log("전체 선택 해야된다.");
+            allCheckHandel();
           }}
         >
-          <img src={CheckBoxOff} alt="전체동의" className="w-24 h-24 mr-10" />
+          <img
+            src={allCheck ? CheckBoxOn : CheckBoxOff}
+            alt="전체동의"
+            className="w-24 h-24 mr-10"
+          />
           <p className="font-bold text-h2">전체 약관에 동의 합니다.</p>
         </div>
 
         <ul>
-          {/* map 돌려야되는 부분 */}
           {data?.map((item) => {
             return (
               <li
@@ -116,14 +145,14 @@ function AcceptTerms() {
                   // console.log(i + 1);
                 }}
               >
-                <label className="mr-10" htmlFor={item.cluCd}>
+                <label className="mr-10 cursor-pointer" htmlFor={item.cluCd}>
                   <input
                     type="checkbox"
-                    className="absolute left-[-10px]"
+                    className="absolute left-[-9999px]"
                     id={item.cluCd}
                     value={item.cluCd}
                     onChange={(e) => {
-                      changeHandel(e.currentTarget.checked, item.cluCd);
+                      changeHandel(e.currentTarget.checked, item?.cluCd);
                     }}
                     checked={!!checkList.includes(item.cluCd)}
                   />
@@ -143,10 +172,17 @@ function AcceptTerms() {
         </p>
         <button
           type="button"
-          className="w-full text-center p-20 bg-[#e8e8e8] btn btn-fill btn-fill-disabled"
+          className={cls(
+            "mt-30  btn-extra w-full text-center",
+            allCheck // 여기서 조건 줘서 스타일 수정
+              ? "cursor-pointer rounded border-1 btn-fill"
+              : "btn-fill-disabled rounded "
+          )}
           onClick={() => {
             navigate(urls.SignUpPart1);
+            // dispatch 해줘야되는 부분
           }}
+          disabled={!allCheck}
         >
           동의하고 회원가입
         </button>
