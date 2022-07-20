@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import { useQuery } from "react-query";
@@ -71,15 +70,7 @@ function AcceptTerms() {
   );
 
   useEffect(() => {
-    if (
-      checkList.length === 7 ||
-      (checkList.includes("SG000001") &&
-        checkList.includes("SG000003") &&
-        checkList.includes("OCB00002") &&
-        checkList.includes("SC140114"))
-    ) {
-      setAllCheck(true);
-    }
+    setAllCheck(checkList.length === 7);
   }, [checkList]);
 
   const changeHandel = (check: boolean, id: string | undefined) => {
@@ -166,7 +157,11 @@ function AcceptTerms() {
           type="button"
           className={cls(
             "mt-30  btn-extra w-full text-center",
-            allCheck // 여기서 조건 줘서 스타일 수정
+            allCheck ||
+              (checkList.includes("SG000001") &&
+                checkList.includes("SG000003") &&
+                checkList.includes("OCB00002") &&
+                checkList.includes("SC140114"))
               ? "cursor-pointer rounded border-1 btn-fill"
               : "btn-fill-disabled rounded "
           )}
@@ -174,7 +169,14 @@ function AcceptTerms() {
             navigate(urls.SignUpPart1);
             // dispatch 해줘야되는 부분
           }}
-          disabled={!allCheck}
+          disabled={
+            !(
+              checkList.includes("SG000001") &&
+              checkList.includes("SG000003") &&
+              checkList.includes("OCB00002") &&
+              checkList.includes("SC140114")
+            )
+          }
         >
           동의하고 회원가입
         </button>
