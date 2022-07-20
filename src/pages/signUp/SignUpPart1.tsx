@@ -1,34 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-nested-ternary */
-
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { idCheckAPI } from "../../apis/auth";
+import TermsIdCheckBody from "../../apis/auth/types/requests/TermsIdCheckBody";
+import ApiUrls from "../../constants/api_urls";
+import regex from "../../constants/regex";
+// import { idCheckAPI } from "../../apis/auth";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
+import hmsRequest from "../../network";
 import cls from "../../util";
 
 function SignUpPart1() {
   const navigate = useNavigate();
   const [idCheck, setIdCheck] = useState(false);
+  const [apiIdCheck, setApiIdCheck] = useState(false);
   const [idCheckBtn, setIdCheckBtn] = useState(false);
   const [passwordCheck, setPasswordCheck] = useState(false);
   const [rePassWordCheck, setRePasswordCheck] = useState(false);
   const [passWordCrossCheck, setPassWordCrossCheck] = useState(false);
   const [carNumberCheck, setCarNumberCheck] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [signPart1Btn, setSignPart1Btn] = useState(false);
-  const [check, setCheck] = useState({
-    id: false,
-    idapi: false,
-    password: false,
-    repassword: false,
-    carnumber: false,
-  });
-
-  console.log(check.id);
-
-  // 아이디 , 비밀번호 재입력 , 차량번호, 중복확인 이렇게 네가지가 값이 있을 경우에만 버튼 활성화
 
   const [useId, setUserId] = useState("");
 
@@ -37,17 +29,44 @@ function SignUpPart1() {
   const rePassWordRef = useRef<HTMLInputElement>(null);
   const carNumberRef = useRef<HTMLInputElement>(null);
 
-  // 아이디 체크
+  // singPart1Btn 조건 체크
+  useEffect(() => {
+    if (
+      !idCheck &&
+      idRef.current?.value &&
+      regex.id.test(idRef.current.value) &&
+      !passwordCheck &&
+      passWordRef.current?.value &&
+      regex.passWord.test(passWordRef.current.value) &&
+      !rePassWordCheck &&
+      rePassWordRef.current?.value &&
+      regex.passWord.test(rePassWordRef.current.value) &&
+      !passWordCrossCheck &&
+      carNumberRef.current?.value &&
+      !carNumberCheck &&
+      regex.carNumber.test(carNumberRef.current.value) &&
+      apiIdCheck
+    ) {
+      setSignPart1Btn(true);
+    } else {
+      setSignPart1Btn(false);
+    }
+  }, [
+    idCheck,
+    passwordCheck,
+    rePassWordCheck,
+    passWordCrossCheck,
+    carNumberCheck,
+    apiIdCheck,
+  ]);
+
+  // 아이디 체크 (정규식)
   const handleIdCheck = () => {
-    console.log(idRef.current?.value);
+    // console.log(idRef.current?.value);
 
-    // 숫자를 꼭 포함해야되는건가?? 물어보기!!
-    const userIdRegex = /^[A-Za-z0-9]{5,20}$/i;
-
-    // value가 있어야 되며, test를 통과할때
     if (!idRef.current?.value) {
       setIdCheck(false);
-    } else if (idRef.current?.value && userIdRegex.test(idRef.current?.value)) {
+    } else if (idRef.current?.value && regex.id.test(idRef.current?.value)) {
       setIdCheck(false);
       setIdCheckBtn(true);
       setUserId(idRef.current.value);
@@ -57,34 +76,63 @@ function SignUpPart1() {
     }
   };
 
+  // id 중복체크
+  const idCheckAPI = async (useId: TermsIdCheckBody) => {
+    try {
+      const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, useId);
+      const { dupYn } = data.responseData;
+
+      if (dupYn === "Y") {
+        alert("중복된 아이디 입니다.");
+        setApiIdCheck(false);
+      }
+      if (dupYn === "N") {
+        alert("사용가능한 아이디입니다.");
+        setApiIdCheck(true);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   // 비밀번호 체크
   const handlePasswordCheck = () => {
-    console.log(passWordRef.current?.value);
-
-    const usePassWordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+    // console.log(passWordRef.current?.value);
 
     if (
       (passWordRef.current?.value &&
-        usePassWordRegex.test(passWordRef.current.value)) ||
+        regex.passWord.test(passWordRef.current.value)) ||
       !passWordRef.current?.value
     ) {
       setPasswordCheck(false);
     } else {
       setPasswordCheck(true);
     }
+
+    // 비밀번호 서로 같은지 체크하는 부분 = passWordCrossCheck
+    if (
+      passWordRef.current?.value &&
+      rePassWordRef.current?.value &&
+      passWordRef.current?.value !== rePassWordRef.current?.value &&
+      regex.passWord.test(rePassWordRef.current.value) &&
+      regex.passWord.test(passWordRef.current.value)
+    ) {
+      setPassWordCrossCheck(true);
+    } else if (
+      passWordRef.current?.value === rePassWordRef.current?.value ||
+      !regex.passWord.test(rePassWordRef.current?.value as string)
+    ) {
+      setPassWordCrossCheck(false);
+    }
   };
 
   // 비밀번호 재확인 체크
   const handleRePasswordCheck = () => {
-    console.log(rePassWordRef.current?.value);
-
-    const usePassWordRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+    // console.log(rePassWordRef.current?.value);
 
     if (
       (rePassWordRef.current?.value &&
-        usePassWordRegex.test(rePassWordRef.current.value)) ||
+        regex.passWord.test(rePassWordRef.current.value)) ||
       !rePassWordRef.current?.value
     ) {
       setRePasswordCheck(false);
@@ -97,13 +145,13 @@ function SignUpPart1() {
       passWordRef.current?.value &&
       rePassWordRef.current?.value &&
       passWordRef.current?.value !== rePassWordRef.current?.value &&
-      usePassWordRegex.test(rePassWordRef.current.value) &&
-      usePassWordRegex.test(passWordRef.current.value)
+      regex.passWord.test(rePassWordRef.current.value) &&
+      regex.passWord.test(passWordRef.current.value)
     ) {
       setPassWordCrossCheck(true);
     } else if (
       passWordRef.current?.value === rePassWordRef.current?.value ||
-      !usePassWordRegex.test(rePassWordRef.current?.value as string)
+      !regex.passWord.test(rePassWordRef.current?.value as string)
     ) {
       setPassWordCrossCheck(false);
     }
@@ -111,14 +159,10 @@ function SignUpPart1() {
 
   // 차량번호 체크
   const handleCarNumberCheck = () => {
-    console.log(carNumberRef.current?.value);
-
-    const useCarNumberRegex =
-      /^\d{2,3}[가|나|다|라|마|거|너|더|러|머|버|서|어|저|고|노|도|로|모|보|소|오|조|구|누|두|루|무|부|수|우|주|바|사|아|자|허|배|호|하|국|합|육|해|공]\d{4}$|^[서울|부산|대구|인천|대전|광주|울산|제주|경기|강원|충남|전남|전북|경남|경북|세종]{2}\d{2,3}[가|나|다|라|마|거|너|더|러|머|버|서|어|저|고|노|도|로|모|보|소|오|조|구|누|두|루|무|부|수|우|주|바|사|아|자|허|배|호|하|국|합|육|해|공]\d{4}/i;
-
+    // console.log(carNumberRef.current?.value);
     if (
       (carNumberRef.current?.value &&
-        useCarNumberRegex.test(carNumberRef.current.value)) ||
+        regex.carNumber.test(carNumberRef.current.value)) ||
       !carNumberRef.current?.value
     ) {
       setCarNumberCheck(false);
@@ -205,8 +249,10 @@ function SignUpPart1() {
                 ref={rePassWordRef}
                 onChange={handleRePasswordCheck}
                 onFocus={() => {
-                  setRePasswordCheck(false);
-                  setPassWordCrossCheck(false);
+                  if (signPart1Btn) {
+                    setRePasswordCheck(false);
+                    setPassWordCrossCheck(false);
+                  }
                 }}
                 onBlur={handleRePasswordCheck}
               />
@@ -239,7 +285,9 @@ function SignUpPart1() {
               ref={carNumberRef}
               onChange={handleCarNumberCheck}
               onFocus={() => {
-                setCarNumberCheck(false);
+                if (signPart1Btn) {
+                  setCarNumberCheck(false);
+                }
               }}
               onBlur={handleCarNumberCheck}
             />
@@ -255,12 +303,12 @@ function SignUpPart1() {
           type="button"
           className={cls(
             "mt-30  btn-extra w-full",
-            signPart1Btn // 여기서 조건 줘서 스타일 수정
+            signPart1Btn
               ? "cursor-pointer rounded border-1 btn-fill"
               : "btn-fill-disabled rounded "
           )}
           // input 값이 전부 통과될 경우 버튼 활성화!
-          disabled={!idCheckBtn}
+          disabled={!signPart1Btn}
           onClick={() => {
             navigate(urls.SignUpPart2);
             console.log("work");
