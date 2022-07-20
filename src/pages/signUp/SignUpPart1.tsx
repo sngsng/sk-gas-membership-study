@@ -1,15 +1,11 @@
-/* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
-import { useQuery } from "react-query";
+/* eslint-disable no-nested-ternary */
+
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { idCheckAPI } from "../../apis/auth";
-import TermsIdCheckBody from "../../apis/auth/types/requests/TermsIdCheckBody";
-import ApiUrls from "../../constants/api_urls";
-// import urls from "../../constants/urls";
+import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
-import hmsRequest from "../../network";
 import cls from "../../util";
 
 function SignUpPart1() {
@@ -20,13 +16,19 @@ function SignUpPart1() {
   const [rePassWordCheck, setRePasswordCheck] = useState(false);
   const [passWordCrossCheck, setPassWordCrossCheck] = useState(false);
   const [carNumberCheck, setCarNumberCheck] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [signPart1Btn, setSignPart1Btn] = useState(false);
+  const [check, setCheck] = useState({
+    id: false,
+    idapi: false,
+    password: false,
+    repassword: false,
+    carnumber: false,
+  });
+
+  console.log(check.id);
 
   // 아이디 , 비밀번호 재입력 , 차량번호, 중복확인 이렇게 네가지가 값이 있을 경우에만 버튼 활성화
-
-  // useEffect(() => {
-  //   if()
-  // }, [signPart1Btn]);
 
   const [useId, setUserId] = useState("");
 
@@ -260,7 +262,7 @@ function SignUpPart1() {
           // input 값이 전부 통과될 경우 버튼 활성화!
           disabled={!idCheckBtn}
           onClick={() => {
-            // navigate(urls.SignUpPart2);
+            navigate(urls.SignUpPart2);
             console.log("work");
           }}
         >
