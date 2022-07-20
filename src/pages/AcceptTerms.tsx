@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { AxiosError } from "axios";
 import { useQuery } from "react-query";
@@ -8,6 +9,9 @@ import Terms from "../apis/common/types/responses/Terms";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
 import cls from "../util";
+import { useAppSelector, useAppDispatch } from "../store/hook/index";
+
+import { addCluAgrList } from "../store/modules/User";
 
 // const data = [
 //   {
@@ -60,6 +64,8 @@ function AcceptTerms() {
   const navigate = useNavigate();
   const [allCheck, setAllCheck] = useState(false);
   const [checkList, setCheckList] = useState<any>([]);
+  const dispatch = useAppDispatch();
+  const userCheckedList = useAppSelector((state) => state.user.cluAgrList);
 
   const { data } = useQuery<Terms[], AxiosError>(
     ["getTermsList", urls.AccepTerms],
@@ -68,6 +74,10 @@ function AcceptTerms() {
       retry: 0,
     }
   );
+
+  useEffect(() => {
+    setCheckList(userCheckedList);
+  }, []);
 
   useEffect(() => {
     setAllCheck(checkList.length === 7);
@@ -167,7 +177,7 @@ function AcceptTerms() {
           )}
           onClick={() => {
             navigate(urls.SignUpPart1);
-            // dispatch 해줘야되는 부분
+            dispatch(addCluAgrList(checkList));
           }}
           disabled={
             !(
