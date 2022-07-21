@@ -19,6 +19,7 @@ function AcceptTerms() {
   const navigate = useNavigate();
   const [allCheck, setAllCheck] = useState(false);
   const [checkList, setCheckList] = useState<any>([]);
+  // const [termsList, setTermsList] = useState();
   const dispatch = useAppDispatch();
   const userCheckedList = useAppSelector((state) => state.user.cluAgrList);
 
@@ -58,6 +59,71 @@ function AcceptTerms() {
       setCheckList([]);
     }
   };
+
+  const a = [];
+
+  console.log(
+    "DB : ",
+    termsListData,
+    "checkList : ",
+    checkList,
+    "2 :",
+
+    termsListData
+      ?.filter((terms, index) => {
+        return checkList.includes(terms.cluCd);
+      })
+      .map((terms) => {
+        return terms.mndtAgrYn;
+      })
+      .filter((mndtAgrYn) => {
+        return mndtAgrYn === "Y";
+      }).length
+  );
+
+  // *** DB데이터에서 필수 체크요소가 몇개인지 찾아냄. ***
+  // DB에서 필수 체크 몇개인지 구한거
+  const termsListRequiredLength = termsListData
+    ?.map((terms) => {
+      return terms.mndtAgrYn;
+    })
+    .filter((terms) => {
+      return terms === "Y";
+    }).length;
+  console.log("ck", termsListRequiredLength);
+
+  const checkedTermsLength = termsListData
+    ?.filter((terms, index) => {
+      return checkList.includes(terms.cluCd);
+    })
+    .map((terms) => {
+      return terms.mndtAgrYn;
+    })
+    .filter((mndtAgrYn) => {
+      return mndtAgrYn === "Y";
+    }).length;
+  console.log("ed", checkedTermsLength);
+
+  // *** 배열 찾기 성공  // id 값으로 배열 찾아내기 ***
+  // 이건 선택한 terms의 갯수 구한거
+  // const checkedTermsLength = termsListData
+  //   ?.filter((terms, index) => {
+  //     return terms.cluCd === checkList[index];
+  //   })
+  //   .map((terms, index) => {
+  //     return terms.mndtAgrYn;
+  //   })
+  //   .filter((terms) => {
+  //     return terms === "Y";
+  //   }).length;
+  // console.log(checkedTermsLength);
+
+  // console.log(
+  //   termsListData?.map((value, index) => {
+  //     return value;
+  //   })
+  //   // true / false
+  // );
 
   return (
     <Layout isHeader title="행복충전모바일 회원가입" backBtn>
@@ -100,24 +166,13 @@ function AcceptTerms() {
           text="동의하고 회원가입"
           className={cls(
             "mt-30  btn-extra w-full",
-            allCheck ||
-              (checkList.includes("SG000001") &&
-                checkList.includes("SG000003") &&
-                checkList.includes("OCB00002") &&
-                checkList.includes("SC140114"))
+            allCheck || termsListRequiredLength === checkedTermsLength
               ? "cursor-pointer rounded border-1 btn-fill"
               : "btn-fill-disabled rounded "
           )}
-          disabled={
-            !(
-              checkList.includes("SG000001") &&
-              checkList.includes("SG000003") &&
-              checkList.includes("OCB00002") &&
-              checkList.includes("SC140114")
-            )
-          }
+          disabled={!(termsListRequiredLength === checkedTermsLength)}
           onClick={() => {
-            navigate(urls.SignUpPart1);
+            // navigate(urls.SignUpPart1);
             dispatch(addCluAgrList(checkList));
           }}
         />
