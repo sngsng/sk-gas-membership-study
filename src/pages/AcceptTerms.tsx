@@ -31,7 +31,9 @@ function AcceptTerms() {
   );
 
   useEffect(() => {
-    setCheckList(userCheckedList);
+    if (userCheckedList.length > 1) {
+      setCheckList(userCheckedList);
+    }
   }, []);
 
   useEffect(() => {
