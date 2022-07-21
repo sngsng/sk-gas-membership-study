@@ -49,7 +49,7 @@ interface UserState {
   cluAgrList: CluAgrList[];
 }
 
-interface CluAgrList {
+export interface CluAgrList {
   // 약관코드
   cluCd: string;
 

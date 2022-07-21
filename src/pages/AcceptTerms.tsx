@@ -11,7 +11,7 @@ import Layout from "../elements/Layout";
 import cls from "../util";
 import { useAppSelector, useAppDispatch } from "../store/hook/index";
 
-import { addCluAgrList } from "../store/modules/User";
+import { addCluAgrList, CluAgrList } from "../store/modules/User";
 
 // const data = [
 //   {
@@ -102,6 +102,24 @@ function AcceptTerms() {
     }
   };
 
+  function searchArray(list: any[], data: Terms[]) {
+    const userCheckedList = [];
+
+    for (let i = 0; i < data.length; i++) {
+      for (let j = 0; j < data.length; j++) {
+        if (data[i].cluCd === list[j]) {
+          userCheckedList.push(data[i]);
+        }
+      }
+    }
+
+    console.log("userCheckedList : ", userCheckedList);
+    // dispatch(
+    //   addCluAgrList(userCheckedList as CluAgrList[])
+    //   // data?.findIndex((value, idx) => value.cluCd === checkList[idx])
+    // );
+  }
+
   return (
     <Layout isHeader title="행복충전모바일 회원가입" backBtn>
       <div className="p-20">
@@ -134,9 +152,6 @@ function AcceptTerms() {
                 className="flex mb-16 cursor-pointer last:mb-0"
                 aria-hidden="true"
                 key={item.cluCd}
-                onClick={() => {
-                  // console.log(i + 1);
-                }}
               >
                 <label className="mr-10 cursor-pointer" htmlFor={item.cluCd}>
                   <input
@@ -177,6 +192,7 @@ function AcceptTerms() {
           )}
           onClick={() => {
             navigate(urls.SignUpPart1);
+            searchArray(checkList, data as Terms[]);
             dispatch(addCluAgrList(checkList));
           }}
           disabled={

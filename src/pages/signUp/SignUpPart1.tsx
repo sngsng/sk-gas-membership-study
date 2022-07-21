@@ -9,6 +9,7 @@ import regex from "../../constants/regex";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import hmsRequest from "../../network";
+import { useAppSelector } from "../../store/hook";
 import cls from "../../util";
 
 function SignUpPart1() {
@@ -28,6 +29,9 @@ function SignUpPart1() {
   const passWordRef = useRef<HTMLInputElement>(null);
   const rePassWordRef = useRef<HTMLInputElement>(null);
   const carNumberRef = useRef<HTMLInputElement>(null);
+  const user = useAppSelector((state) => state.user);
+
+  console.log(user);
 
   // singPart1Btn 조건 체크
   useEffect(() => {
