@@ -29,7 +29,7 @@ function TermCheckItem({
         <img
           src={checkList.includes(terms.cluCd) ? CheckOn : CheckOff}
           alt="체크버튼"
-          className="w-full"
+          className="w-full min-w-24"
         />
       </label>
       <p>{terms.cluShrtCtt}</p>
