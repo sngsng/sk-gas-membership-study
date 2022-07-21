@@ -1,6 +1,6 @@
 import React from "react";
-import BottomMenu from "../component/BottomMenu";
-import Header from "../component/Header";
+import BottomMenu from "../components/BottomMenu";
+import Header from "../components/Header";
 import cls from "../util/index";
 
 type ILayout = {
