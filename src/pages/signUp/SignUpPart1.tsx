@@ -71,6 +71,7 @@ function SignUpPart1() {
     if (!idRef.current?.value) {
       setIdCheck(false);
     } else if (idRef.current?.value && regex.id.test(idRef.current?.value)) {
+      setApiIdCheck(false);
       setIdCheck(false);
       setIdCheckBtn(true);
       setUserId(idRef.current.value);
