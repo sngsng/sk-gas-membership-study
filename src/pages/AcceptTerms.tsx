@@ -13,53 +13,6 @@ import { useAppSelector, useAppDispatch } from "../store/hook/index";
 
 import { addCluAgrList, CluAgrList } from "../store/modules/User";
 
-// const data = [
-//   {
-//     id: 1,
-//     value: 1,
-//     label: "1",
-//   },
-//   {
-//     id: 2,
-//     value: 2,
-//     label: "2",
-//   },
-//   {
-//     id: 3,
-//     value: 3,
-//     label: "3",
-//   },
-//   {
-//     id: 4,
-//     value: 4,
-//     label: "4",
-//   },
-// ];
-
-// seletedOptions = [{}, {}];
-// seletedOptions = [id, id];
-
-// const onChange = (option: any) => {
-//   existed => includes, find //  =>. T / F
-
-//   // T 있음 - 체크 상태  =>     =>  체크x
-//   seletedOptions에서 []
-
-//   // F 없음 - 체크 x =>  체크 0
-//   setSeletedOptions()
-
-// }
-
-// const onChecked = (    ) => {
-//   seletedOptions ( [] )
-//   return T / F
-// }
-
-// data.map((option) => <checkbox value={value} onChange={() => onChange(option))} checked={T/F} />);
-//                                              이렇게 하면 타고 들어가서 주는 방법인가보다~
-
-// findIndex...
-
 function AcceptTerms() {
   const navigate = useNavigate();
   const [allCheck, setAllCheck] = useState(false);
@@ -67,7 +20,7 @@ function AcceptTerms() {
   const dispatch = useAppDispatch();
   const userCheckedList = useAppSelector((state) => state.user.cluAgrList);
 
-  const { data } = useQuery<Terms[], AxiosError>(
+  const { data: termsListData, isLoading } = useQuery<Terms[], AxiosError>(
     ["getTermsList", urls.AccepTerms],
     () => SignUpTermsList(),
     {
@@ -80,7 +33,7 @@ function AcceptTerms() {
   }, []);
 
   useEffect(() => {
-    setAllCheck(checkList.length === 7);
+    setAllCheck(checkList.length === termsListData?.length);
   }, [checkList]);
 
   const changeHandel = (check: boolean, id: string | undefined) => {
@@ -92,23 +45,23 @@ function AcceptTerms() {
   };
 
   const allCheckHandel = () => {
-    if (allCheck === false) {
+    if (!allCheck) {
       setCheckList([]);
       setAllCheck(true);
-      setCheckList(data?.map((i) => i.cluCd));
+      setCheckList(termsListData?.map((i) => i.cluCd));
     } else {
       setAllCheck(false);
       setCheckList([]);
     }
   };
 
-  function searchArray(list: any[], data: Terms[]) {
+  function searchArray(list: any[], termsListData: Terms[]) {
     const userCheckedList = [];
 
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < data.length; j++) {
-        if (data[i].cluCd === list[j]) {
-          userCheckedList.push(data[i]);
+    for (let i = 0; i < termsListData.length; i++) {
+      for (let j = 0; j < termsListData.length; j++) {
+        if (termsListData[i].cluCd === list[j]) {
+          userCheckedList.push(termsListData[i]);
         }
       }
     }
@@ -116,7 +69,7 @@ function AcceptTerms() {
     console.log("userCheckedList : ", userCheckedList);
     // dispatch(
     //   addCluAgrList(userCheckedList as CluAgrList[])
-    //   // data?.findIndex((value, idx) => value.cluCd === checkList[idx])
+    //   // termsListData?.findIndex((value, idx) => value.cluCd === checkList[idx])
     // );
   }
 
@@ -131,7 +84,7 @@ function AcceptTerms() {
         </div>
 
         <div
-          className="flex items-center pb-20 mb-20 border-b-1 border-gray300"
+          className="flex items-center pb-20 mb-20 cursor-pointer border-b-1 border-gray300"
           aria-hidden="true"
           onClick={() => {
             allCheckHandel();
@@ -145,36 +98,41 @@ function AcceptTerms() {
           <p className="font-bold text-h2">전체 약관에 동의 합니다.</p>
         </div>
 
-        <ul>
-          {data?.map((item) => {
-            return (
-              <li
-                className="flex mb-16 cursor-pointer last:mb-0"
-                aria-hidden="true"
-                key={item.cluCd}
-              >
-                <label className="mr-10 cursor-pointer" htmlFor={item.cluCd}>
-                  <input
-                    type="checkbox"
-                    className="absolute left-[-9999px]"
-                    id={item.cluCd}
-                    value={item.cluCd}
-                    onChange={(e) => {
-                      changeHandel(e.currentTarget.checked, item?.cluCd);
-                    }}
-                    checked={!!checkList.includes(item.cluCd)}
-                  />
-                  <img
-                    src={checkList.includes(item.cluCd) ? CheckOn : CheckOff}
-                    alt="체크버튼"
-                    className="w-full"
-                  />
-                </label>
-                <p>{item.cluShrtCtt}</p>
-              </li>
-            );
-          })}
-        </ul>
+        {isLoading ? (
+          <p className="text-center py-150">로딩중입니다....</p>
+        ) : (
+          <ul>
+            {termsListData?.map((terms) => {
+              return (
+                <li
+                  className="flex mb-16 cursor-pointer last:mb-0"
+                  aria-hidden="true"
+                  key={terms.cluCd}
+                >
+                  <label className="mr-10 cursor-pointer" htmlFor={terms.cluCd}>
+                    <input
+                      type="checkbox"
+                      className="absolute left-[-9999px]"
+                      id={terms.cluCd}
+                      value={terms.cluCd}
+                      onChange={(e) => {
+                        changeHandel(e.currentTarget.checked, terms?.cluCd);
+                      }}
+                      checked={!!checkList.includes(terms.cluCd)}
+                    />
+                    <img
+                      src={checkList.includes(terms.cluCd) ? CheckOn : CheckOff}
+                      alt="체크버튼"
+                      className="w-full"
+                    />
+                  </label>
+                  <p>{terms.cluShrtCtt}</p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
         <p className="pl-34 text-b3 text-[#b7b7b7] mb-30 mt-6">
           ※ 본 마케팅 수신 동의 시 혜택으로 충전 할인 서비스가 제공됩니다.
         </p>
@@ -192,7 +150,7 @@ function AcceptTerms() {
           )}
           onClick={() => {
             navigate(urls.SignUpPart1);
-            searchArray(checkList, data as Terms[]);
+            searchArray(checkList, termsListData as Terms[]);
             dispatch(addCluAgrList(checkList));
           }}
           disabled={
