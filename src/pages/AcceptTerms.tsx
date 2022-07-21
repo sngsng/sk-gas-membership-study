@@ -4,14 +4,16 @@ import { AxiosError } from "axios";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { SignUpTermsList } from "../apis/common";
-import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../assets";
+import { CheckBoxOff, CheckBoxOn } from "../assets";
 import Terms from "../apis/common/types/responses/Terms";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
 import cls from "../util";
 import { useAppSelector, useAppDispatch } from "../store/hook/index";
 
-import { addCluAgrList, CluAgrList } from "../store/modules/User";
+import { addCluAgrList } from "../store/modules/User";
+import TermsCheckList from "../components/TermsCheckList";
+import Button from "../elements/Button";
 
 function AcceptTerms() {
   const navigate = useNavigate();
@@ -55,29 +57,11 @@ function AcceptTerms() {
     }
   };
 
-  function searchArray(list: any[], termsListData: Terms[]) {
-    const userCheckedList = [];
-
-    for (let i = 0; i < termsListData.length; i++) {
-      for (let j = 0; j < termsListData.length; j++) {
-        if (termsListData[i].cluCd === list[j]) {
-          userCheckedList.push(termsListData[i]);
-        }
-      }
-    }
-
-    console.log("userCheckedList : ", userCheckedList);
-    // dispatch(
-    //   addCluAgrList(userCheckedList as CluAgrList[])
-    //   // termsListData?.findIndex((value, idx) => value.cluCd === checkList[idx])
-    // );
-  }
-
   return (
     <Layout isHeader title="행복충전모바일 회원가입" backBtn>
       <div className="p-20">
         <div className="text-center mb-160">
-          <p className="mt-40 mb-6 font-bold text-h2">약관 동의가 필요해요</p>
+          <p className="mb-6 font-bold mt-60 text-h2">약관 동의가 필요해요</p>
           <p className="text-[#b7b7b7] text-b2">
             서비스 이용에 필요한 약관에 동의해 주세요.
           </p>
@@ -86,9 +70,7 @@ function AcceptTerms() {
         <div
           className="flex items-center pb-20 mb-20 cursor-pointer border-b-1 border-gray300"
           aria-hidden="true"
-          onClick={() => {
-            allCheckHandel();
-          }}
+          onClick={allCheckHandel}
         >
           <img
             src={allCheck ? CheckBoxOn : CheckBoxOff}
@@ -101,45 +83,21 @@ function AcceptTerms() {
         {isLoading ? (
           <p className="text-center py-150">로딩중입니다....</p>
         ) : (
-          <ul>
-            {termsListData?.map((terms) => {
-              return (
-                <li
-                  className="flex mb-16 cursor-pointer last:mb-0"
-                  aria-hidden="true"
-                  key={terms.cluCd}
-                >
-                  <label className="mr-10 cursor-pointer" htmlFor={terms.cluCd}>
-                    <input
-                      type="checkbox"
-                      className="absolute left-[-9999px]"
-                      id={terms.cluCd}
-                      value={terms.cluCd}
-                      onChange={(e) => {
-                        changeHandel(e.currentTarget.checked, terms?.cluCd);
-                      }}
-                      checked={!!checkList.includes(terms.cluCd)}
-                    />
-                    <img
-                      src={checkList.includes(terms.cluCd) ? CheckOn : CheckOff}
-                      alt="체크버튼"
-                      className="w-full"
-                    />
-                  </label>
-                  <p>{terms.cluShrtCtt}</p>
-                </li>
-              );
-            })}
-          </ul>
+          <TermsCheckList
+            termsListData={termsListData}
+            changeHandel={changeHandel}
+            checkList={checkList}
+          />
         )}
 
         <p className="pl-34 text-b3 text-[#b7b7b7] mb-30 mt-6">
           ※ 본 마케팅 수신 동의 시 혜택으로 충전 할인 서비스가 제공됩니다.
         </p>
-        <button
-          type="button"
+
+        <Button
+          text="동의하고 회원가입"
           className={cls(
-            "mt-30  btn-extra w-full text-center",
+            "mt-30  btn-extra w-full",
             allCheck ||
               (checkList.includes("SG000001") &&
                 checkList.includes("SG000003") &&
@@ -148,11 +106,6 @@ function AcceptTerms() {
               ? "cursor-pointer rounded border-1 btn-fill"
               : "btn-fill-disabled rounded "
           )}
-          onClick={() => {
-            navigate(urls.SignUpPart1);
-            searchArray(checkList, termsListData as Terms[]);
-            dispatch(addCluAgrList(checkList));
-          }}
           disabled={
             !(
               checkList.includes("SG000001") &&
@@ -161,9 +114,11 @@ function AcceptTerms() {
               checkList.includes("SC140114")
             )
           }
-        >
-          동의하고 회원가입
-        </button>
+          onClick={() => {
+            navigate(urls.SignUpPart1);
+            dispatch(addCluAgrList(checkList));
+          }}
+        />
       </div>
     </Layout>
   );
