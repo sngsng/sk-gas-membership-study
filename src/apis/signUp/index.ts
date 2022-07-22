@@ -1,6 +1,6 @@
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
-import TermsIdCheckBody from "./types/requests/TermsIdCheckBody";
+import { TermsIdCheckBody } from "./types/requests";
 
 // eslint-disable-next-line import/prefer-default-export
 export const idCheckAPI = async (useId: TermsIdCheckBody) => {

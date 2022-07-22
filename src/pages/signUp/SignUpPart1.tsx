@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TermsIdCheckBody from "../../apis/auth/types/requests/TermsIdCheckBody";
+import { TermsIdCheckBody } from "../../apis/signUp/types/requests";
 import ApiUrls from "../../constants/api_urls";
 import regex from "../../constants/regex";
 // import { idCheckAPI } from "../../apis/auth";

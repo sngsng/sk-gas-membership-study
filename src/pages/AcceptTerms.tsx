@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { AxiosError } from "axios";
-import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { SignUpTermsList } from "../apis/common";
 import { CheckBoxOff, CheckBoxOn } from "../assets";
-import Terms from "../apis/common/types/responses/Terms";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
 import cls from "../util";
@@ -13,51 +9,86 @@ import { useAppSelector, useAppDispatch } from "../store/hook/index";
 import { addCluAgrList } from "../store/modules/User";
 import TermsCheckList from "../components/TermsCheckList";
 import Button from "../elements/Button";
+import ApiUrls from "../constants/api_urls";
+import hmsRequest from "../network";
+import { Terms } from "../apis/signUp/types/responses";
 
 function AcceptTerms() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const userCheckedList = useAppSelector((state) => state.user.cluAgrList);
+  const [isLoading, setIsLoading] = useState(false);
   const [allCheck, setAllCheck] = useState(false);
-  const [checkList, setCheckList] = useState<any>([]);
+  const [termsListData, setTermsListData] = useState<Terms[]>([]);
+  const [checkList, setCheckList] = useState<Terms[]>([]);
 
-  const { data: termsListData, isLoading } = useQuery<Terms[], AxiosError>(
-    ["getTermsList", urls.AccepTerms],
-    () => SignUpTermsList(),
-    {
-      retry: 0,
-    }
+  console.log(
+    "allCheck : ",
+    allCheck,
+    "termsListData : ",
+    termsListData,
+    "checkList : ",
+    checkList,
+    "userCheckedList : ",
+    userCheckedList
   );
 
   useEffect(() => {
-    if (userCheckedList.length > 1) {
-      setCheckList(userCheckedList);
-    }
+    setIsLoading(true);
+    (async () => {
+      try {
+        const { data } = await hmsRequest(ApiUrls.TERMS_LIST, {
+          svcCluFg: "01",
+        });
+        const { cluList } = data.responseData;
+        setTermsListData(cluList);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
   }, []);
 
   useEffect(() => {
-    setAllCheck(checkList.length === termsListData?.length);
-  }, [checkList]);
+    if (userCheckedList.length > 1) {
+      console.log("올체크 해주나?");
 
-  const changeHandel = (check: boolean, id: string | undefined) => {
+      setCheckList(userCheckedList);
+      setAllCheck(checkList.length === termsListData.length);
+    }
+  }, []);
+
+  const changeHandel = (check: boolean, terms: Terms) => {
     if (check) {
-      setCheckList([...checkList, id]);
+      setCheckList([...checkList, terms]);
     } else {
-      setCheckList(checkList.filter((i: string) => i !== id));
+      setCheckList(
+        checkList.filter((value: Terms) => {
+          return value.cluCd !== terms.cluCd;
+        })
+      );
     }
   };
 
+  console.log("checkList : ", checkList);
+
+  // all 버튼 클릭시
   const allCheckHandel = () => {
     if (!allCheck) {
       setCheckList([]);
       setAllCheck(true);
-      setCheckList(termsListData?.map((i) => i.cluCd));
+      setCheckList(
+        termsListData.map((i) => {
+          return { ...i, cluCd: i.cluCd };
+        })
+      );
     } else {
       setAllCheck(false);
       setCheckList([]);
     }
   };
 
+  // 필수 Y 값 갯수
   const termsListRequiredLength = termsListData
     ?.map((terms) => {
       return terms.mndtAgrYn;
@@ -66,16 +97,10 @@ function AcceptTerms() {
       return terms === "Y";
     }).length;
 
-  const checkedTermsLength = termsListData
-    ?.filter((terms) => {
-      return checkList.includes(terms.cluCd);
-    })
-    .map((terms) => {
-      return terms.mndtAgrYn;
-    })
-    .filter((mndtAgrYn) => {
-      return mndtAgrYn === "Y";
-    }).length;
+  // 클릭한 Y 값 갯수
+  const checkedTermsLength = checkList
+    .map((terms) => terms.mndtAgrYn)
+    .filter((mndtAgrYn) => mndtAgrYn === "Y").length;
 
   return (
     <Layout isHeader title="행복충전모바일 회원가입" backBtn>
@@ -114,20 +139,24 @@ function AcceptTerms() {
           ※ 본 마케팅 수신 동의 시 혜택으로 충전 할인 서비스가 제공됩니다.
         </p>
 
-        <Button
-          text="동의하고 회원가입"
-          className={cls(
-            "mt-30  btn-extra w-full",
-            allCheck || termsListRequiredLength === checkedTermsLength
-              ? "cursor-pointer rounded border-1 btn-fill"
-              : "btn-fill-disabled rounded "
-          )}
-          disabled={!(termsListRequiredLength === checkedTermsLength)}
-          onClick={() => {
-            navigate(urls.SignUpPart1);
-            dispatch(addCluAgrList(checkList));
-          }}
-        />
+        {isLoading ? (
+          <p className="text-center py-150">로딩중입니다....</p>
+        ) : (
+          <Button
+            text="동의하고 회원가입"
+            className={cls(
+              "mt-30  btn-extra w-full",
+              allCheck || termsListRequiredLength === checkedTermsLength
+                ? "cursor-pointer rounded border-1 btn-fill"
+                : "btn-fill-disabled rounded "
+            )}
+            disabled={!(termsListRequiredLength === checkedTermsLength)}
+            onClick={() => {
+              navigate(urls.SignUpPart1);
+              dispatch(addCluAgrList(checkList));
+            }}
+          />
+        )}
       </div>
     </Layout>
   );

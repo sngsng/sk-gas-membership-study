@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Terms } from "../../apis/signUp/types/responses";
 // import type { RootState } from "../index";
 
 // 상태의 유형 정의
@@ -46,18 +47,7 @@ interface UserState {
   prnBizlcNo?: string;
 
   // 약관동의 목록
-  cluAgrList: CluAgrList[];
-}
-
-export interface CluAgrList {
-  // 약관코드
-  cluCd: string;
-
-  // 약관버전
-  cluVer: string;
-
-  // 동의여부
-  agrYn: string;
+  cluAgrList: Terms[];
 }
 
 // 해당 유형을 사용하여 초기 상태 정의
@@ -80,7 +70,7 @@ const initialState: UserState = {
     {
       cluCd: "",
       cluVer: "",
-      agrYn: "",
+      mndtAgrYn: "",
     },
   ],
 };
@@ -105,7 +95,7 @@ export const User = createSlice({
 
     // 이게 맞는거
     // addCluAgrList: (state, action: PayloadAction<CluAgrList[]>) => {
-    addCluAgrList: (state, action: PayloadAction<CluAgrList[]>) => {
+    addCluAgrList: (state, action: PayloadAction<Terms[]>) => {
       console.log("스테이트 : ", state.cluAgrList, "액션 : ", action);
       state.cluAgrList = action.payload;
     },

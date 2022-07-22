@@ -1,11 +1,11 @@
 import React from "react";
-import Terms from "../apis/common/types/responses/Terms";
+import { Terms } from "../apis/signUp/types/responses";
 import { CheckOff, CheckOn } from "../assets";
 
 interface TermsCheckItemProps {
   terms: Terms;
-  changeHandel: (check: boolean, id: string | undefined) => void;
-  checkList: any;
+  changeHandel: (check: boolean, id: Terms) => void;
+  checkList: Terms | any;
 }
 
 function TermCheckItem({
@@ -22,12 +22,20 @@ function TermCheckItem({
           id={terms.cluCd}
           value={terms.cluCd}
           onChange={(e) => {
-            changeHandel(e.currentTarget.checked, terms?.cluCd);
+            changeHandel(e.currentTarget.checked, terms);
           }}
-          checked={!!checkList.includes(terms.cluCd)}
+          checked={
+            checkList.find(
+              (checked: Terms) => checked.cluCd === terms.cluCd
+            ) !== undefined
+          }
         />
         <img
-          src={checkList.includes(terms.cluCd) ? CheckOn : CheckOff}
+          src={
+            checkList.find((checked: Terms) => checked.cluCd === terms.cluCd)
+              ? CheckOn
+              : CheckOff
+          }
           alt="체크버튼"
           className="w-full min-w-24"
         />
@@ -38,9 +46,9 @@ function TermCheckItem({
 }
 
 interface TermsCheckListProps {
-  termsListData: Terms[] | undefined;
-  changeHandel: (check: boolean, id: string | undefined) => void;
-  checkList: any;
+  termsListData: Terms[];
+  changeHandel: (check: boolean, id: Terms) => void;
+  checkList: Terms | any;
 }
 
 function TermsCheckList({
