@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../assets";
 import Layout from "../elements/Layout";
+import { useAppDispatch } from "../store/hook";
+import { addCluAgrList } from "../store/modules/User";
 
 function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(addCluAgrList([]));
+  }, []);
 
   return (
     <Layout isHeader={false} isMenu={false}>

@@ -21,7 +21,9 @@ function AcceptTerms() {
   const [isLoading, setIsLoading] = useState(false);
   const [allCheck, setAllCheck] = useState(false);
   const [termsListData, setTermsListData] = useState<Terms[]>([]); // 고정값 7
-  const [checkList, setCheckList] = useState<Terms[]>(userCheckedList); // 선택하는 값
+  const [checkList, setCheckList] = useState<Terms[] | undefined>(
+    userCheckedList
+  ); // 선택하는 값
 
   // console.log(
   //   "allCheck : ",
@@ -50,45 +52,35 @@ function AcceptTerms() {
     })();
   }, []);
 
-  console.log("userCheckedList : ", userCheckedList);
-
   useEffect(() => {
-    setAllCheck(termsListData.length === checkList.length);
+    setAllCheck(termsListData.length === checkList?.length);
   }, [checkList, termsListData]);
 
+  // DB에서 불러오는 데이터가 없으면서, 리듀서에서 값이 하나만 있을대 초기화 시켜주는 것
   useEffect(() => {
-    if (!termsListData.length && userCheckedList.length === 1) {
+    if (!termsListData.length && userCheckedList?.length === 1) {
       setCheckList([]);
     }
   }, []);
 
-  console.log("test", !termsListData.length);
-
   // 약관 개별 선택시
   const changeHandel = (check: boolean, terms: Terms) => {
-    if (check) {
+    if (check && !!checkList) {
       setCheckList([...checkList, terms]);
     } else {
       setCheckList(
-        checkList.filter((value: Terms) => {
+        checkList?.filter((value: Terms) => {
           return value.cluCd !== terms.cluCd;
         })
       );
     }
   };
 
-  console.log("checkList : ", checkList);
-
   // all 버튼 클릭시
   const allCheckHandel = () => {
     if (!allCheck) {
       setCheckList([]);
       setAllCheck(true);
-      // setCheckList(
-      //   termsListData.map((i) => {
-      //     return { ...i, cluCd: i.cluCd };
-      //   })
-      // );
       setCheckList(
         termsListData.map((terms) => {
           return terms;
@@ -111,7 +103,7 @@ function AcceptTerms() {
 
   // 클릭한 Y 값 갯수
   const checkedTermsLength = checkList
-    .map((terms) => terms.mndtAgrYn)
+    ?.map((terms) => terms.mndtAgrYn)
     .filter((mndtAgrYn) => mndtAgrYn === "Y").length;
 
   return (
@@ -165,7 +157,7 @@ function AcceptTerms() {
             disabled={!(termsListRequiredLength === checkedTermsLength)}
             onClick={() => {
               navigate(urls.SignUpPart1);
-              dispatch(addCluAgrList(checkList));
+              dispatch(addCluAgrList(checkList as Terms[]));
             }}
           />
         )}
