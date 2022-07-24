@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-nested-ternary */
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TermsIdCheckBody } from "../../apis/signUp/types/requests";
 import ApiUrls from "../../constants/api_urls";
 import regex from "../../constants/regex";
-// import { idCheckAPI } from "../../apis/auth";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import hmsRequest from "../../network";
-import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { useAppDispatch } from "../../store/hook";
 import { UserData1 } from "../../store/modules/types/signUp";
 import { signPart1DataAdd } from "../../store/modules/User";
 import cls from "../../util";
@@ -17,6 +14,7 @@ import cls from "../../util";
 function SignUpPart1() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const [idCheck, setIdCheck] = useState(false);
   const [apiIdCheck, setApiIdCheck] = useState(false);
   const [idCheckBtn, setIdCheckBtn] = useState(false);
@@ -26,20 +24,19 @@ function SignUpPart1() {
   const [carNumberCheck, setCarNumberCheck] = useState(false);
   const [signPart1Btn, setSignPart1Btn] = useState(false);
 
-  const user = useAppSelector((state) => state.user);
-  console.log(user);
-
-  const [useId, setUserId] = useState("");
-
   const idRef = useRef<HTMLInputElement>(null);
   const passWordRef = useRef<HTMLInputElement>(null);
   const rePassWordRef = useRef<HTMLInputElement>(null);
   const carNumberRef = useRef<HTMLInputElement>(null);
 
+  const [useId, setUserId] = useState("");
+
+  // dispatch로 다음 데이터 넘기는 곳
   const [nextData, setNextData] = useState<UserData1>({
     iognId: "",
     iognPwd: "",
     carFrtNo: "",
+    carTbkNo: "",
   });
 
   // 다음 파트로 넘어갈수 있는지 체크 하는 곳
@@ -82,7 +79,6 @@ function SignUpPart1() {
       setIdCheck(false);
       setIdCheckBtn(true);
       setUserId(idRef.current.value);
-      console.log("nextData", nextData);
       setNextData({ ...nextData, iognId: idRef.current.value });
     } else {
       setIdCheck(true);
@@ -176,8 +172,8 @@ function SignUpPart1() {
       setCarNumberCheck(false);
       // 차량 앞번호
       const carFrtNo = carNumberRef.current?.value.slice(0, 3);
+      // 차량 뒷번호
       const carTbkNo = carNumberRef.current?.value.slice(3);
-      console.log(carFrtNo, carTbkNo);
       setNextData({ ...nextData, carFrtNo, carTbkNo });
     } else {
       setCarNumberCheck(true);
@@ -323,7 +319,7 @@ function SignUpPart1() {
           // input 값이 전부 통과될 경우 버튼 활성화!
           disabled={!signPart1Btn}
           onClick={() => {
-            // navigate(urls.SignUpPart2);
+            navigate(urls.SignUpPart2);
             dispatch(signPart1DataAdd(nextData));
             console.log("work");
           }}
