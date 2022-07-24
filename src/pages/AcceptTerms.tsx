@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckBoxOff, CheckBoxOn } from "../assets";
@@ -16,22 +17,22 @@ import { Terms } from "../apis/signUp/types/responses";
 function AcceptTerms() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const userCheckedList = useAppSelector((state) => state.user.cluAgrList);
+  const userCheckedList = useAppSelector((state) => state.user.cluAgrList); // 다음 페이지로 갔다가 올때
   const [isLoading, setIsLoading] = useState(false);
   const [allCheck, setAllCheck] = useState(false);
-  const [termsListData, setTermsListData] = useState<Terms[]>([]);
-  const [checkList, setCheckList] = useState<Terms[]>([]);
+  const [termsListData, setTermsListData] = useState<Terms[]>([]); // 고정값 7
+  const [checkList, setCheckList] = useState<Terms[]>(userCheckedList); // 선택하는 값
 
-  console.log(
-    "allCheck : ",
-    allCheck,
-    "termsListData : ",
-    termsListData,
-    "checkList : ",
-    checkList,
-    "userCheckedList : ",
-    userCheckedList
-  );
+  // console.log(
+  //   "allCheck : ",
+  //   allCheck,
+  //   "termsListData : ",
+  //   termsListData,
+  //   "checkList : ",
+  //   checkList,
+  //   "userCheckedList : ",
+  //   userCheckedList
+  // );
 
   useEffect(() => {
     setIsLoading(true);
@@ -49,15 +50,21 @@ function AcceptTerms() {
     })();
   }, []);
 
-  useEffect(() => {
-    if (userCheckedList.length > 1) {
-      console.log("올체크 해주나?");
+  console.log("userCheckedList : ", userCheckedList);
 
-      setCheckList(userCheckedList);
-      setAllCheck(checkList.length === termsListData.length);
+  useEffect(() => {
+    setAllCheck(termsListData.length === checkList.length);
+  }, [checkList, termsListData]);
+
+  useEffect(() => {
+    if (!termsListData.length && userCheckedList.length === 1) {
+      setCheckList([]);
     }
   }, []);
 
+  console.log("test", !termsListData.length);
+
+  // 약관 개별 선택시
   const changeHandel = (check: boolean, terms: Terms) => {
     if (check) {
       setCheckList([...checkList, terms]);
@@ -77,9 +84,14 @@ function AcceptTerms() {
     if (!allCheck) {
       setCheckList([]);
       setAllCheck(true);
+      // setCheckList(
+      //   termsListData.map((i) => {
+      //     return { ...i, cluCd: i.cluCd };
+      //   })
+      // );
       setCheckList(
-        termsListData.map((i) => {
-          return { ...i, cluCd: i.cluCd };
+        termsListData.map((terms) => {
+          return terms;
         })
       );
     } else {
@@ -163,3 +175,17 @@ function AcceptTerms() {
 }
 
 export default AcceptTerms;
+
+// // dispatch 하려고 만든 데이터
+// if (termsListData && checkList) {
+//   const sendData = termsListData
+//     ?.filter((terms) => {
+//       return checkList.includes(terms.cluCd);
+//     })
+//     .map((terms) => {
+//       delete terms.cluShrtCtt;
+//       return terms;
+//     });
+
+//   console.log(sendData);
+// }
