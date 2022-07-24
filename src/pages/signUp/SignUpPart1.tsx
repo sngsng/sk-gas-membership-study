@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TermsIdCheckBody } from "../../apis/signUp/types/requests";
 import ApiUrls from "../../constants/api_urls";
-import regex from "../../constants/regex";
+import regex from "../../util/regex";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import hmsRequest from "../../network";
