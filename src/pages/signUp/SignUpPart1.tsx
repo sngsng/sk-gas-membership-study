@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 import { TermsIdCheckBody } from "../../apis/signUp/types/requests";
 import ApiUrls from "../../constants/api_urls";
 import regex from "../../util/regex";
@@ -23,6 +24,7 @@ function SignUpPart1() {
   const [passWordCrossCheck, setPassWordCrossCheck] = useState(false);
   const [carNumberCheck, setCarNumberCheck] = useState(false);
   const [signPart1Btn, setSignPart1Btn] = useState(false);
+  const [isIdCheckLoading, setIdCheckLoading] = useState(false);
 
   const idRef = useRef<HTMLInputElement>(null);
   const passWordRef = useRef<HTMLInputElement>(null);
@@ -102,6 +104,8 @@ function SignUpPart1() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIdCheckLoading(false);
     }
   };
 
@@ -201,21 +205,32 @@ function SignUpPart1() {
                 onBlur={handleIdCheck}
                 onChange={handleIdCheck}
               />
-              <button
-                type="button"
-                disabled={!idCheckBtn}
-                className={cls(
-                  "ml-10  btn-extra",
-                  idCheckBtn
-                    ? "cursor-pointer rounded border-1 btn-fill"
-                    : "btn-fill-disabled rounded "
+              <div className="flex items-center justify-center min-w-100 min-h-60">
+                {isIdCheckLoading ? (
+                  <ClipLoader
+                    className="text-blue"
+                    color="text-blue"
+                    size={30}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    disabled={!idCheckBtn}
+                    className={cls(
+                      "ml-10  btn-extra",
+                      idCheckBtn
+                        ? "cursor-pointer rounded border-1 btn-fill"
+                        : "btn-fill-disabled rounded "
+                    )}
+                    onClick={() => {
+                      setIdCheckLoading(true);
+                      idCheckAPI({ lognId: useId });
+                    }}
+                  >
+                    중복확인
+                  </button>
                 )}
-                onClick={() => {
-                  idCheckAPI({ lognId: useId });
-                }}
-              >
-                중복확인
-              </button>
+              </div>
             </div>
             {idCheck && (
               <p className="font-normal text-b3 text-red">

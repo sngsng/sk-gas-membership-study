@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 import { CheckBoxOff, CheckBoxOn } from "../assets";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
 import cls from "../util";
 import { useAppSelector, useAppDispatch } from "../store/hook/index";
-
 import { addCluAgrList } from "../store/modules/User";
 import TermsCheckList from "../components/TermsCheckList";
 import Button from "../elements/Button";
@@ -135,7 +135,9 @@ function AcceptTerms() {
         </p>
 
         {isLoading ? (
-          <p className="text-center py-150">로딩중입니다....</p>
+          <div className="text-center ">
+            <ClipLoader className=" text-blue" color="text-blue" size={30} />
+          </div>
         ) : (
           <Button
             text="동의하고 회원가입"
