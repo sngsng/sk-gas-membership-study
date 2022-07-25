@@ -27,11 +27,11 @@ const initialState: UserState = {
   mbrFg: "",
   prnBizlcNo: "",
   cluAgrList: [
-    {
-      cluCd: "",
-      cluVer: "",
-      mndtAgrYn: "",
-    },
+    // {
+    //   cluCd: "",
+    //   cluVer: "",
+    //   mndtAgrYn: "",
+    // },
   ],
 };
 

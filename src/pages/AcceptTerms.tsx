@@ -25,16 +25,8 @@ function AcceptTerms() {
     userCheckedList
   ); // 선택하는 값
 
-  // console.log(
-  //   "allCheck : ",
-  //   allCheck,
-  //   "termsListData : ",
-  //   termsListData,
-  //   "checkList : ",
-  //   checkList,
-  //   "userCheckedList : ",
-  //   userCheckedList
-  // );
+  // const termsListDataCheck = termsListData.length;
+  // console.log(termsListDataCheck);
 
   useEffect(() => {
     setIsLoading(true);
@@ -52,16 +44,12 @@ function AcceptTerms() {
     })();
   }, []);
 
+  // all check버튼 활성화 체크부분
   useEffect(() => {
-    setAllCheck(termsListData.length === checkList?.length);
-  }, [checkList, termsListData]);
-
-  // DB에서 불러오는 데이터가 없으면서, 리듀서에서 값이 하나만 있을대 초기화 시켜주는 것
-  useEffect(() => {
-    if (!termsListData.length && userCheckedList?.length === 1) {
-      setCheckList([]);
+    if (termsListData.length) {
+      setAllCheck(termsListData.length === checkList?.length);
     }
-  }, []);
+  }, [checkList, termsListData]);
 
   // 약관 개별 선택시
   const changeHandel = (check: boolean, terms: Terms) => {
@@ -150,7 +138,8 @@ function AcceptTerms() {
             text="동의하고 회원가입"
             className={cls(
               "mt-30  btn-extra w-full",
-              allCheck || termsListRequiredLength === checkedTermsLength
+              termsListData.length &&
+                (allCheck || termsListRequiredLength === checkedTermsLength)
                 ? "cursor-pointer rounded border-1 btn-fill"
                 : "btn-fill-disabled rounded "
             )}
