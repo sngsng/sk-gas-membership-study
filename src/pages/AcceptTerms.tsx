@@ -25,9 +25,6 @@ function AcceptTerms() {
     userCheckedList
   ); // 선택하는 값
 
-  // const termsListDataCheck = termsListData.length;
-  // console.log(termsListDataCheck);
-
   useEffect(() => {
     setIsLoading(true);
     (async () => {
@@ -37,12 +34,15 @@ function AcceptTerms() {
         });
         const { cluList } = data.responseData;
         setTermsListData(cluList);
-        setIsLoading(false);
       } catch (err) {
         console.log(err);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, []);
+  // 마지막으로 로딩을 처리하는 방법?? ==> finally : 무조건적으로 한번은 실행된다.
+  // 그리고 캐시 처리 하는 방법.
 
   // all check버튼 활성화 체크부분
   useEffect(() => {
@@ -80,19 +80,22 @@ function AcceptTerms() {
     }
   };
 
-  // 필수 Y 값 갯수
-  const termsListRequiredLength = termsListData
-    ?.map((terms) => {
-      return terms.mndtAgrYn;
-    })
-    .filter((terms) => {
-      return terms === "Y";
+  // Y 값 갯수 구하는 로직
+  function requiredLengthCheck(data: Terms[] | undefined) {
+    return data?.filter((terms) => {
+      return terms.mndtAgrYn === "Y";
     }).length;
+  }
+
+  // 필수 Y 값 갯수
+  const termsListRequiredLength = requiredLengthCheck(termsListData);
 
   // 클릭한 Y 값 갯수
-  const checkedTermsLength = checkList
-    ?.map((terms) => terms.mndtAgrYn)
-    .filter((mndtAgrYn) => mndtAgrYn === "Y").length;
+  const checkedTermsLength = requiredLengthCheck(checkList);
+
+  // Y 값 갯수 같은지 체크
+  const termsRequiredLengthCheck =
+    termsListRequiredLength === checkedTermsLength;
 
   return (
     <Layout isHeader title="행복충전모바일 회원가입" backBtn>
@@ -138,12 +141,11 @@ function AcceptTerms() {
             text="동의하고 회원가입"
             className={cls(
               "mt-30  btn-extra w-full",
-              termsListData.length &&
-                (allCheck || termsListRequiredLength === checkedTermsLength)
+              termsListData.length && (allCheck || termsRequiredLengthCheck)
                 ? "cursor-pointer rounded border-1 btn-fill"
                 : "btn-fill-disabled rounded "
             )}
-            disabled={!(termsListRequiredLength === checkedTermsLength)}
+            disabled={!termsRequiredLengthCheck}
             onClick={() => {
               navigate(urls.SignUpPart1);
               dispatch(addCluAgrList(checkList as Terms[]));
