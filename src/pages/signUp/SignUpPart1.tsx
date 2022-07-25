@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -25,6 +26,7 @@ function SignUpPart1() {
   const [carNumberCheck, setCarNumberCheck] = useState(false);
   const [signPart1Btn, setSignPart1Btn] = useState(false);
   const [isIdCheckLoading, setIdCheckLoading] = useState(false);
+  const [isNextBtnLoading, setIsNextBtnLoading] = useState(false);
 
   const idRef = useRef<HTMLInputElement>(null);
   const passWordRef = useRef<HTMLInputElement>(null);
@@ -323,24 +325,29 @@ function SignUpPart1() {
           )}
         </div>
 
-        <button
-          type="button"
-          className={cls(
-            "mt-30  btn-extra w-full",
-            signPart1Btn
-              ? "cursor-pointer rounded border-1 btn-fill"
-              : "btn-fill-disabled rounded "
-          )}
-          // input 값이 전부 통과될 경우 버튼 활성화!
-          disabled={!signPart1Btn}
-          onClick={() => {
-            navigate(urls.SignUpPart2);
-            dispatch(signPart1DataAdd(nextData));
-            console.log("work");
-          }}
-        >
-          다음
-        </button>
+        {isNextBtnLoading ? (
+          <ClipLoader className="text-blue" color="text-blue" size={30} />
+        ) : (
+          <button
+            type="button"
+            className={cls(
+              "mt-30  btn-extra w-full",
+              signPart1Btn
+                ? "cursor-pointer rounded border-1 btn-fill"
+                : "btn-fill-disabled rounded "
+            )}
+            // input 값이 전부 통과될 경우 버튼 활성화!
+            disabled={!signPart1Btn}
+            onClick={() => {
+              navigate(urls.SignUpPart2);
+              dispatch(signPart1DataAdd(nextData));
+              setIsNextBtnLoading(true);
+              console.log("work");
+            }}
+          >
+            다음
+          </button>
+        )}
       </form>
     </Layout>
   );
