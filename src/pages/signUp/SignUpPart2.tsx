@@ -1,14 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Select from "react-select";
+import { useForm, Controller } from "react-hook-form";
 import { CheckBoxOff, CheckOff } from "../../assets/index";
 import urls from "../../constants/urls";
-// import Select from "react-select";
 import Layout from "../../elements/Layout";
 import cls from "../../util";
 
+interface IFormInput {
+  // firstName: string;
+  // lastName: string;
+  iceCreamType: { label: string; value: string };
+}
+
 function SignInPark2() {
   const navigate = useNavigate();
+  // const [selectedOption, setSelectedOption] = useState("");
+  const { control, handleSubmit } = useForm<IFormInput>();
   const [checkList, setCheckList] = useState({
     birthdayCheck: false,
     phoneNumberCheck: false,
@@ -20,8 +29,7 @@ function SignInPark2() {
     phoneCorp: "",
     phoneNo: "",
   });
-
-  console.log(nextData);
+  // eslint-disable-next-line no-underscore-dangle
 
   const { name, birthday, phoneNo } = nextData;
 
@@ -61,6 +69,10 @@ function SignInPark2() {
     }
   };
 
+  const onSubmit = (data: IFormInput) => {
+    alert(JSON.stringify(data));
+  };
+
   console.log(checkList);
 
   return (
@@ -71,7 +83,7 @@ function SignInPark2() {
         {/* park1에도 label쪽 코드 이렇게 수정 그리고, 포커스때 label에 색 바껴야됨. */}
         <label
           htmlFor="userName"
-          className="flex flex-col mb-20 font-bold text-b3"
+          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
         >
           이름 *
           <input
@@ -87,7 +99,7 @@ function SignInPark2() {
         </label>
         <label
           htmlFor="birthday"
-          className="flex flex-col mb-20 font-bold text-b3"
+          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
         >
           생년월일 *
           <input
@@ -104,7 +116,7 @@ function SignInPark2() {
             <p className="mt-8 error">생년월일 8자리를 입력해 주세요</p>
           )}
         </label>
-        <div className="flex flex-col mb-20 font-bold text-b3">
+        <div className="flex flex-col mb-20 font-bold text-b3 ">
           성별 *
           <div className="flex w-full mt-8">
             <button
@@ -141,15 +153,65 @@ function SignInPark2() {
         </div>
         <label
           htmlFor="newsAgency"
-          className="flex flex-col mb-20 font-bold text-b3"
+          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
         >
-          통신사 *
-          {/* <Select
-          /> */}
+          <p className="mb-8 font-bold text-b3">통신사 *</p>
+          <Controller
+            name="iceCreamType"
+            render={({ field }) => {
+              const styles = {
+                input: (prev: any) => ({
+                  ...prev,
+                  paddingRight: 8,
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                  color: "#808080",
+                }),
+                control: (prev: any) => ({
+                  ...prev,
+                  minHeight: 60,
+                  borderRadius: 8,
+                  paddingLeft: 8,
+                  paddingRight: 8,
+                  borderColor: "rgb(204, 204, 204)",
+                }),
+                // 구분선
+                indicatorSeparator: (prev: any) => ({
+                  ...prev,
+                  backgroundColor: "white",
+                }),
+                placeholder: (prev: any) => ({
+                  ...prev,
+                  color: "#808080",
+                }),
+              };
+
+              return (
+                <Select
+                  className="font-bold text-black text-b1 "
+                  {...field}
+                  options={[
+                    { value: "SKT", label: "SK텔레콤" },
+                    { value: "KTF", label: "KT" },
+                    { value: "LGT", label: "LG U+" },
+                    { value: "SKM", label: "SKT 알뜰폰" },
+                    { value: "KTM", label: "KT 알뜰폰" },
+                    { value: "LGM", label: "LG 알뜰폰" },
+                  ]}
+                  styles={styles}
+                  isSearchable={false}
+                />
+              );
+            }}
+            control={control}
+            defaultValue={{ label: "통신사를 선택해주세요", value: "" }}
+          />
           {/* phoneCorp */}
-          {/* 일단 패키지 사용 해야되는 곳 */}
         </label>
-        <label htmlFor="phoneNo" className="flex flex-col font-bold text-b3">
+        <label
+          htmlFor="phoneNo"
+          className="flex flex-col font-bold text-b3 focus-within:text-blue"
+        >
           휴대폰 번호 *
           <input
             className="mt-8 label-input"
