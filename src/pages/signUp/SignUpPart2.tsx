@@ -17,8 +17,10 @@ interface IFormInput {
 function SignInPark2() {
   const navigate = useNavigate();
   const { control } = useForm<IFormInput>();
-  const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
-
+  const [termsCheckList, setTermsCheckList] = useState<Terms[] | any>([]);
+  const termsDataLength = fetchPassAuthenticationTermsList().length;
+  const termsCheckListLength = termsCheckList.length;
+  const termsLengthComparison = termsCheckListLength === termsDataLength;
   const [isCheckList, setIsCheckList] = useState({
     birthdayCheck: false,
     phoneNumberCheck: false,
@@ -37,8 +39,11 @@ function SignInPark2() {
     terms3chk: "",
     terms4chk: "",
   });
+  const { name, birthday, phoneNo, phoneCorp, gen } = nextData;
+  const { birthdayCheck, phoneCorpCheck, phoneNumberCheck, termsAllCheck } =
+    isCheckList;
 
-  const { name, birthday, phoneNo } = nextData;
+  console.log("nextData : ", nextData);
 
   // 정보 입력 하는곳
   const onChange = (e: any) => {
@@ -50,8 +55,8 @@ function SignInPark2() {
   };
 
   // 생일 입력 체크
-  const birthdayCheck = () => {
-    if (nextData.birthday.length !== 8) {
+  const birthdayIsCheck = () => {
+    if (birthday.length !== 8) {
       setIsCheckList({
         ...isCheckList,
         birthdayCheck: true,
@@ -65,8 +70,8 @@ function SignInPark2() {
   };
 
   // 휴대폰 갯수 체크
-  const phoneNumberCheck = () => {
-    if (nextData.phoneNo.length !== 11) {
+  const phoneNumberIsCheck = () => {
+    if (phoneNo.length !== 11) {
       setIsCheckList({
         ...isCheckList,
         phoneNumberCheck: true,
@@ -79,10 +84,7 @@ function SignInPark2() {
     }
   };
 
-  const termsDataLength = fetchPassAuthenticationTermsList().length;
-  const termsCheckListLength = termsCheckList.length;
-  const termsLengthComparison = termsCheckListLength === termsDataLength;
-
+  // terms all btn 상태체크
   useEffect(() => {
     if (termsLengthComparison) {
       setIsCheckList({ ...isCheckList, termsAllCheck: true });
@@ -91,34 +93,97 @@ function SignInPark2() {
     }
   }, [termsCheckList]);
 
-  const changeHandel = (check: boolean, terms: Terms) => {
+  // terms all 체크 클릭시
+  const termsAllCheckHandel = () => {
+    if (termsAllCheck === false) {
+      setIsCheckList({ ...isCheckList, termsAllCheck: true });
+      setTermsCheckList([]);
+      setTermsCheckList(
+        fetchPassAuthenticationTermsList().map((terms) => {
+          return terms;
+        })
+      );
+      setNextData({
+        ...nextData,
+        terms1chk: "Y",
+        terms2chk: "Y",
+        terms3chk: "Y",
+        terms4chk: "Y",
+      });
+    } else {
+      setTermsCheckList([]);
+      setIsCheckList({ ...isCheckList, termsAllCheck: false });
+      setNextData({
+        ...nextData,
+        terms1chk: "",
+        terms2chk: "",
+        terms3chk: "",
+        terms4chk: "",
+      });
+    }
+  };
+
+  // terms "Y" 체크후 입력 & 제거
+  const termsRequired = (index: number) => {
+    switch (index) {
+      case 0:
+        if (nextData.terms1chk) {
+          console.log("@@@");
+          setNextData({ ...nextData, terms1chk: "" });
+        } else {
+          console.log("!!!");
+          setNextData({ ...nextData, terms1chk: "Y" });
+        }
+        break;
+      case 1:
+        if (nextData.terms2chk) {
+          setNextData({ ...nextData, terms2chk: "" });
+        } else {
+          setNextData({ ...nextData, terms2chk: "Y" });
+        }
+        break;
+      case 2:
+        if (nextData.terms3chk) {
+          setNextData({ ...nextData, terms3chk: "" });
+        } else {
+          setNextData({ ...nextData, terms3chk: "Y" });
+        }
+        break;
+      case 3:
+        if (nextData.terms4chk) {
+          setNextData({ ...nextData, terms4chk: "" });
+        } else {
+          setNextData({ ...nextData, terms4chk: "Y" });
+        }
+        break;
+
+      default:
+        "";
+    }
+  };
+
+  // terms 개별 체크
+  const changeHandel = (check: boolean, terms: Terms, index: number) => {
     if (check && !!termsCheckList) {
       setTermsCheckList([...termsCheckList, terms]);
+      termsRequired(index);
     } else {
       setTermsCheckList(
         termsCheckList?.filter((value: Terms) => {
           return value.cluCd !== terms.cluCd;
         })
       );
+      termsRequired(index);
     }
   };
 
-  const allCheckHandel = () => {
-    if (isCheckList.termsAllCheck === false) {
-      setTermsCheckList([]);
-      setIsCheckList({ ...isCheckList, termsAllCheck: true });
-      setTermsCheckList(
-        fetchPassAuthenticationTermsList().map((terms) => {
-          return terms;
-        })
-      );
-    } else {
-      setTermsCheckList([]);
-      setIsCheckList({ ...isCheckList, termsAllCheck: false });
+  // input값 있는지 체크
+  const inputDataCheck = () => {
+    if (name && birthday && phoneNo && phoneCorp) {
+      return true;
     }
+    return false;
   };
-
-  console.log("termsCheckList : ", termsCheckList);
 
   return (
     <Layout title="행복충전모바일 회원가입">
@@ -154,9 +219,9 @@ function SignInPark2() {
             name="birthday"
             value={birthday}
             onChange={onChange}
-            onBlur={birthdayCheck}
+            onBlur={birthdayIsCheck}
           />
-          {isCheckList.birthdayCheck && (
+          {birthdayCheck && (
             <p className="mt-8 error">생년월일 8자리를 입력해 주세요</p>
           )}
         </label>
@@ -166,7 +231,7 @@ function SignInPark2() {
             <button
               className={cls(
                 "flex-1 btn-extra  rounded-l-[8px]",
-                nextData.gen === "0" ? "btn-fill" : "btn-fill-disabled"
+                gen === "0" ? "btn-fill" : "btn-fill-disabled"
               )}
               // btn-fill-disabled
               type="button"
@@ -180,7 +245,7 @@ function SignInPark2() {
             <button
               className={cls(
                 "flex-1 btn-extra  rounded-r-[8px]",
-                nextData.gen === "1" ? "btn-fill" : "btn-fill-disabled"
+                gen === "1" ? "btn-fill" : "btn-fill-disabled"
               )}
               type="button"
               value="girl"
@@ -253,7 +318,7 @@ function SignInPark2() {
                     setIsCheckList({ ...isCheckList, phoneCorpCheck: false });
                   }}
                   onBlur={() => {
-                    nextData.phoneCorp === ""
+                    phoneCorp === ""
                       ? setIsCheckList({ ...isCheckList, phoneCorpCheck: true })
                       : setIsCheckList({
                           ...isCheckList,
@@ -266,7 +331,7 @@ function SignInPark2() {
             control={control}
           />
 
-          {isCheckList.phoneCorpCheck && (
+          {phoneCorpCheck && (
             <p className="mt-8 font-bold error text-b3">
               통신사를 선택해주세요.
             </p>
@@ -284,10 +349,10 @@ function SignInPark2() {
             id="phoneNo"
             name="phoneNo"
             value={phoneNo}
-            onBlur={phoneNumberCheck}
+            onBlur={phoneNumberIsCheck}
             onChange={onChange}
           />
-          {isCheckList.phoneNumberCheck && (
+          {phoneNumberCheck && (
             <p className="mt-8 error">휴대폰 번호를 입력해 주세요</p>
           )}
         </label>
@@ -297,10 +362,10 @@ function SignInPark2() {
           className="flex items-center pb-20 mb-20 border-b-1 border-gray300"
           role="button"
           aria-hidden="true"
-          onClick={allCheckHandel}
+          onClick={termsAllCheckHandel}
         >
           <img
-            src={isCheckList.termsAllCheck ? CheckBoxOn : CheckBoxOff}
+            src={termsAllCheck ? CheckBoxOn : CheckBoxOff}
             alt="전체동의"
             className="w-24 h-24 mr-10"
           />
@@ -317,8 +382,11 @@ function SignInPark2() {
                     id={terms.cluCd}
                     value={terms.cluCd}
                     onChange={(e) => {
-                      changeHandel(e.currentTarget.checked, terms);
+                      changeHandel(e.currentTarget.checked, terms, index);
                     }}
+                    checked={termsCheckList.find(
+                      (checked: Terms) => checked.cluCd === terms.cluCd
+                    )}
                   />
                   <img
                     src={
@@ -342,12 +410,14 @@ function SignInPark2() {
           type="button"
           className={cls(
             "w-full text-center p-20 bg-[#e8e8e8] btn btn-fill",
-            // "btn-fill-disabled",
-            "btn-fill"
+            termsLengthComparison && inputDataCheck()
+              ? "btn-fill"
+              : "btn-fill-disabled"
           )}
-          // disabled={}
+          disabled={!(termsLengthComparison && inputDataCheck())}
           onClick={() => {
-            navigate(urls.SignUpPart3);
+            // navigate(urls.SignUpPart3);
+            console.log("!!!");
           }}
         >
           동의하고 회원가입
