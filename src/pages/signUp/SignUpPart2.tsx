@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
-import { CheckBoxOff, CheckOff } from "../../assets/index";
+import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets/index";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import cls from "../../util";
+import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
+import { Terms } from "../../apis/signUp/types/responses";
 
 interface IFormInput {
   phoneCorp: { label: string; value: string };
@@ -14,13 +16,14 @@ interface IFormInput {
 
 function SignInPark2() {
   const navigate = useNavigate();
-  // const [selectedOption, setSelectedOption] = useState("");
   const { control } = useForm<IFormInput>();
+  const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
 
-  const [checkList, setCheckList] = useState({
+  const [isCheckList, setIsCheckList] = useState({
     birthdayCheck: false,
     phoneNumberCheck: false,
     phoneCorpCheck: false,
+    termsAllCheck: false,
   });
   const [nextData, setNextData] = useState({
     name: "",
@@ -28,17 +31,16 @@ function SignInPark2() {
     gen: "0",
     phoneCorp: "",
     phoneNo: "",
+    nation: "0",
+    terms1chk: "",
+    terms2chk: "",
+    terms3chk: "",
+    terms4chk: "",
   });
 
-  // useEffect(() => {
-  //   setNextData({
-  //     ...nextData,
+  const { name, birthday, phoneNo } = nextData;
 
-  //   });
-  // }, [control]);
-
-  const { name, birthday, phoneNo, phoneCorp } = nextData;
-
+  // 정보 입력 하는곳
   const onChange = (e: any) => {
     const { value, name } = e.target;
     setNextData({
@@ -47,49 +49,82 @@ function SignInPark2() {
     });
   };
 
+  // 생일 입력 체크
   const birthdayCheck = () => {
     if (nextData.birthday.length !== 8) {
-      setCheckList({
-        ...checkList,
+      setIsCheckList({
+        ...isCheckList,
         birthdayCheck: true,
       });
     } else {
-      setCheckList({
-        ...checkList,
+      setIsCheckList({
+        ...isCheckList,
         birthdayCheck: false,
       });
     }
   };
 
+  // 휴대폰 갯수 체크
   const phoneNumberCheck = () => {
     if (nextData.phoneNo.length !== 11) {
-      setCheckList({
-        ...checkList,
+      setIsCheckList({
+        ...isCheckList,
         phoneNumberCheck: true,
       });
     } else {
-      setCheckList({
-        ...checkList,
+      setIsCheckList({
+        ...isCheckList,
         phoneNumberCheck: false,
       });
     }
   };
 
-  // const onSubmit = (data: IFormInput) => {
-  //   alert(JSON.stringify(data));
-  // };
+  const termsDataLength = fetchPassAuthenticationTermsList().length;
+  const termsCheckListLength = termsCheckList.length;
+  const termsLengthComparison = termsCheckListLength === termsDataLength;
 
-  // console.log(checkList, nextData);
+  useEffect(() => {
+    if (termsLengthComparison) {
+      setIsCheckList({ ...isCheckList, termsAllCheck: true });
+    } else {
+      setIsCheckList({ ...isCheckList, termsAllCheck: false });
+    }
+  }, [termsCheckList]);
 
-  console.log(nextData);
-  console.log(checkList.phoneCorpCheck);
+  const changeHandel = (check: boolean, terms: Terms) => {
+    if (check && !!termsCheckList) {
+      setTermsCheckList([...termsCheckList, terms]);
+    } else {
+      setTermsCheckList(
+        termsCheckList?.filter((value: Terms) => {
+          return value.cluCd !== terms.cluCd;
+        })
+      );
+    }
+  };
+
+  const allCheckHandel = () => {
+    if (isCheckList.termsAllCheck === false) {
+      setTermsCheckList([]);
+      setIsCheckList({ ...isCheckList, termsAllCheck: true });
+      setTermsCheckList(
+        fetchPassAuthenticationTermsList().map((terms) => {
+          return terms;
+        })
+      );
+    } else {
+      setTermsCheckList([]);
+      setIsCheckList({ ...isCheckList, termsAllCheck: false });
+    }
+  };
+
+  console.log("termsCheckList : ", termsCheckList);
 
   return (
     <Layout title="행복충전모바일 회원가입">
-      <form className="p-20 mb-40">
+      <form className="p-20">
         <p className="mb-30 text-h2">본인인증</p>
 
-        {/* park1에도 label쪽 코드 이렇게 수정 그리고, 포커스때 label에 색 바껴야됨. */}
         <label
           htmlFor="userName"
           className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
@@ -121,7 +156,7 @@ function SignInPark2() {
             onChange={onChange}
             onBlur={birthdayCheck}
           />
-          {checkList.birthdayCheck && (
+          {isCheckList.birthdayCheck && (
             <p className="mt-8 error">생년월일 8자리를 입력해 주세요</p>
           )}
         </label>
@@ -167,7 +202,7 @@ function SignInPark2() {
           <p className="mb-8 font-bold text-b3">통신사 *</p>
           <Controller
             name="phoneCorp"
-            render={({ field }) => {
+            render={() => {
               const styles = {
                 input: (prev: any) => ({
                   ...prev,
@@ -215,12 +250,15 @@ function SignInPark2() {
                       phoneCorp: e?.value as string,
                     });
 
-                    setCheckList({ ...checkList, phoneCorpCheck: false });
+                    setIsCheckList({ ...isCheckList, phoneCorpCheck: false });
                   }}
                   onBlur={() => {
                     nextData.phoneCorp === ""
-                      ? setCheckList({ ...checkList, phoneCorpCheck: true })
-                      : setCheckList({ ...checkList, phoneCorpCheck: false });
+                      ? setIsCheckList({ ...isCheckList, phoneCorpCheck: true })
+                      : setIsCheckList({
+                          ...isCheckList,
+                          phoneCorpCheck: false,
+                        });
                   }}
                 />
               );
@@ -228,7 +266,7 @@ function SignInPark2() {
             control={control}
           />
 
-          {checkList.phoneCorpCheck && (
+          {isCheckList.phoneCorpCheck && (
             <p className="mt-8 font-bold error text-b3">
               통신사를 선택해주세요.
             </p>
@@ -249,7 +287,7 @@ function SignInPark2() {
             onBlur={phoneNumberCheck}
             onChange={onChange}
           />
-          {checkList.phoneNumberCheck && (
+          {isCheckList.phoneNumberCheck && (
             <p className="mt-8 error">휴대폰 번호를 입력해 주세요</p>
           )}
         </label>
@@ -259,39 +297,55 @@ function SignInPark2() {
           className="flex items-center pb-20 mb-20 border-b-1 border-gray300"
           role="button"
           aria-hidden="true"
-          onClick={() => {
-            console.log("22");
-          }}
+          onClick={allCheckHandel}
         >
-          <img src={CheckBoxOff} alt="전체동의" className="w-24 h-24 mr-10" />
+          <img
+            src={isCheckList.termsAllCheck ? CheckBoxOn : CheckBoxOff}
+            alt="전체동의"
+            className="w-24 h-24 mr-10"
+          />
           <p className="font-bold text-h2">본인인증 약관에 전체 동의합니다.</p>
         </div>
         <ul className="mb-30">
-          {/* map 돌려야되는 부분 */}
-          <li className="flex mb-16 cursor-pointer">
-            <div className="mr-10">
-              <img src={CheckOff} alt="체크버튼" className="w-full" />
-            </div>
-            <Link to="/">(필수)SK LPG 행복충전 멤버쉽 서비스 약관</Link>
-          </li>
-          <li className="flex mb-16 cursor-pointer">
-            <div className="mr-[10px]">
-              <img src={CheckOff} alt="체크버튼" className="w-full" />
-            </div>
-            <Link to="/">(필수)SK LPG 행복충전 개인정보 수집 및 이용</Link>
-          </li>
-          <li className="flex cursor-pointer">
-            <div className="mr-[10px]">
-              <img src={CheckOff} alt="체크버튼" className="w-full" />
-            </div>
-            <Link to="/">(필수)OCB 카드서비스/회원서비스 약관</Link>
-          </li>
+          {fetchPassAuthenticationTermsList().map((terms, index) => {
+            return (
+              <li className="flex mb-16 cursor-pointer" key={terms.cluCd}>
+                <label className="mr-10 cursor-pointer" htmlFor={terms.cluCd}>
+                  <input
+                    type="checkBox"
+                    className="absolute left-[-9999px]"
+                    id={terms.cluCd}
+                    value={terms.cluCd}
+                    onChange={(e) => {
+                      changeHandel(e.currentTarget.checked, terms);
+                    }}
+                  />
+                  <img
+                    src={
+                      termsCheckList.find(
+                        (checked: Terms) => checked.cluCd === terms.cluCd
+                      )
+                        ? CheckOn
+                        : CheckOff
+                    }
+                    alt="체크버튼"
+                    className="w-full min-w-24"
+                  />
+                </label>
+                <p>{terms.cluShrtCtt}</p>
+              </li>
+            );
+          })}
         </ul>
 
         <button
           type="button"
-          className="w-full text-center p-20 bg-[#e8e8e8] btn btn-fill btn-fill-disabled"
-          // 여기서 cla써서 조건 줘서 클래서 먹이는거~!!
+          className={cls(
+            "w-full text-center p-20 bg-[#e8e8e8] btn btn-fill",
+            // "btn-fill-disabled",
+            "btn-fill"
+          )}
+          // disabled={}
           onClick={() => {
             navigate(urls.SignUpPart3);
           }}
