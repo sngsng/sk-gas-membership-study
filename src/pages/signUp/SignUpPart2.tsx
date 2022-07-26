@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
@@ -9,18 +9,18 @@ import Layout from "../../elements/Layout";
 import cls from "../../util";
 
 interface IFormInput {
-  // firstName: string;
-  // lastName: string;
-  iceCreamType: { label: string; value: string };
+  phoneCorp: { label: string; value: string };
 }
 
 function SignInPark2() {
   const navigate = useNavigate();
   // const [selectedOption, setSelectedOption] = useState("");
-  const { control, handleSubmit } = useForm<IFormInput>();
+  const { control } = useForm<IFormInput>();
+
   const [checkList, setCheckList] = useState({
     birthdayCheck: false,
     phoneNumberCheck: false,
+    phoneCorpCheck: false,
   });
   const [nextData, setNextData] = useState({
     name: "",
@@ -29,9 +29,15 @@ function SignInPark2() {
     phoneCorp: "",
     phoneNo: "",
   });
-  // eslint-disable-next-line no-underscore-dangle
 
-  const { name, birthday, phoneNo } = nextData;
+  // useEffect(() => {
+  //   setNextData({
+  //     ...nextData,
+
+  //   });
+  // }, [control]);
+
+  const { name, birthday, phoneNo, phoneCorp } = nextData;
 
   const onChange = (e: any) => {
     const { value, name } = e.target;
@@ -69,11 +75,14 @@ function SignInPark2() {
     }
   };
 
-  const onSubmit = (data: IFormInput) => {
-    alert(JSON.stringify(data));
-  };
+  // const onSubmit = (data: IFormInput) => {
+  //   alert(JSON.stringify(data));
+  // };
 
-  console.log(checkList);
+  // console.log(checkList, nextData);
+
+  console.log(nextData);
+  console.log(checkList.phoneCorpCheck);
 
   return (
     <Layout title="행복충전모바일 회원가입">
@@ -157,7 +166,7 @@ function SignInPark2() {
         >
           <p className="mb-8 font-bold text-b3">통신사 *</p>
           <Controller
-            name="iceCreamType"
+            name="phoneCorp"
             render={({ field }) => {
               const styles = {
                 input: (prev: any) => ({
@@ -189,7 +198,6 @@ function SignInPark2() {
               return (
                 <Select
                   className="font-bold text-black text-b1 "
-                  {...field}
                   options={[
                     { value: "SKT", label: "SK텔레콤" },
                     { value: "KTF", label: "KT" },
@@ -200,13 +208,31 @@ function SignInPark2() {
                   ]}
                   styles={styles}
                   isSearchable={false}
+                  defaultValue={{ label: "통신사를 선택해주세요", value: "" }}
+                  onChange={(e) => {
+                    setNextData({
+                      ...nextData,
+                      phoneCorp: e?.value as string,
+                    });
+
+                    setCheckList({ ...checkList, phoneCorpCheck: false });
+                  }}
+                  onBlur={() => {
+                    nextData.phoneCorp === ""
+                      ? setCheckList({ ...checkList, phoneCorpCheck: true })
+                      : setCheckList({ ...checkList, phoneCorpCheck: false });
+                  }}
                 />
               );
             }}
             control={control}
-            defaultValue={{ label: "통신사를 선택해주세요", value: "" }}
           />
-          {/* phoneCorp */}
+
+          {checkList.phoneCorpCheck && (
+            <p className="mt-8 font-bold error text-b3">
+              통신사를 선택해주세요.
+            </p>
+          )}
         </label>
         <label
           htmlFor="phoneNo"
