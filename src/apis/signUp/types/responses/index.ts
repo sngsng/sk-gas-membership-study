@@ -16,3 +16,16 @@ export interface TermsIdCheck {
   // 아이디 중복 여부
   dupYn: "Y" | "N";
 }
+
+export interface Part2Data {
+  name?: string;
+  birthday?: string;
+  gen?: string;
+  phoneCorp?: string;
+  phoneNo?: string;
+  nation?: string;
+  terms1chk?: string;
+  terms2chk?: string;
+  terms3chk?: string;
+  terms4chk?: string;
+}

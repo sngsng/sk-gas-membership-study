@@ -24,6 +24,9 @@ export interface UserData2 {
 
   // 휴대폰번호
   hpNo?: string;
+
+  // 국적
+  ntnl?: string;
 }
 
 export interface UserData3 {
@@ -32,9 +35,6 @@ export interface UserData3 {
 
   // 차량 모델코드
   carModelCd?: string;
-
-  // 국적
-  ntnl?: string;
 
   // 회원구분
   mbrFg?: string;

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Terms } from "../../apis/signUp/types/responses";
+import { Part2Data, Terms } from "../../apis/signUp/types/responses";
 import { UserData1, UserData2, UserData3 } from "./types/signUp";
 
 // 상태의 유형 정의
@@ -42,9 +42,17 @@ export const User = createSlice({
       state.carFrtNo = action.payload.carFrtNo;
       state.carTbkNo = action.payload.carTbkNo;
     },
+    signPart2DataAdd: (state, action: PayloadAction<Part2Data>) => {
+      state.birth = action.payload.birthday;
+      state.gen = action.payload.gen;
+      state.hpNo = action.payload.phoneNo;
+      state.ntnl = action.payload.nation;
+      state.mbrNm = action.payload.name;
+    },
   },
 });
 
-export const { addCluAgrList, signPart1DataAdd } = User.actions;
+export const { addCluAgrList, signPart1DataAdd, signPart2DataAdd } =
+  User.actions;
 
 export default User.reducer;
