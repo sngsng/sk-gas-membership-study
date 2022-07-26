@@ -9,6 +9,9 @@ const ApiUrls = {
   TERMS_LIST: "/mbr/cluList",
   TERMS_DETAIL_LIST: "/mbr/cluDet",
   TERMS_ID_CHECK: "/mbr/chkDupLgnId",
+
+  // 본인인증 APP 인증요청
+  REQUEST_APP: "/mbr/reqKmcCertApp",
 };
 
 export default ApiUrls;

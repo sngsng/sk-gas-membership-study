@@ -3,12 +3,18 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
+import { useMutation, UseMutationResult, useQuery } from "react-query";
+import axios, { AxiosResponse } from "axios";
 import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets/index";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import cls from "../../util";
 import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
-import { Terms } from "../../apis/signUp/types/responses";
+import { RequestSMS, Terms } from "../../apis/signUp/types/responses";
+import hmsRequest from "../../network";
+import ApiUrls from "../../constants/api_urls";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { smsAuthenticationRequest } from "../../store/modules/ApiData";
 
 interface IFormInput {
   phoneCorp: { label: string; value: string };
@@ -16,6 +22,8 @@ interface IFormInput {
 
 function SignInPark2() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const apiData = useAppSelector((state) => state.userApiData);
   const { control } = useForm<IFormInput>();
   const [termsCheckList, setTermsCheckList] = useState<Terms[] | any>([]);
   const termsDataLength = fetchPassAuthenticationTermsList().length;
@@ -42,8 +50,6 @@ function SignInPark2() {
   const { name, birthday, phoneNo, phoneCorp, gen } = nextData;
   const { birthdayCheck, phoneCorpCheck, phoneNumberCheck, termsAllCheck } =
     isCheckList;
-
-  console.log("nextData : ", nextData);
 
   // 정보 입력 하는곳
   const onChange = (e: any) => {
@@ -185,6 +191,48 @@ function SignInPark2() {
     return false;
   };
 
+  // const { mutateAsync, isLoading: addPaymentCardLoading } =
+  //   useMutation(addPaymentCard);
+
+  // const addPaymentCard = async (
+  //   body: AddPaymentCardRequestBody
+  // ): Promise<AddPaymentCardResponse> => {
+  //   const { data } = await hmsRequest(ApiUrls.ADD_PAYMENT_CARD, {
+  //     transNo: createTransactionNo(),
+  //     mbrshPgmId: "H",
+  //     infwOrgCd: "G002",
+  //     ...body,
+  //   });
+  //   const { responseData } = data;
+  //   return plainToInstance(AddPaymentCardResponse, responseData);
+  // };
+
+  // console.log(nextData);
+
+  // const sendSMS = useMutation(() => {
+  //   return hmsRequest(ApiUrls.REQUEST_APP, nextData);
+  // });
+
+  const sendSMS = async (body: Record<string, any>) => {
+    try {
+      const { data } = await hmsRequest(ApiUrls.REQUEST_APP, body);
+      const { responseData } = data;
+      return responseData;
+    } catch (err) {
+      return console.log("sendSMS", err);
+    }
+  };
+
+  const { mutateAsync: NextSendData } = useMutation(sendSMS);
+
+  const smsAuthentication = () => {
+    NextSendData(nextData).then((res) => {
+      const { certNum, trCert, check1 } = res;
+      dispatch(smsAuthenticationRequest({ certNum, trCert, check1 }));
+      navigate(urls.SignUpPart3);
+    });
+  };
+  console.log("apiData : ", apiData);
   return (
     <Layout title="행복충전모바일 회원가입">
       <form className="p-20">
@@ -415,10 +463,7 @@ function SignInPark2() {
               : "btn-fill-disabled"
           )}
           disabled={!(termsLengthComparison && inputDataCheck())}
-          onClick={() => {
-            // navigate(urls.SignUpPart3);
-            console.log("!!!");
-          }}
+          onClick={smsAuthentication}
         >
           동의하고 회원가입
         </button>
