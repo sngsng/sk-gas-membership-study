@@ -12,6 +12,8 @@ const ApiUrls = {
 
   // 본인인증 APP 인증요청
   REQUEST_APP: "/mbr/reqKmcCertApp",
+  // 본인인증 SMS 전송요청
+  REQUEST_SMS1: "/mbr/sndKmcCertSms",
 };
 
 export default ApiUrls;

@@ -13,7 +13,7 @@ import { Part2Data, Terms } from "../../apis/signUp/types/responses";
 import hmsRequest from "../../network";
 import ApiUrls from "../../constants/api_urls";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { smsAuthenticationRequest } from "../../store/modules/ApiData";
+import { signUpPart2 } from "../../store/modules/ApiData";
 import { signPart2DataAdd } from "../../store/modules/User";
 
 interface IFormInput {
