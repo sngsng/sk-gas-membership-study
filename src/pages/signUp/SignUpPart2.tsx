@@ -160,27 +160,6 @@ function SignInPark2() {
           errors={errors?.name?.message}
         />
 
-        {/* 생년월일 */}
-        {/* <label
-          htmlFor="birthday"
-          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
-        >
-          생년월일 *
-          <input
-            type="text"
-            className="mt-8 label-input"
-            placeholder="생년월일을 입력해주세요"
-            maxLength={8}
-            {...register("birthday", {
-              required: "생년월일을 입력해주세요",
-              minLength: { value: 8, message: "생년월일 8자리를 입력해주세요" },
-            })}
-          />
-          {errors?.birthday && (
-            <p className="mt-8 error">{errors.birthday.message}</p>
-          )}
-        </label> */}
-
         <Input
           HtmlFor="birthday"
           placeholder="생년월일을 입력해주세요"
@@ -282,25 +261,18 @@ function SignInPark2() {
           )}
         </label>
 
-        {/* 휴대전화 */}
-        <label
-          htmlFor="name"
-          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
-        >
-          휴대폰 *
-          <input
-            type="text"
-            placeholder="휴대폰 번호를 입력해주세요"
-            className="mt-8 label-input"
-            {...register("phoneNo", {
-              required: "휴대폰 번호를 입력해주세요",
-              minLength: { value: 11, message: "휴대폰 번호를 입력해주세요" },
-            })}
-          />
-          {errors?.phoneNo && (
-            <p className="mt-8 error">{errors.phoneNo.message}</p>
-          )}
-        </label>
+        <Input
+          HtmlFor="phoneNo"
+          label="휴대폰 *"
+          placeholder="휴대폰 번호를 입력해주세요"
+          maxLength={11}
+          className="flex flex-col mb-20"
+          register={register("phoneNo", {
+            required: "휴대폰 번호를 입력해주세요",
+            minLength: { value: 11, message: "휴대폰 11자리를 입력해주세요" },
+          })}
+          errors={errors?.phoneNo?.message}
+        />
       </form>
 
       {/* 약관 */}
