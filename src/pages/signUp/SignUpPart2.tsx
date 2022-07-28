@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+// import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
 import { Part2Data, Terms } from "../../apis/signUp/types/responses";
 import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets";
+// import urls from "../../constants/urls";
 import Input from "../../elements/Input";
 import Layout from "../../elements/Layout";
 import cls from "../../util";
@@ -30,6 +32,7 @@ const options = [
 ];
 
 function SignInPark2() {
+  // const navigate = useNavigate();
   const [nextData, setNextData] = useState<Part2Data>();
   const [termsCheckList, setTermsCheckList] = useState<Terms[] | any>([]);
   const termsDataLength = fetchPassAuthenticationTermsList().length;
@@ -250,6 +253,7 @@ function SignInPark2() {
                   onChange={onChange}
                   options={options}
                   styles={styles}
+                  isSearchable={false}
                   placeholder="통신사를 선택해 주세요"
                   className="font-normal text-b1"
                 />
