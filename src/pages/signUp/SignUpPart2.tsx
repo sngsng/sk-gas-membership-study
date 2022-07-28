@@ -1,109 +1,59 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable */
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { useForm, Controller } from "react-hook-form";
-import { useMutation } from "react-query";
-import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets/index";
-
+import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
+import { Part2Data, Terms } from "../../apis/signUp/types/responses";
+import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import cls from "../../util";
-import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
-import { Part2Data, Terms } from "../../apis/signUp/types/responses";
-import hmsRequest from "../../network";
-import ApiUrls from "../../constants/api_urls";
-import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { signUpPart2 } from "../../store/modules/ApiData";
-import { signPart2DataAdd } from "../../store/modules/User";
 
-interface IFormInput {
-  phoneCorp: { label: string; value: string };
+interface SubmitData {
+  name: string;
+  birthday: string;
+  gen: "0" | "1";
+  phoneNo: string;
+  // 받을 값을 타입지정 안해주면 값을 관리 하기 힘들다...
+  phoneCorp: {
+    value: string;
+    label: string;
+  };
 }
+
+const options = [
+  { value: "SKT", label: "SK텔레콤" },
+  { value: "KTF", label: "KT" },
+  { value: "LGT", label: "LG U+" },
+  { value: "SKM", label: "SKT 알뜰폰" },
+  { value: "KTM", label: "KT 알뜰폰" },
+  { value: "LGM", label: "LG 알뜰폰" },
+];
 
 function SignInPark2() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const apiData = useAppSelector((state) => state.userApiData);
-  const user = useAppSelector((state) => state.user);
-  const { control } = useForm<IFormInput>();
+  const [nextData, setNextData] = useState<Part2Data>();
   const [termsCheckList, setTermsCheckList] = useState<Terms[] | any>([]);
   const termsDataLength = fetchPassAuthenticationTermsList().length;
   const termsCheckListLength = termsCheckList.length;
   const termsLengthComparison = termsCheckListLength === termsDataLength;
-  const [isCheckList, setIsCheckList] = useState({
-    birthdayCheck: false,
-    phoneNumberCheck: false,
-    phoneCorpCheck: false,
-    termsAllCheck: false,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    setValue,
+  } = useForm<SubmitData>({
+    defaultValues: {
+      gen: "0",
+    },
+    mode: "onChange",
   });
-  const [nextData, setNextData] = useState<Part2Data>({
-    name: "",
-    birthday: "",
-    gen: "0",
-    phoneCorp: "",
-    phoneNo: "",
-    nation: "0",
-    terms1chk: "",
-    terms2chk: "",
-    terms3chk: "",
-    terms4chk: "",
-  });
-  const { name, birthday, phoneNo, phoneCorp, gen, nation } = nextData;
-  const { birthdayCheck, phoneCorpCheck, phoneNumberCheck, termsAllCheck } =
-    isCheckList;
-
-  // 정보 입력 하는곳
-  const onChange = (e: any) => {
-    const { value, name } = e.target;
-    setNextData({
-      ...nextData,
-      [name]: value,
-    });
-  };
-
-  // 생일 입력 체크
-  const birthdayIsCheck = () => {
-    if (birthday?.length !== 8) {
-      setIsCheckList({
-        ...isCheckList,
-        birthdayCheck: true,
-      });
-    } else {
-      setIsCheckList({
-        ...isCheckList,
-        birthdayCheck: false,
-      });
-    }
-  };
-
-  // 휴대폰 갯수 체크
-  const phoneNumberIsCheck = () => {
-    if (phoneNo?.length !== 11) {
-      setIsCheckList({
-        ...isCheckList,
-        phoneNumberCheck: true,
-      });
-    } else {
-      setIsCheckList({
-        ...isCheckList,
-        phoneNumberCheck: false,
-      });
-    }
-  };
-
-  // terms all btn 상태체크
-  useEffect(() => {
-    if (termsLengthComparison) {
-      setIsCheckList({ ...isCheckList, termsAllCheck: true });
-    } else {
-      setIsCheckList({ ...isCheckList, termsAllCheck: false });
-    }
-  }, [termsCheckList]);
 
   // terms all 체크 클릭시
   const termsAllCheckHandel = () => {
-    if (termsAllCheck === false) {
-      setIsCheckList({ ...isCheckList, termsAllCheck: true });
+    if (!termsLengthComparison) {
       setTermsCheckList([]);
       setTermsCheckList(
         fetchPassAuthenticationTermsList().map((terms) => {
@@ -119,7 +69,6 @@ function SignInPark2() {
       });
     } else {
       setTermsCheckList([]);
-      setIsCheckList({ ...isCheckList, termsAllCheck: false });
       setNextData({
         ...nextData,
         terms1chk: "",
@@ -127,45 +76,6 @@ function SignInPark2() {
         terms3chk: "",
         terms4chk: "",
       });
-    }
-  };
-
-  // terms "Y" 체크후 입력 & 제거
-  const termsRequired = (index: number) => {
-    switch (index) {
-      case 0:
-        if (nextData.terms1chk) {
-          console.log("@@@");
-          setNextData({ ...nextData, terms1chk: "" });
-        } else {
-          console.log("!!!");
-          setNextData({ ...nextData, terms1chk: "Y" });
-        }
-        break;
-      case 1:
-        if (nextData.terms2chk) {
-          setNextData({ ...nextData, terms2chk: "" });
-        } else {
-          setNextData({ ...nextData, terms2chk: "Y" });
-        }
-        break;
-      case 2:
-        if (nextData.terms3chk) {
-          setNextData({ ...nextData, terms3chk: "" });
-        } else {
-          setNextData({ ...nextData, terms3chk: "Y" });
-        }
-        break;
-      case 3:
-        if (nextData.terms4chk) {
-          setNextData({ ...nextData, terms4chk: "" });
-        } else {
-          setNextData({ ...nextData, terms4chk: "Y" });
-        }
-        break;
-
-      default:
-        "";
     }
   };
 
@@ -184,117 +94,147 @@ function SignInPark2() {
     }
   };
 
-  // input값 있는지 체크
-  const inputDataCheck = () => {
-    if (name && birthday && phoneNo && phoneCorp) {
-      return true;
+  // terms "Y" 체크후 입력 & 제거 / util로 이동
+  const termsRequired = (index: number) => {
+    switch (index) {
+      case 0:
+        if (nextData?.terms1chk) {
+          setNextData({ ...nextData, terms1chk: "" });
+        } else {
+          setNextData({ ...nextData, terms1chk: "Y" });
+        }
+        break;
+      case 1:
+        if (nextData?.terms2chk) {
+          setNextData({ ...nextData, terms2chk: "" });
+        } else {
+          setNextData({ ...nextData, terms2chk: "Y" });
+        }
+        break;
+      case 2:
+        if (nextData?.terms3chk) {
+          setNextData({ ...nextData, terms3chk: "" });
+        } else {
+          setNextData({ ...nextData, terms3chk: "Y" });
+        }
+        break;
+      case 3:
+        if (nextData?.terms4chk) {
+          setNextData({ ...nextData, terms4chk: "" });
+        } else {
+          setNextData({ ...nextData, terms4chk: "Y" });
+        }
+        break;
+
+      default:
+        "";
     }
-    return false;
   };
 
-  const sendSMS = async (body: Record<string, any>) => {
-    try {
-      const { data } = await hmsRequest(ApiUrls.REQUEST_APP, body);
-      const { responseData } = data;
-      return responseData;
-    } catch (err) {
-      return console.log("sendSMS", err);
-    }
-  };
+  const onSubmit = (data: SubmitData) => {
+    const { birthday, name, gen, phoneCorp, phoneNo } = data;
 
-  const { mutateAsync: NextSendData } = useMutation(sendSMS);
-
-  const smsAuthentication = () => {
-    dispatch(signPart2DataAdd({ gen, birthday, nation, name, phoneNo }));
-    NextSendData(nextData).then((res) => {
-      const { certNum, trCert, check1 } = res;
-      dispatch(smsAuthenticationRequest({ certNum, trCert, check1 }));
-      navigate(urls.SignUpPart3);
+    setNextData({
+      ...nextData,
+      birthday,
+      name,
+      gen,
+      phoneCorp: phoneCorp.value,
+      phoneNo,
     });
+    // navigate(urls.SignUpPart3);
   };
+
+  console.log("----------------nextData----------------");
+  console.log(nextData);
+
   return (
     <Layout title="행복충전모바일 회원가입">
       <form className="p-20">
         <p className="mb-30 text-h2">본인인증</p>
 
+        {/* 이름 */}
         <label
-          htmlFor="userName"
+          htmlFor="name"
           className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
         >
           이름 *
           <input
-            className="mt-8 label-input"
             type="text"
             placeholder="이름을 입력해주세요"
-            id="userName"
-            name="name"
-            value={name}
-            onChange={onChange}
+            className="mt-8 label-input"
+            {...register("name", {
+              required: "이름을 입력해주세요",
+              minLength: { value: 2, message: "2글자 이상 입력해주세요" },
+            })}
           />
-          <p className="hidden">최소 2글자 이상 입력해주세요</p>
+          {errors?.name && <p className="mt-8 error">{errors.name.message}</p>}
         </label>
+
+        {/* 생년월일 */}
         <label
           htmlFor="birthday"
           className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
         >
           생년월일 *
           <input
-            className="mt-8 label-input"
             type="text"
+            className="mt-8 label-input"
             placeholder="생년월일을 입력해주세요"
-            id="birthday"
-            name="birthday"
-            value={birthday}
-            onChange={onChange}
-            onBlur={birthdayIsCheck}
+            maxLength={8}
+            {...register("birthday", {
+              required: "생년월일을 입력해주세요",
+              minLength: { value: 8, message: "생년월일 8자리를 입력해주세요" },
+            })}
           />
-          {birthdayCheck && (
-            <p className="mt-8 error">생년월일 8자리를 입력해 주세요</p>
+          {errors?.birthday && (
+            <p className="mt-8 error">{errors.birthday.message}</p>
           )}
         </label>
+
+        {/* 성별 */}
         <div className="flex flex-col mb-20 font-bold text-b3 ">
           성별 *
-          <div className="flex w-full mt-8">
-            <button
-              className={cls(
-                "flex-1 btn-extra  rounded-l-[8px]",
-                gen === "0" ? "btn-fill" : "btn-fill-disabled"
-              )}
-              // btn-fill-disabled
-              type="button"
-              value="man"
-              onClick={() => {
-                setNextData({ ...nextData, gen: "0" });
-              }}
-            >
-              남자
-            </button>
-            <button
-              className={cls(
-                "flex-1 btn-extra  rounded-r-[8px]",
-                gen === "1" ? "btn-fill" : "btn-fill-disabled"
-              )}
-              type="button"
-              value="girl"
-              onClick={() => {
-                setNextData({
-                  ...nextData,
-                  gen: "1",
-                });
-              }}
-            >
-              여자
-            </button>
-          </div>
-        </div>
-        <label
-          htmlFor="newsAgency"
-          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
-        >
-          <p className="mb-8 font-bold text-b3">통신사 *</p>
           <Controller
+            control={control}
+            name="gen"
+            render={({ field: { value } }) => {
+              return (
+                <div className="flex w-full mt-8">
+                  <div
+                    aria-label="man"
+                    className={cls(
+                      "btn-left  btn-extra btn-full",
+                      value === "0" ? "btn-fill" : " btn-fill-disabled"
+                    )}
+                    onClick={() => setValue("gen", "0")}
+                  >
+                    남자
+                  </div>
+                  <div
+                    aria-label="woman"
+                    className={cls(
+                      "btn-right btn-extra btn-full",
+                      value === "1" ? "btn-fill" : " btn-fill-disabled"
+                    )}
+                    onClick={() => setValue("gen", "1")}
+                  >
+                    여자
+                  </div>
+                </div>
+              );
+            }}
+          />
+        </div>
+
+        {/* 통신사 */}
+        <label className="block mb-20 text-b3">
+          <p className="mb-8 font-bold">통신사 *</p>
+          <Controller
+            control={control}
             name="phoneCorp"
-            render={() => {
+            rules={{ required: "통신사를 선택해주세요" }}
+            render={({ field: { onChange } }) => {
               const styles = {
                 input: (prev: any) => ({
                   ...prev,
@@ -321,70 +261,45 @@ function SignInPark2() {
                   color: "#808080",
                 }),
               };
-
               return (
                 <Select
-                  className="font-bold text-black text-b1 "
-                  options={[
-                    { value: "SKT", label: "SK텔레콤" },
-                    { value: "KTF", label: "KT" },
-                    { value: "LGT", label: "LG U+" },
-                    { value: "SKM", label: "SKT 알뜰폰" },
-                    { value: "KTM", label: "KT 알뜰폰" },
-                    { value: "LGM", label: "LG 알뜰폰" },
-                  ]}
+                  onChange={onChange}
+                  options={options}
                   styles={styles}
-                  isSearchable={false}
-                  defaultValue={{ label: "통신사를 선택해주세요", value: "" }}
-                  onChange={(e) => {
-                    setNextData({
-                      ...nextData,
-                      phoneCorp: e?.value as string,
-                    });
-
-                    setIsCheckList({ ...isCheckList, phoneCorpCheck: false });
-                  }}
-                  onBlur={() => {
-                    phoneCorp === ""
-                      ? setIsCheckList({ ...isCheckList, phoneCorpCheck: true })
-                      : setIsCheckList({
-                          ...isCheckList,
-                          phoneCorpCheck: false,
-                        });
-                  }}
+                  placeholder="통신사를 선택해 주세요"
+                  className="font-normal text-b1"
                 />
               );
             }}
-            control={control}
           />
-
-          {phoneCorpCheck && (
-            <p className="mt-8 font-bold error text-b3">
-              통신사를 선택해주세요.
-            </p>
+          {errors?.phoneCorp && (
+            <p className="mt-8 font-normal error">{errors.phoneCorp.message}</p>
           )}
         </label>
+
+        {/* 휴대전화 */}
         <label
-          htmlFor="phoneNo"
-          className="flex flex-col font-bold text-b3 focus-within:text-blue"
+          htmlFor="name"
+          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
         >
-          휴대폰 번호 *
+          휴대폰 *
           <input
-            className="mt-8 label-input"
             type="text"
-            placeholder="휴대폰 번호를 입력해 주세요"
-            id="phoneNo"
-            name="phoneNo"
-            value={phoneNo}
-            onBlur={phoneNumberIsCheck}
-            onChange={onChange}
+            placeholder="휴대폰 번호를 입력해주세요"
+            className="mt-8 label-input"
+            {...register("phoneNo", {
+              required: "휴대폰 번호를 입력해주세요",
+              minLength: { value: 11, message: "휴대폰 번호를 입력해주세요" },
+            })}
           />
-          {phoneNumberCheck && (
-            <p className="mt-8 error">휴대폰 번호를 입력해 주세요</p>
+          {errors?.phoneNo && (
+            <p className="mt-8 error">{errors.phoneNo.message}</p>
           )}
         </label>
       </form>
-      <div className="p-20">
+
+      {/* 약관 */}
+      <div className="py-20">
         <div
           className="flex items-center pb-20 mb-20 border-b-1 border-gray300"
           role="button"
@@ -392,12 +307,13 @@ function SignInPark2() {
           onClick={termsAllCheckHandel}
         >
           <img
-            src={termsAllCheck ? CheckBoxOn : CheckBoxOff}
+            src={termsLengthComparison ? CheckBoxOn : CheckBoxOff}
             alt="전체동의"
             className="w-24 h-24 mr-10"
           />
           <p className="font-bold text-h2">본인인증 약관에 전체 동의합니다.</p>
         </div>
+
         <ul className="mb-30">
           {fetchPassAuthenticationTermsList().map((terms, index) => {
             return (
@@ -437,12 +353,10 @@ function SignInPark2() {
           type="button"
           className={cls(
             "w-full text-center p-20 bg-[#e8e8e8] btn btn-fill",
-            termsLengthComparison && inputDataCheck()
-              ? "btn-fill"
-              : "btn-fill-disabled"
+            false ? "btn-fill" : "btn-fill-disabled"
           )}
-          disabled={!(termsLengthComparison && inputDataCheck())}
-          onClick={smsAuthentication}
+          // disabled={}
+          onClick={handleSubmit(onSubmit)}
         >
           동의하고 회원가입
         </button>

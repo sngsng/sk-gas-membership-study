@@ -13,7 +13,15 @@
 }
 
 .btn {
-  @apply rounded cursor-pointer border-1;
+  @apply w-full text-center rounded cursor-pointer border-1;
+}
+
+.btn-left {
+  @apply w-full text-center rounded-l-[8px] cursor-pointer border-1;
+}
+
+.btn-right {
+  @apply w-full text-center rounded-r-[8px] cursor-pointer border-1;
 }
 
 .btn-fill {
