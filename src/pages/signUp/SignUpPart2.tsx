@@ -1,12 +1,10 @@
-/* eslint-disable */
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
 import { Part2Data, Terms } from "../../apis/signUp/types/responses";
 import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets";
-import urls from "../../constants/urls";
+import Input from "../../elements/Input";
 import Layout from "../../elements/Layout";
 import cls from "../../util";
 
@@ -32,7 +30,6 @@ const options = [
 ];
 
 function SignInPark2() {
-  const navigate = useNavigate();
   const [nextData, setNextData] = useState<Part2Data>();
   const [termsCheckList, setTermsCheckList] = useState<Terms[] | any>([]);
   const termsDataLength = fetchPassAuthenticationTermsList().length;
@@ -41,7 +38,7 @@ function SignInPark2() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     control,
     setValue,
   } = useForm<SubmitData>({
@@ -76,21 +73,6 @@ function SignInPark2() {
         terms3chk: "",
         terms4chk: "",
       });
-    }
-  };
-
-  // terms 개별 체크
-  const changeHandel = (check: boolean, terms: Terms, index: number) => {
-    if (check && !!termsCheckList) {
-      setTermsCheckList([...termsCheckList, terms]);
-      termsRequired(index);
-    } else {
-      setTermsCheckList(
-        termsCheckList?.filter((value: Terms) => {
-          return value.cluCd !== terms.cluCd;
-        })
-      );
-      termsRequired(index);
     }
   };
 
@@ -131,6 +113,21 @@ function SignInPark2() {
     }
   };
 
+  // terms 개별 체크
+  const changeHandel = (check: boolean, terms: Terms, index: number) => {
+    if (check && !!termsCheckList) {
+      setTermsCheckList([...termsCheckList, terms]);
+      termsRequired(index);
+    } else {
+      setTermsCheckList(
+        termsCheckList?.filter((value: Terms) => {
+          return value.cluCd !== terms.cluCd;
+        })
+      );
+      termsRequired(index);
+    }
+  };
+
   const onSubmit = (data: SubmitData) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
 
@@ -145,34 +142,26 @@ function SignInPark2() {
     // navigate(urls.SignUpPart3);
   };
 
-  console.log("----------------nextData----------------");
-  console.log(nextData);
-
   return (
     <Layout title="행복충전모바일 회원가입">
       <form className="p-20">
         <p className="mb-30 text-h2">본인인증</p>
 
-        {/* 이름 */}
-        <label
-          htmlFor="name"
-          className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
-        >
-          이름 *
-          <input
-            type="text"
-            placeholder="이름을 입력해주세요"
-            className="mt-8 label-input"
-            {...register("name", {
-              required: "이름을 입력해주세요",
-              minLength: { value: 2, message: "2글자 이상 입력해주세요" },
-            })}
-          />
-          {errors?.name && <p className="mt-8 error">{errors.name.message}</p>}
-        </label>
+        <Input
+          HtmlFor="name"
+          label="이름 *"
+          placeholder="이름을 입력해주세요"
+          className="flex flex-col mb-20"
+          maxLength={20}
+          register={register("name", {
+            required: "이름을 입력해주세요",
+            minLength: { value: 2, message: "2글자 이상 입력해주세요" },
+          })}
+          errors={errors?.name?.message}
+        />
 
         {/* 생년월일 */}
-        <label
+        {/* <label
           htmlFor="birthday"
           className="flex flex-col mb-20 font-bold text-b3 focus-within:text-blue"
         >
@@ -190,7 +179,20 @@ function SignInPark2() {
           {errors?.birthday && (
             <p className="mt-8 error">{errors.birthday.message}</p>
           )}
-        </label>
+        </label> */}
+
+        <Input
+          HtmlFor="birthday"
+          placeholder="생년월일을 입력해주세요"
+          label="생년월일 *"
+          maxLength={8}
+          className="flex flex-col mb-20"
+          register={register("birthday", {
+            required: "생년월일을 입력해주세요",
+            minLength: { value: 8, message: "생년월일 8자리를 입력해주세요" },
+          })}
+          errors={errors?.birthday?.message}
+        />
 
         {/* 성별 */}
         <div className="flex flex-col mb-20 font-bold text-b3 ">
@@ -202,22 +204,25 @@ function SignInPark2() {
               return (
                 <div className="flex w-full mt-8">
                   <div
-                    aria-label="man"
+                    // aria-label="man"
                     className={cls(
                       "btn-left  btn-extra btn-full",
                       value === "0" ? "btn-fill" : " btn-fill-disabled"
                     )}
                     onClick={() => setValue("gen", "0")}
+                    aria-hidden="true"
                   >
                     남자
                   </div>
                   <div
-                    aria-label="woman"
+                    // aria-label="woman"
                     className={cls(
                       "btn-right btn-extra btn-full",
                       value === "1" ? "btn-fill" : " btn-fill-disabled"
                     )}
                     onClick={() => setValue("gen", "1")}
+                    // onClick={() => onChange("1")}
+                    aria-hidden="true"
                   >
                     여자
                   </div>
@@ -228,7 +233,7 @@ function SignInPark2() {
         </div>
 
         {/* 통신사 */}
-        <label className="block mb-20 text-b3">
+        <label htmlFor="phoneCorp" className="block mb-20 text-b3">
           <p className="mb-8 font-bold">통신사 *</p>
           <Controller
             control={control}
@@ -352,10 +357,10 @@ function SignInPark2() {
         <button
           type="button"
           className={cls(
-            "w-full text-center p-20 bg-[#e8e8e8] btn btn-fill",
-            false ? "btn-fill" : "btn-fill-disabled"
+            "w-full text-center p-20 bg-[#e8e8e8] btn",
+            isValid && termsLengthComparison ? "btn-fill" : "btn-fill-disabled"
           )}
-          // disabled={}
+          disabled={!(isValid && termsLengthComparison)}
           onClick={handleSubmit(onSubmit)}
         >
           동의하고 회원가입
