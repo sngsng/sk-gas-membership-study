@@ -1,6 +1,6 @@
 import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
-import cls from "../util";
+import cls from "../../util";
 
 interface LabelInputProps {
   HtmlFor: string;

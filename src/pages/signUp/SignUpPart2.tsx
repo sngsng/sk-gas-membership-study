@@ -177,42 +177,23 @@ function SignInPark2() {
         />
 
         {/* 성별 */}
-        <div className="flex flex-col mb-20 font-bold text-b3 ">
-          성별 *
-          <Controller
-            control={control}
-            name="gen"
-            render={({ field: { value } }) => {
-              return (
-                <div className="flex w-full mt-8">
-                  <div
-                    // aria-label="man"
-                    className={cls(
-                      "btn-left  btn-extra btn-full",
-                      value === "0" ? "btn-fill" : " btn-fill-disabled"
-                    )}
-                    onClick={() => setValue("gen", "0")}
-                    aria-hidden="true"
-                  >
-                    남자
-                  </div>
-                  <div
-                    // aria-label="woman"
-                    className={cls(
-                      "btn-right btn-extra btn-full",
-                      value === "1" ? "btn-fill" : " btn-fill-disabled"
-                    )}
-                    onClick={() => setValue("gen", "1")}
-                    // onClick={() => onChange("1")}
-                    aria-hidden="true"
-                  >
-                    여자
-                  </div>
-                </div>
-              );
-            }}
-          />
-        </div>
+
+        <Controller
+          control={control}
+          name="gen"
+          render={({ field: { value } }) => {
+            return (
+              <LabelSelectBtn
+                name="gen"
+                label="성별 *"
+                choice1="남자"
+                choice2="여자"
+                setValue={setValue}
+                value={value}
+              />
+            );
+          }}
+        />
 
         {/* 통신사 */}
 
