@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useForm } from "react-hook-form";
 import { TermsIdCheckBody } from "../../apis/signUp/types/requests";
 import ApiUrls from "../../constants/api_urls";
 import regex from "../../util/regex";
@@ -12,10 +13,38 @@ import { useAppDispatch } from "../../store/hook";
 import { UserData1 } from "../../store/modules/types/signUp";
 import { signPart1DataAdd } from "../../store/modules/User";
 import cls from "../../util";
+import LabelInput from "../../components/signUp/LabelInput";
+import Button from "../../elements/Button";
+import LabelInputBtn from "../../components/signUp/LabelInputBtn";
+
+interface SignUpPart1SubmitType {
+  Id: string;
+  Pwd: string;
+  rePwd: string;
+  carNumber: string;
+}
 
 function SignUpPart1() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors },
+  } = useForm<SignUpPart1SubmitType>({
+    mode: "onChange",
+  });
+
+  // console.clear();
+  console.log("----------------getValues----------------");
+  console.log(errors);
+
+  const onSubmit = (data: SignUpPart1SubmitType) => {
+    console.log("----------------data----------------");
+    console.log(data);
+  };
 
   const [idCheck, setIdCheck] = useState(false);
   const [apiIdCheck, setApiIdCheck] = useState(false);
@@ -188,11 +217,11 @@ function SignUpPart1() {
 
   return (
     <Layout title="행복충전모바일 회원가입">
-      <form className="p-20">
+      <form className="p-20" onSubmit={handleSubmit(onSubmit)}>
         <p className="text-h2 mb-30">가입정보를 입력해 주세요.</p>
 
         <div className="mb-40">
-          <div className="mb-12 focus-within:text-blue">
+          {/* <div className="mb-12 focus-within:text-blue">
             <p className="mb-8 font-bold text-b3 ">아이디 *</p>
             <div className="flex mb-8 ">
               <input
@@ -239,9 +268,28 @@ function SignUpPart1() {
                 영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.
               </p>
             )}
-          </div>
+          </div> */}
 
-          <div className="mb-12 focus-within:text-blue">
+          <LabelInputBtn
+            HtmlFor="id"
+            label="아이디 *"
+            btnText="중복확인"
+            isLoading={false}
+            placeholder="아이디를 입력해주세요"
+            maxLength={20}
+            register={register("Id", {
+              required:
+                "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
+              minLength: {
+                value: 5,
+                message:
+                  "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
+              },
+            })}
+            errors={errors?.Id?.message}
+          />
+
+          {/* <div className="mb-12 focus-within:text-blue">
             <p className="mb-8 font-bold text-b3">비밀번호 *</p>
             <div className="flex mb-8">
               <input
@@ -262,9 +310,46 @@ function SignUpPart1() {
                 영문 대소문자, 숫자, 특수문자를 포함하여 8자 이상 입력해 주세요.
               </p>
             )}
-          </div>
+          </div> */}
 
-          <div className="mb-12 focus-within:text-blue">
+          <LabelInput
+            HtmlFor="Pwd"
+            // type="password"
+            label="비밀번호 *"
+            className="mb-12"
+            placeholder="비밀번호를 입력해주세요"
+            maxLength={20}
+            register={register("Pwd", {
+              required: "비밀번호를 입력해주세요",
+              pattern: regex.passWord,
+              minLength: {
+                value: 8,
+                message:
+                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+              },
+            })}
+            errors={errors?.Pwd?.message}
+          />
+
+          <LabelInput
+            HtmlFor="rePwd"
+            // type="password"
+            label="비밀번호 재입력 *"
+            className="mb-12"
+            placeholder="비밀번호를 입력해주세요"
+            maxLength={20}
+            register={register("rePwd", {
+              required: "비밀번호를 입력해주세요",
+              pattern: regex.passWord,
+              minLength: {
+                value: 8,
+                message:
+                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+              },
+            })}
+            errors={errors?.rePwd?.message}
+          />
+          {/* <div className="mb-12 focus-within:text-blue">
             <p className="mb-8 font-bold text-b3">비밀번호 재입력 *</p>
             <div className="flex mb-8">
               <input
@@ -290,16 +375,16 @@ function SignUpPart1() {
               </p>
             )}
 
-            {/* 비밀번호 서로 체크후 다를경우 경고 메시지 */}
+            비밀번호 서로 체크후 다를경우 경고 메시지
             {passWordCrossCheck && (
               <p className="font-normal text-b3 text-red">
                 비밀번호가 일치하지 않습니다
               </p>
             )}
-          </div>
+          </div> */}
         </div>
 
-        <p className="font-bold text-h2 mb-30">차량정보를 입력해 주세요.</p>
+        {/* <p className="font-bold text-h2 mb-30">차량정보를 입력해 주세요.</p>
         <div className="focus-within:text-blue">
           <p className="mb-8 font-bold text-b3 focus:text-blue">차량번호 *</p>
           <div className="flex mb-8">
@@ -323,30 +408,53 @@ function SignUpPart1() {
               형식이 올바르지 않습니다 (ex 00가0000)
             </p>
           )}
-        </div>
+        </div> */}
+
+        <LabelInput
+          HtmlFor="carNumber"
+          label="차량번호 *"
+          placeholder="차량번호를 입력해 주세요(ex 00가 0000)"
+          maxLength={10}
+          register={register("carNumber", {
+            required: "차량번호를 입력해 주세요",
+            pattern: {
+              value: regex.carNumber,
+              message: " 형식이 올바르지 않습니다 (ex 00가0000)",
+            },
+          })}
+          errors={errors?.carNumber?.message}
+        />
 
         {isNextBtnLoading ? (
           <ClipLoader className="text-blue" color="text-blue" size={30} />
         ) : (
-          <button
-            type="button"
-            className={cls(
-              "mt-30  btn-extra w-full",
-              signPart1Btn
-                ? "cursor-pointer rounded border-1 btn-fill"
-                : "btn-fill-disabled rounded "
-            )}
-            // input 값이 전부 통과될 경우 버튼 활성화!
-            disabled={!signPart1Btn}
-            onClick={() => {
-              navigate(urls.SignUpPart2);
-              dispatch(signPart1DataAdd(nextData));
-              setIsNextBtnLoading(true);
-              console.log("work");
-            }}
-          >
-            다음
-          </button>
+          // <button
+          //   type="button"
+          //   className={cls(
+          //     "mt-30  btn-extra w-full",
+          //     signPart1Btn
+          //       ? "cursor-pointer rounded border-1 btn-fill"
+          //       : "btn-fill-disabled rounded "
+          //   )}
+          //   // input 값이 전부 통과될 경우 버튼 활성화!
+          //   // disabled={!signPart1Btn}
+          //   // onClick={() => {
+          //   //   navigate(urls.SignUpPart2);
+          //   //   dispatch(signPart1DataAdd(nextData));
+          //   //   setIsNextBtnLoading(true);
+          //   //   console.log("work");
+          //   // }}
+          //   onClick={handleSubmit(onSubmit)}
+          // >
+          //   다음
+          // </button>
+
+          <Button
+            text="다음"
+            className="btn-extra mt-30"
+            checked={false}
+            onClick={handleSubmit(onSubmit)}
+          />
         )}
       </form>
     </Layout>
