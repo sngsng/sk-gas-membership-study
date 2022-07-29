@@ -150,7 +150,7 @@ function SignInPark2() {
       <form className="p-20">
         <p className="mb-30 text-h2">본인인증</p>
 
-        <Input
+        <LabelInput
           HtmlFor="name"
           label="이름 *"
           placeholder="이름을 입력해주세요"
@@ -163,7 +163,7 @@ function SignInPark2() {
           errors={errors?.name?.message}
         />
 
-        <Input
+        <LabelInput
           HtmlFor="birthday"
           placeholder="생년월일을 입력해주세요"
           label="생년월일 *"
@@ -215,57 +215,26 @@ function SignInPark2() {
         </div>
 
         {/* 통신사 */}
-        <label htmlFor="phoneCorp" className="block mb-20 text-b3">
-          <p className="mb-8 font-bold">통신사 *</p>
-          <Controller
-            control={control}
-            name="phoneCorp"
-            rules={{ required: "통신사를 선택해주세요" }}
-            render={({ field: { onChange } }) => {
-              const styles = {
-                input: (prev: any) => ({
-                  ...prev,
-                  paddingRight: 8,
-                  paddingTop: 8,
-                  paddingBottom: 8,
-                  color: "#808080",
-                }),
-                control: (prev: any) => ({
-                  ...prev,
-                  minHeight: 60,
-                  borderRadius: 8,
-                  paddingLeft: 8,
-                  paddingRight: 8,
-                  borderColor: "rgb(204, 204, 204)",
-                }),
-                // 구분선
-                indicatorSeparator: (prev: any) => ({
-                  ...prev,
-                  backgroundColor: "white",
-                }),
-                placeholder: (prev: any) => ({
-                  ...prev,
-                  color: "#808080",
-                }),
-              };
-              return (
-                <Select
-                  onChange={onChange}
-                  options={options}
-                  styles={styles}
-                  isSearchable={false}
-                  placeholder="통신사를 선택해 주세요"
-                  className="font-normal text-b1"
-                />
-              );
-            }}
-          />
-          {errors?.phoneCorp && (
-            <p className="mt-8 font-normal error">{errors.phoneCorp.message}</p>
-          )}
-        </label>
 
-        <Input
+        <Controller
+          control={control}
+          name="phoneCorp"
+          rules={{ required: "통신사를 선택해주세요" }}
+          render={({ field: { onChange } }) => {
+            return (
+              <SelectForm
+                HtmlFor="phoneCorp"
+                label="통신사 *"
+                placeholder="통신사를 선택해 주세요"
+                onChange={onChange}
+                options={options}
+                errors={errors?.phoneCorp?.message}
+              />
+            );
+          }}
+        />
+
+        <LabelInput
           HtmlFor="phoneNo"
           label="휴대폰 *"
           placeholder="휴대폰 번호를 입력해주세요"

@@ -2,9 +2,9 @@ import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import cls from "../util";
 
-interface InputProps {
+interface LabelInputProps {
   HtmlFor: string;
-  type?: "text" | "password" | "number";
+  type?: "text" | "password" | "number" | "checkBox";
   placeholder: string;
   label?: string;
   className?: string;
@@ -13,7 +13,8 @@ interface InputProps {
   register: UseFormRegisterReturn;
 }
 
-function Input({
+// useForm Input용   *** React-hook-form ***
+function LabelInput({
   HtmlFor,
   type = "text",
   placeholder,
@@ -22,7 +23,7 @@ function Input({
   errors,
   maxLength,
   register,
-}: InputProps) {
+}: LabelInputProps) {
   return (
     <label
       htmlFor={HtmlFor}
@@ -30,6 +31,7 @@ function Input({
     >
       {label && label}
       <input
+        id={HtmlFor}
         type={type}
         placeholder={placeholder}
         maxLength={maxLength}
@@ -41,4 +43,4 @@ function Input({
   );
 }
 
-export default Input;
+export default LabelInput;
