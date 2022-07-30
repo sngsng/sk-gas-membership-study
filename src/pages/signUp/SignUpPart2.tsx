@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // import { useNavigate } from "react-router-dom";
-import Select from "react-select";
+// import * as yup from "yup";
+// import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
 import { Part2Data, Terms } from "../../apis/signUp/types/responses";
-import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets";
-// import urls from "../../constants/urls";
-import Input from "../../elements/Input";
+import SelectForm from "../../components/signUp/SelectForm";
+import TermsList from "../../components/signUp/TermsList";
+import LabelInput from "../../components/signUp/LabelInput";
 import Layout from "../../elements/Layout";
 import cls from "../../util";
+import LabelSelectBtn from "../../components/signUp/LabelSelectBtn";
 
-interface SubmitData {
+export interface SignUpPart2SubmitType {
   name: string;
   birthday: string;
   gen: "0" | "1";
   phoneNo: string;
-  // 받을 값을 타입지정 안해주면 값을 관리 하기 힘들다...
   phoneCorp: {
     value: string;
     label: string;
@@ -31,6 +32,25 @@ const options = [
   { value: "LGM", label: "LG 알뜰폰" },
 ];
 
+// const schema = yup.object({
+//   name: yup
+//     .string()
+//     .required("이름을 입력해주세요")
+//     .min(2, "2글자 이상 입력해주세요"),
+//   birthday: yup
+//     .string()
+//     .required("생년월일을 입력해주세요")
+//     .min(8, "생년월일 8자리를 입력해주세요"),
+//   phoneNo: yup
+//     .string()
+//     .required("휴대폰 번호를 입력해주세요")
+//     .min(11, "휴대폰 11자리를 입력해주세요 "),
+//   //     phoneCorp: {
+//   //   value: string;
+//   //   label: string;
+//   // };
+// });
+
 function SignInPark2() {
   // const navigate = useNavigate();
   const [nextData, setNextData] = useState<Part2Data>();
@@ -44,7 +64,8 @@ function SignInPark2() {
     formState: { errors, isValid },
     control,
     setValue,
-  } = useForm<SubmitData>({
+  } = useForm<SignUpPart2SubmitType>({
+    // resolver: yupResolver(schema),
     defaultValues: {
       gen: "0",
     },
@@ -117,21 +138,26 @@ function SignInPark2() {
   };
 
   // terms 개별 체크
-  const changeHandel = (check: boolean, terms: Terms, index: number) => {
+  const changeHandel = (
+    check: boolean,
+    terms: Terms,
+    index: number | undefined
+  ) => {
     if (check && !!termsCheckList) {
       setTermsCheckList([...termsCheckList, terms]);
-      termsRequired(index);
+
+      !!index && termsRequired(index);
     } else {
       setTermsCheckList(
         termsCheckList?.filter((value: Terms) => {
           return value.cluCd !== terms.cluCd;
         })
       );
-      termsRequired(index);
+      !!index && termsRequired(index);
     }
   };
 
-  const onSubmit = (data: SubmitData) => {
+  const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
 
     setNextData({
@@ -154,7 +180,7 @@ function SignInPark2() {
           HtmlFor="name"
           label="이름 *"
           placeholder="이름을 입력해주세요"
-          className="flex flex-col mb-20"
+          className="mb-20 "
           maxLength={20}
           register={register("name", {
             required: "이름을 입력해주세요",
@@ -168,7 +194,7 @@ function SignInPark2() {
           placeholder="생년월일을 입력해주세요"
           label="생년월일 *"
           maxLength={8}
-          className="flex flex-col mb-20"
+          className="mb-20 "
           register={register("birthday", {
             required: "생년월일을 입력해주세요",
             minLength: { value: 8, message: "생년월일 8자리를 입력해주세요" },
@@ -220,7 +246,7 @@ function SignInPark2() {
           label="휴대폰 *"
           placeholder="휴대폰 번호를 입력해주세요"
           maxLength={11}
-          className="flex flex-col mb-20"
+          className="mb-20"
           register={register("phoneNo", {
             required: "휴대폰 번호를 입력해주세요",
             minLength: { value: 11, message: "휴대폰 11자리를 입력해주세요" },
@@ -230,55 +256,15 @@ function SignInPark2() {
       </form>
 
       {/* 약관 */}
-      <div className="py-20">
-        <div
-          className="flex items-center pb-20 mb-20 border-b-1 border-gray300"
-          role="button"
-          aria-hidden="true"
-          onClick={termsAllCheckHandel}
-        >
-          <img
-            src={termsLengthComparison ? CheckBoxOn : CheckBoxOff}
-            alt="전체동의"
-            className="w-24 h-24 mr-10"
-          />
-          <p className="font-bold text-h2">본인인증 약관에 전체 동의합니다.</p>
-        </div>
-
-        <ul className="mb-30">
-          {fetchPassAuthenticationTermsList().map((terms, index) => {
-            return (
-              <li className="flex mb-16 cursor-pointer" key={terms.cluCd}>
-                <label className="mr-10 cursor-pointer" htmlFor={terms.cluCd}>
-                  <input
-                    type="checkBox"
-                    className="absolute left-[-9999px]"
-                    id={terms.cluCd}
-                    value={terms.cluCd}
-                    onChange={(e) => {
-                      changeHandel(e.currentTarget.checked, terms, index);
-                    }}
-                    checked={termsCheckList.find(
-                      (checked: Terms) => checked.cluCd === terms.cluCd
-                    )}
-                  />
-                  <img
-                    src={
-                      termsCheckList.find(
-                        (checked: Terms) => checked.cluCd === terms.cluCd
-                      )
-                        ? CheckOn
-                        : CheckOff
-                    }
-                    alt="체크버튼"
-                    className="w-full min-w-24"
-                  />
-                </label>
-                <p>{terms.cluShrtCtt}</p>
-              </li>
-            );
-          })}
-        </ul>
+      <div className="p-20">
+        <TermsList
+          allCheckTitle="본인인증 약관에 전체 동의합니다."
+          changeHandel={changeHandel}
+          termsData={fetchPassAuthenticationTermsList}
+          termsAllCheckHandel={termsAllCheckHandel}
+          termsCheckList={termsCheckList}
+          termsLengthComparison={termsLengthComparison}
+        />
 
         <button
           type="button"
@@ -286,7 +272,7 @@ function SignInPark2() {
             "w-full text-center p-20 bg-[#e8e8e8] btn",
             isValid && termsLengthComparison ? "btn-fill" : "btn-fill-disabled"
           )}
-          disabled={!(isValid && termsLengthComparison)}
+          // disabled={!(isValid && termsLengthComparison)}
           onClick={handleSubmit(onSubmit)}
         >
           동의하고 회원가입

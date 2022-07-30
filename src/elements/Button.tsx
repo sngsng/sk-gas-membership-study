@@ -6,7 +6,7 @@ interface ButtonProps {
   className: string;
   disabled?: boolean;
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
-  checked?: boolean;
+  isBtnCheck?: boolean;
 }
 
 export default function Button({
@@ -14,7 +14,7 @@ export default function Button({
   className = "",
   disabled = false,
   onClick,
-  checked,
+  isBtnCheck,
   ...res
 }: ButtonProps) {
   return (
@@ -23,7 +23,7 @@ export default function Button({
       className={cls(
         "btn text-center",
         className,
-        checked ? "btn-fill" : "btn-fill-disabled"
+        isBtnCheck ? "btn-fill" : "btn-fill-disabled"
       )}
       disabled={disabled}
       onClick={onClick}

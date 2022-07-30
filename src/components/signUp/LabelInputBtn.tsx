@@ -1,7 +1,8 @@
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import Button from "../../elements/Button";
+import cls from "../../util";
 
 interface LabelInputBtnProps {
   HtmlFor: string;
@@ -13,7 +14,9 @@ interface LabelInputBtnProps {
   maxLength?: number;
   register: UseFormRegisterReturn;
   isLoading: boolean;
+  isBtnCheck: boolean;
   btnText: string;
+  onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
 }
 
 function LabelInputBtn({
@@ -21,18 +24,23 @@ function LabelInputBtn({
   type = "text",
   placeholder,
   label,
-  // className = "",
+  className = "",
   errors,
   maxLength,
   register,
   isLoading = false,
   btnText,
+  isBtnCheck,
+  onClick,
 }: LabelInputBtnProps) {
   return (
     <>
       <label
         htmlFor={HtmlFor}
-        className="block mb-8 mb-12 font-bold min-h-60 text-b3"
+        className={cls(
+          "block mb-8 mb-12 font-bold min-h-60 text-b3",
+          className
+        )}
       >
         {label}
         <div className="flex">
@@ -52,10 +60,8 @@ function LabelInputBtn({
               <Button
                 className="ml-10 min-h-60 text-b1 min-w-101"
                 text={btnText}
-                checked={false}
-                onClick={() => {
-                  console.log("111");
-                }}
+                isBtnCheck={isBtnCheck}
+                onClick={onClick}
               />
             )}
           </div>

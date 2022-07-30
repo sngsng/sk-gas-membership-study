@@ -32,14 +32,12 @@ function SignUpPart1() {
     register,
     handleSubmit,
     getValues,
-    formState: { errors },
+    getFieldState,
+
+    formState: { errors, isValid, isDirty, isSubmitted, isSubmitSuccessful },
   } = useForm<SignUpPart1SubmitType>({
     mode: "onChange",
   });
-
-  // console.clear();
-  console.log("----------------getValues----------------");
-  console.log(errors);
 
   const onSubmit = (data: SignUpPart1SubmitType) => {
     console.log("----------------data----------------");
@@ -73,51 +71,51 @@ function SignUpPart1() {
   });
 
   // 다음 파트로 넘어갈수 있는지 체크 하는 곳
-  useEffect(() => {
-    if (
-      !idCheck &&
-      idRef.current?.value &&
-      regex.id.test(idRef.current.value) &&
-      !passwordCheck &&
-      passWordRef.current?.value &&
-      regex.passWord.test(passWordRef.current.value) &&
-      !rePassWordCheck &&
-      rePassWordRef.current?.value &&
-      regex.passWord.test(rePassWordRef.current.value) &&
-      !passWordCrossCheck &&
-      carNumberRef.current?.value &&
-      !carNumberCheck &&
-      regex.carNumber.test(carNumberRef.current.value) &&
-      apiIdCheck
-    ) {
-      setSignPart1Btn(true);
-    } else {
-      setSignPart1Btn(false);
-    }
-  }, [
-    idCheck,
-    passwordCheck,
-    rePassWordCheck,
-    passWordCrossCheck,
-    carNumberCheck,
-    apiIdCheck,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     !idCheck &&
+  //     idRef.current?.value &&
+  //     regex.id.test(idRef.current.value) &&
+  //     !passwordCheck &&
+  //     passWordRef.current?.value &&
+  //     regex.passWord.test(passWordRef.current.value) &&
+  //     !rePassWordCheck &&
+  //     rePassWordRef.current?.value &&
+  //     regex.passWord.test(rePassWordRef.current.value) &&
+  //     !passWordCrossCheck &&
+  //     carNumberRef.current?.value &&
+  //     !carNumberCheck &&
+  //     regex.carNumber.test(carNumberRef.current.value) &&
+  //     apiIdCheck
+  //   ) {
+  //     setSignPart1Btn(true);
+  //   } else {
+  //     setSignPart1Btn(false);
+  //   }
+  // }, [
+  //   idCheck,
+  //   passwordCheck,
+  //   rePassWordCheck,
+  //   passWordCrossCheck,
+  //   carNumberCheck,
+  //   apiIdCheck,
+  // ]);
 
-  // 아이디 체크 (정규식)
-  const handleIdCheck = () => {
-    if (!idRef.current?.value) {
-      setIdCheck(false);
-    } else if (idRef.current?.value && regex.id.test(idRef.current?.value)) {
-      setApiIdCheck(false);
-      setIdCheck(false);
-      setIdCheckBtn(true);
-      setUserId(idRef.current.value);
-      setNextData({ ...nextData, iognId: idRef.current.value });
-    } else {
-      setIdCheck(true);
-      setIdCheckBtn(false);
-    }
-  };
+  // // 아이디 체크 (정규식)
+  // const handleIdCheck = () => {
+  //   if (!idRef.current?.value) {
+  //     setIdCheck(false);
+  //   } else if (idRef.current?.value && regex.id.test(idRef.current?.value)) {
+  //     setApiIdCheck(false);
+  //     setIdCheck(false);
+  //     setIdCheckBtn(true);
+  //     setUserId(idRef.current.value);
+  //     setNextData({ ...nextData, iognId: idRef.current.value });
+  //   } else {
+  //     setIdCheck(true);
+  //     setIdCheckBtn(false);
+  //   }
+  // };
 
   // id 중복체크 (api)
   const idCheckAPI = async (useId: TermsIdCheckBody) => {
@@ -140,80 +138,82 @@ function SignUpPart1() {
     }
   };
 
-  // 비밀번호 체크
-  const handlePasswordCheck = () => {
-    if (
-      (passWordRef.current?.value &&
-        regex.passWord.test(passWordRef.current.value)) ||
-      !passWordRef.current?.value
-    ) {
-      setPasswordCheck(false);
-    } else {
-      setPasswordCheck(true);
-    }
+  // // 비밀번호 체크
+  // const handlePasswordCheck = () => {
+  //   if (
+  //     (passWordRef.current?.value &&
+  //       regex.passWord.test(passWordRef.current.value)) ||
+  //     !passWordRef.current?.value
+  //   ) {
+  //     setPasswordCheck(false);
+  //   } else {
+  //     setPasswordCheck(true);
+  //   }
 
-    if (
-      passWordRef.current?.value &&
-      rePassWordRef.current?.value &&
-      passWordRef.current?.value !== rePassWordRef.current?.value &&
-      regex.passWord.test(rePassWordRef.current.value) &&
-      regex.passWord.test(passWordRef.current.value)
-    ) {
-      setPassWordCrossCheck(true);
-    } else if (
-      passWordRef.current?.value === rePassWordRef.current?.value ||
-      !regex.passWord.test(rePassWordRef.current?.value as string)
-    ) {
-      setPassWordCrossCheck(false);
-    }
-  };
+  //   if (
+  //     passWordRef.current?.value &&
+  //     rePassWordRef.current?.value &&
+  //     passWordRef.current?.value !== rePassWordRef.current?.value &&
+  //     regex.passWord.test(rePassWordRef.current.value) &&
+  //     regex.passWord.test(passWordRef.current.value)
+  //   ) {
+  //     setPassWordCrossCheck(true);
+  //   } else if (
+  //     passWordRef.current?.value === rePassWordRef.current?.value ||
+  //     !regex.passWord.test(rePassWordRef.current?.value as string)
+  //   ) {
+  //     setPassWordCrossCheck(false);
+  //   }
+  // };
 
-  // 비밀번호 재확인 체크
-  const handleRePasswordCheck = () => {
-    if (
-      (rePassWordRef.current?.value &&
-        regex.passWord.test(rePassWordRef.current.value)) ||
-      !rePassWordRef.current?.value
-    ) {
-      setRePasswordCheck(false);
-    } else {
-      setRePasswordCheck(true);
-    }
+  // // 비밀번호 재확인 체크
+  // const handleRePasswordCheck = () => {
+  //   if (
+  //     (rePassWordRef.current?.value &&
+  //       regex.passWord.test(rePassWordRef.current.value)) ||
+  //     !rePassWordRef.current?.value
+  //   ) {
+  //     setRePasswordCheck(false);
+  //   } else {
+  //     setRePasswordCheck(true);
+  //   }
 
-    if (
-      passWordRef.current?.value &&
-      rePassWordRef.current?.value &&
-      passWordRef.current?.value !== rePassWordRef.current?.value &&
-      regex.passWord.test(rePassWordRef.current.value) &&
-      regex.passWord.test(passWordRef.current.value)
-    ) {
-      setPassWordCrossCheck(true);
-    } else if (
-      passWordRef.current?.value === rePassWordRef.current?.value ||
-      !regex.passWord.test(rePassWordRef.current?.value as string)
-    ) {
-      setPassWordCrossCheck(false);
-      setNextData({ ...nextData, iognPwd: rePassWordRef.current?.value });
-    }
-  };
+  //   if (
+  //     passWordRef.current?.value &&
+  //     rePassWordRef.current?.value &&
+  //     passWordRef.current?.value !== rePassWordRef.current?.value &&
+  //     regex.passWord.test(rePassWordRef.current.value) &&
+  //     regex.passWord.test(passWordRef.current.value)
+  //   ) {
+  //     setPassWordCrossCheck(true);
+  //   } else if (
+  //     passWordRef.current?.value === rePassWordRef.current?.value ||
+  //     !regex.passWord.test(rePassWordRef.current?.value as string)
+  //   ) {
+  //     setPassWordCrossCheck(false);
+  //     setNextData({ ...nextData, iognPwd: rePassWordRef.current?.value });
+  //   }
+  // };
 
-  // 차량번호 체크
-  const handleCarNumberCheck = () => {
-    if (
-      (carNumberRef.current?.value &&
-        regex.carNumber.test(carNumberRef.current.value)) ||
-      !carNumberRef.current?.value
-    ) {
-      setCarNumberCheck(false);
-      // 차량 앞번호
-      const carFrtNo = carNumberRef.current?.value.slice(0, 3);
-      // 차량 뒷번호
-      const carTbkNo = carNumberRef.current?.value.slice(3);
-      setNextData({ ...nextData, carFrtNo, carTbkNo });
-    } else {
-      setCarNumberCheck(true);
-    }
-  };
+  // // 차량번호 체크
+  // const handleCarNumberCheck = () => {
+  //   if (
+  //     (carNumberRef.current?.value &&
+  //       regex.carNumber.test(carNumberRef.current.value)) ||
+  //     !carNumberRef.current?.value
+  //   ) {
+  //     setCarNumberCheck(false);
+  //     // 차량 앞번호
+  //     const carFrtNo = carNumberRef.current?.value.slice(0, 3);
+  //     // 차량 뒷번호
+  //     const carTbkNo = carNumberRef.current?.value.slice(3);
+  //     setNextData({ ...nextData, carFrtNo, carTbkNo });
+  //   } else {
+  //     setCarNumberCheck(true);
+  //   }
+  // };
+
+  const isIdCheckBtn = !!getValues().Id && !errors.Id;
 
   return (
     <Layout title="행복충전모바일 회원가입">
@@ -221,65 +221,22 @@ function SignUpPart1() {
         <p className="text-h2 mb-30">가입정보를 입력해 주세요.</p>
 
         <div className="mb-40">
-          {/* <div className="mb-12 focus-within:text-blue">
-            <p className="mb-8 font-bold text-b3 ">아이디 *</p>
-            <div className="flex mb-8 ">
-              <input
-                className="flex-1 label-input"
-                type="text"
-                name="id"
-                placeholder="아이디를 입력해주세요"
-                ref={idRef}
-                onFocus={() => {
-                  setIdCheck(false);
-                }}
-                onBlur={handleIdCheck}
-                onChange={handleIdCheck}
-              />
-              <div className="flex items-center justify-center min-w-100 min-h-60">
-                {isIdCheckLoading ? (
-                  <ClipLoader
-                    className="text-blue"
-                    color="text-blue"
-                    size={30}
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    disabled={!idCheckBtn}
-                    className={cls(
-                      "ml-10  btn-extra",
-                      idCheckBtn
-                        ? "cursor-pointer rounded border-1 btn-fill"
-                        : "btn-fill-disabled rounded "
-                    )}
-                    onClick={() => {
-                      setIdCheckLoading(true);
-                      idCheckAPI({ lognId: useId });
-                    }}
-                  >
-                    중복확인
-                  </button>
-                )}
-              </div>
-            </div>
-            {idCheck && (
-              <p className="font-normal text-b3 text-red">
-                영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.
-              </p>
-            )}
-          </div> */}
-
           <LabelInputBtn
             HtmlFor="id"
             label="아이디 *"
             btnText="중복확인"
             isLoading={false}
-            placeholder="아이디를 입력해주세요"
+            isBtnCheck={isIdCheckBtn}
             maxLength={20}
+            placeholder="아이디를 입력해주세요"
             register={register("Id", {
               required:
                 "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
+              pattern: {
+                value: regex.id,
+                message:
+                  "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
+              },
               minLength: {
                 value: 5,
                 message:
@@ -287,30 +244,11 @@ function SignUpPart1() {
               },
             })}
             errors={errors?.Id?.message}
+            onClick={() => {
+              const userId = getValues().Id;
+              idCheckAPI({ lognId: userId });
+            }}
           />
-
-          {/* <div className="mb-12 focus-within:text-blue">
-            <p className="mb-8 font-bold text-b3">비밀번호 *</p>
-            <div className="flex mb-8">
-              <input
-                className="flex-1 label-input"
-                type="password"
-                name="password"
-                placeholder="비밀번호를 입력해주세요"
-                ref={passWordRef}
-                onChange={handlePasswordCheck}
-                onFocus={() => {
-                  setPasswordCheck(false);
-                }}
-                onBlur={handlePasswordCheck}
-              />
-            </div>
-            {passwordCheck && (
-              <p className="font-normal text-b3 text-red">
-                영문 대소문자, 숫자, 특수문자를 포함하여 8자 이상 입력해 주세요.
-              </p>
-            )}
-          </div> */}
 
           <LabelInput
             HtmlFor="Pwd"
@@ -321,7 +259,11 @@ function SignUpPart1() {
             maxLength={20}
             register={register("Pwd", {
               required: "비밀번호를 입력해주세요",
-              pattern: regex.passWord,
+              pattern: {
+                value: regex.passWord,
+                message:
+                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+              },
               minLength: {
                 value: 8,
                 message:
@@ -340,7 +282,11 @@ function SignUpPart1() {
             maxLength={20}
             register={register("rePwd", {
               required: "비밀번호를 입력해주세요",
-              pattern: regex.passWord,
+              pattern: {
+                value: regex.passWord,
+                message:
+                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+              },
               minLength: {
                 value: 8,
                 message:
@@ -349,66 +295,7 @@ function SignUpPart1() {
             })}
             errors={errors?.rePwd?.message}
           />
-          {/* <div className="mb-12 focus-within:text-blue">
-            <p className="mb-8 font-bold text-b3">비밀번호 재입력 *</p>
-            <div className="flex mb-8">
-              <input
-                className="flex-1 label-input"
-                type="password"
-                name="repassword"
-                placeholder="비밀번호를 입력해주세요"
-                ref={rePassWordRef}
-                onChange={handleRePasswordCheck}
-                onFocus={() => {
-                  if (signPart1Btn) {
-                    setRePasswordCheck(false);
-                    setPassWordCrossCheck(false);
-                  }
-                }}
-                onBlur={handleRePasswordCheck}
-              />
-            </div>
-
-            {rePassWordCheck && (
-              <p className="font-normal text-b3 text-red">
-                영문 대소문자, 숫자, 특수문자를 포함하여 8자 이상 입력해 주세요.
-              </p>
-            )}
-
-            비밀번호 서로 체크후 다를경우 경고 메시지
-            {passWordCrossCheck && (
-              <p className="font-normal text-b3 text-red">
-                비밀번호가 일치하지 않습니다
-              </p>
-            )}
-          </div> */}
         </div>
-
-        {/* <p className="font-bold text-h2 mb-30">차량정보를 입력해 주세요.</p>
-        <div className="focus-within:text-blue">
-          <p className="mb-8 font-bold text-b3 focus:text-blue">차량번호 *</p>
-          <div className="flex mb-8">
-            <input
-              className="flex-1 label-input"
-              type="text"
-              name="id"
-              placeholder="차량번호를 입력해 주세요(ex 00가 0000)"
-              ref={carNumberRef}
-              onChange={handleCarNumberCheck}
-              onFocus={() => {
-                if (signPart1Btn) {
-                  setCarNumberCheck(false);
-                }
-              }}
-              onBlur={handleCarNumberCheck}
-            />
-          </div>
-          {carNumberCheck && (
-            <p className="font-normal text-b3 text-red">
-              형식이 올바르지 않습니다 (ex 00가0000)
-            </p>
-          )}
-        </div> */}
 
         <LabelInput
           HtmlFor="carNumber"
@@ -428,31 +315,10 @@ function SignUpPart1() {
         {isNextBtnLoading ? (
           <ClipLoader className="text-blue" color="text-blue" size={30} />
         ) : (
-          // <button
-          //   type="button"
-          //   className={cls(
-          //     "mt-30  btn-extra w-full",
-          //     signPart1Btn
-          //       ? "cursor-pointer rounded border-1 btn-fill"
-          //       : "btn-fill-disabled rounded "
-          //   )}
-          //   // input 값이 전부 통과될 경우 버튼 활성화!
-          //   // disabled={!signPart1Btn}
-          //   // onClick={() => {
-          //   //   navigate(urls.SignUpPart2);
-          //   //   dispatch(signPart1DataAdd(nextData));
-          //   //   setIsNextBtnLoading(true);
-          //   //   console.log("work");
-          //   // }}
-          //   onClick={handleSubmit(onSubmit)}
-          // >
-          //   다음
-          // </button>
-
           <Button
             text="다음"
             className="btn-extra mt-30"
-            checked={false}
+            isBtnCheck={isValid} // Id값 변경 되면 다시 비활성화 되어야 된다.
             onClick={handleSubmit(onSubmit)}
           />
         )}
