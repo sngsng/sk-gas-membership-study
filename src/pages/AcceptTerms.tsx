@@ -93,9 +93,17 @@ function AcceptTerms() {
   // 클릭한 Y 값 갯수
   const checkedTermsLength = requiredLengthCheck(checkList);
 
-  // Y 값 갯수 같은지 체크
   const termsRequiredLengthCheck =
     termsListRequiredLength === checkedTermsLength;
+
+  // Y 값 갯수 같은지 체크 # 1)
+  // function isBtnChecked() {
+  //   return termsListData.length > 0 && (allCheck || termsRequiredLengthCheck);
+  // }
+
+  // # 2)
+  const isTermsListBtnCheck =
+    termsListData.length > 0 && (allCheck || termsRequiredLengthCheck);
 
   return (
     <Layout isHeader title="행복충전모바일 회원가입" backBtn>
@@ -141,12 +149,9 @@ function AcceptTerms() {
         ) : (
           <Button
             text="동의하고 회원가입"
-            className={cls(
-              "mt-30  btn-extra w-full",
-              termsListData.length && (allCheck || termsRequiredLengthCheck)
-                ? "cursor-pointer rounded border-1 btn-fill"
-                : "btn-fill-disabled rounded "
-            )}
+            className={cls("mt-30  btn-extra w-full")}
+            // isBtnCheck={isBtnChecked()} // # 1)
+            isBtnCheck={isTermsListBtnCheck} // # 2) 바로 함수가 실행되는데, 이렇게 하는게 괜찮은지? useEffect로 수정을 해야될지?
             disabled={!termsRequiredLengthCheck}
             onClick={() => {
               navigate(urls.SignUpPart1);
