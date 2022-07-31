@@ -9,8 +9,8 @@ import SelectForm from "../../components/signUp/SelectForm";
 import TermsList from "../../components/signUp/TermsList";
 import LabelInput from "../../components/signUp/LabelInput";
 import Layout from "../../elements/Layout";
-import cls from "../../util";
 import LabelSelectBtn from "../../components/signUp/LabelSelectBtn";
+import Button from "../../elements/Button";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -203,7 +203,6 @@ function SignInPark2() {
         />
 
         {/* 성별 */}
-
         <Controller
           control={control}
           name="gen"
@@ -222,7 +221,6 @@ function SignInPark2() {
         />
 
         {/* 통신사 */}
-
         <Controller
           control={control}
           name="phoneCorp"
@@ -266,17 +264,14 @@ function SignInPark2() {
           termsLengthComparison={termsLengthComparison}
         />
 
-        <button
-          type="button"
-          className={cls(
-            "w-full text-center p-20 bg-[#e8e8e8] btn",
-            isValid && termsLengthComparison ? "btn-fill" : "btn-fill-disabled"
-          )}
-          // disabled={!(isValid && termsLengthComparison)}
+        {/* btn 컴포넌트 */}
+        <Button
+          text="동의하고 회원가입"
+          className="p-20"
+          isBtnCheck={isValid && termsLengthComparison}
+          disabled={!(isValid && termsLengthComparison)}
           onClick={handleSubmit(onSubmit)}
-        >
-          동의하고 회원가입
-        </button>
+        />
       </div>
     </Layout>
   );
