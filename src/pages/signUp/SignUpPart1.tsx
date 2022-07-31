@@ -284,8 +284,8 @@ function SignUpPart1() {
           <Button
             text="다음"
             className="btn-extra mt-30"
-            isBtnCheck={apiIdCheck && isValid} // Id값 변경 되면 다시 비활성화 되어야 된다.
-            disabled={!apiIdCheck && isValid}
+            isBtnCheck={apiIdCheck && isValid}
+            disabled={!apiIdCheck || !isValid}
             onClick={handleSubmit(onSubmit)}
           />
         )}
