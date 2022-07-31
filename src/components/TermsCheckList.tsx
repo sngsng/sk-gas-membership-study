@@ -46,13 +46,13 @@ function TermCheckItem({
 }
 
 interface TermsCheckListProps {
-  termsListData: Terms[];
+  termsListData?: Terms[];
   changeHandel: (check: boolean, id: Terms) => void;
   checkList: Terms | any;
 }
 
 function TermsCheckList({
-  termsListData,
+  termsListData = [],
   changeHandel,
   checkList,
 }: TermsCheckListProps) {

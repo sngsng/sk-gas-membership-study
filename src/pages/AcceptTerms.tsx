@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useQuery } from "react-query";
 import { CheckBoxOff, CheckBoxOn } from "../assets";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
@@ -13,40 +14,23 @@ import Button from "../elements/Button";
 import ApiUrls from "../constants/api_urls";
 import hmsRequest from "../network";
 import { Terms } from "../apis/signUp/types/responses";
+import { fetchTermsList } from "../apis/signUp";
 
 function AcceptTerms() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const userCheckedList = useAppSelector((state) => state.user.cluAgrList); // 다음 페이지로 갔다가 올때
-  const [isLoading, setIsLoading] = useState(false);
   const [allCheck, setAllCheck] = useState(false);
-  const [termsListData, setTermsListData] = useState<Terms[]>([]); // 고정값 7
-  const [checkList, setCheckList] = useState<Terms[] | undefined>(
-    userCheckedList
-  ); // 선택하는 값
+  const [checkList, setCheckList] = useState<Terms[]>(userCheckedList || []);
 
-  useEffect(() => {
-    setIsLoading(true);
-    (async () => {
-      try {
-        const { data } = await hmsRequest(ApiUrls.TERMS_LIST, {
-          svcCluFg: "01",
-        });
-        const { cluList } = data.responseData;
-        setTermsListData(cluList);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
-  // 마지막으로 로딩을 처리하는 방법?? ==> finally : 무조건적으로 한번은 실행된다.
-  // 그리고 캐시 처리 하는 방법.
+  const { data: termsListData, isLoading } = useQuery<Terms[]>(
+    "termsListData",
+    fetchTermsList
+  );
 
   // all check버튼 활성화 체크부분
   useEffect(() => {
-    if (termsListData.length) {
+    if (termsListData?.length) {
       setAllCheck(termsListData.length === checkList?.length);
     }
   }, [checkList, termsListData]);
@@ -66,11 +50,11 @@ function AcceptTerms() {
 
   // all 버튼 클릭시
   const allCheckHandel = () => {
-    if (!allCheck) {
+    if (!allCheck && termsListData) {
       setCheckList([]);
       setAllCheck(true);
       setCheckList(
-        termsListData.map((terms) => {
+        termsListData?.map((terms: Terms) => {
           return terms;
         })
       );
@@ -96,14 +80,8 @@ function AcceptTerms() {
   const termsRequiredLengthCheck =
     termsListRequiredLength === checkedTermsLength;
 
-  // Y 값 갯수 같은지 체크 # 1)
-  // function isBtnChecked() {
-  //   return termsListData.length > 0 && (allCheck || termsRequiredLengthCheck);
-  // }
-
-  // # 2)
-  const isTermsListBtnCheck =
-    termsListData.length > 0 && (allCheck || termsRequiredLengthCheck);
+  // Y 값 갯수 같은지 체크
+  const isTermsListBtnCheck = allCheck || termsRequiredLengthCheck;
 
   return (
     <Layout isHeader title="행복충전모바일 회원가입" backBtn>
@@ -150,8 +128,7 @@ function AcceptTerms() {
           <Button
             text="동의하고 회원가입"
             className={cls("mt-30  btn-extra w-full")}
-            // isBtnCheck={isBtnChecked()} // # 1)
-            isBtnCheck={isTermsListBtnCheck} // # 2) 바로 함수가 실행되는데, 이렇게 하는게 괜찮은지? useEffect로 수정을 해야될지?
+            isBtnCheck={isTermsListBtnCheck}
             disabled={!termsRequiredLengthCheck}
             onClick={() => {
               navigate(urls.SignUpPart1);
@@ -165,17 +142,3 @@ function AcceptTerms() {
 }
 
 export default AcceptTerms;
-
-// // dispatch 하려고 만든 데이터
-// if (termsListData && checkList) {
-//   const sendData = termsListData
-//     ?.filter((terms) => {
-//       return checkList.includes(terms.cluCd);
-//     })
-//     .map((terms) => {
-//       delete terms.cluShrtCtt;
-//       return terms;
-//     });
-
-//   console.log(sendData);
-// }

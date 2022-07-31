@@ -3,7 +3,19 @@ import hmsRequest from "../../network";
 import { TermsIdCheckBody } from "./types/requests";
 import { Terms } from "./types/responses";
 
-// eslint-disable-next-line import/prefer-default-export
+// eslint-disable-next-line consistent-return
+export const fetchTermsList = async () => {
+  try {
+    const { data } = await hmsRequest(ApiUrls.TERMS_LIST, {
+      svcCluFg: "01",
+    });
+    const { cluList } = data.responseData;
+    return cluList;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const idCheckAPI = async (useId: TermsIdCheckBody) => {
   try {
     const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, useId);
