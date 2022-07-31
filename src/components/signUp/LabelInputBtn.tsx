@@ -60,6 +60,7 @@ function LabelInputBtn({
               <Button
                 className="ml-10 min-h-60 text-b1 min-w-101"
                 text={btnText}
+                disabled={!isBtnCheck}
                 isBtnCheck={isBtnCheck}
                 onClick={onClick}
               />

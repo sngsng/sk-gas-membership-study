@@ -292,10 +292,19 @@ function SignUpPart1() {
                 message:
                   "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
               },
+              validate: {
+                passWordCrossCheck: (value) => {
+                  return (
+                    value !== getValues("Pwd") && "비밀번호가 일치하지 않습니다"
+                  );
+                },
+              },
             })}
             errors={errors?.rePwd?.message}
           />
         </div>
+
+        <p className="text-h2 mb-30">차량정보를 입력해 주세요.</p>
 
         <LabelInput
           HtmlFor="carNumber"

@@ -14,11 +14,11 @@ interface LabelSelectBtnProps {
 
 function LabelSelectBtn({
   label,
+  name,
   value,
   choice1,
   choice2,
   setValue,
-  name,
 }: LabelSelectBtnProps) {
   return (
     <div className="flex flex-col mb-20 font-bold text-b3 ">
