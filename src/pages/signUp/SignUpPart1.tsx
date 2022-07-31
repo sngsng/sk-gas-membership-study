@@ -33,34 +33,24 @@ function SignUpPart1() {
     handleSubmit,
     getValues,
     getFieldState,
-
     formState: { errors, isValid, isDirty, isSubmitted, isSubmitSuccessful },
   } = useForm<SignUpPart1SubmitType>({
     mode: "onChange",
   });
+
+  console.log("----------------isValid----------------");
+  console.log(errors);
 
   const onSubmit = (data: SignUpPart1SubmitType) => {
     console.log("----------------data----------------");
     console.log(data);
   };
 
-  const [idCheck, setIdCheck] = useState(false);
   const [apiIdCheck, setApiIdCheck] = useState(false);
-  const [idCheckBtn, setIdCheckBtn] = useState(false);
-  const [passwordCheck, setPasswordCheck] = useState(false);
-  const [rePassWordCheck, setRePasswordCheck] = useState(false);
-  const [passWordCrossCheck, setPassWordCrossCheck] = useState(false);
-  const [carNumberCheck, setCarNumberCheck] = useState(false);
-  const [signPart1Btn, setSignPart1Btn] = useState(false);
+
   const [isIdCheckLoading, setIdCheckLoading] = useState(false);
-  const [isNextBtnLoading, setIsNextBtnLoading] = useState(false);
 
-  const idRef = useRef<HTMLInputElement>(null);
-  const passWordRef = useRef<HTMLInputElement>(null);
-  const rePassWordRef = useRef<HTMLInputElement>(null);
-  const carNumberRef = useRef<HTMLInputElement>(null);
-
-  const [useId, setUserId] = useState("");
+  const [userId, setUserId] = useState("");
 
   // dispatch로 다음 데이터 넘기는 곳
   const [nextData, setNextData] = useState<UserData1>({
@@ -70,57 +60,11 @@ function SignUpPart1() {
     carTbkNo: "",
   });
 
-  // 다음 파트로 넘어갈수 있는지 체크 하는 곳
-  // useEffect(() => {
-  //   if (
-  //     !idCheck &&
-  //     idRef.current?.value &&
-  //     regex.id.test(idRef.current.value) &&
-  //     !passwordCheck &&
-  //     passWordRef.current?.value &&
-  //     regex.passWord.test(passWordRef.current.value) &&
-  //     !rePassWordCheck &&
-  //     rePassWordRef.current?.value &&
-  //     regex.passWord.test(rePassWordRef.current.value) &&
-  //     !passWordCrossCheck &&
-  //     carNumberRef.current?.value &&
-  //     !carNumberCheck &&
-  //     regex.carNumber.test(carNumberRef.current.value) &&
-  //     apiIdCheck
-  //   ) {
-  //     setSignPart1Btn(true);
-  //   } else {
-  //     setSignPart1Btn(false);
-  //   }
-  // }, [
-  //   idCheck,
-  //   passwordCheck,
-  //   rePassWordCheck,
-  //   passWordCrossCheck,
-  //   carNumberCheck,
-  //   apiIdCheck,
-  // ]);
-
-  // // 아이디 체크 (정규식)
-  // const handleIdCheck = () => {
-  //   if (!idRef.current?.value) {
-  //     setIdCheck(false);
-  //   } else if (idRef.current?.value && regex.id.test(idRef.current?.value)) {
-  //     setApiIdCheck(false);
-  //     setIdCheck(false);
-  //     setIdCheckBtn(true);
-  //     setUserId(idRef.current.value);
-  //     setNextData({ ...nextData, iognId: idRef.current.value });
-  //   } else {
-  //     setIdCheck(true);
-  //     setIdCheckBtn(false);
-  //   }
-  // };
-
   // id 중복체크 (api)
-  const idCheckAPI = async (useId: TermsIdCheckBody) => {
+  const idCheckAPI = async (userId: TermsIdCheckBody) => {
+    setUserId(userId.lognId);
     try {
-      const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, useId);
+      const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, userId);
       const { dupYn } = data.responseData;
 
       if (dupYn === "Y") {
@@ -242,11 +186,13 @@ function SignUpPart1() {
                 message:
                   "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
               },
+              onChange: () => setApiIdCheck(false),
             })}
             errors={errors?.Id?.message}
             onClick={() => {
               const userId = getValues().Id;
               idCheckAPI({ lognId: userId });
+              // useState로 상태관리. 또는 hookform에서 쓸만한 기능 있는지 체크하기.
             }}
           />
 
@@ -292,12 +238,20 @@ function SignUpPart1() {
                 message:
                   "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
               },
-              validate: {
-                passWordCrossCheck: (value) => {
-                  return (
-                    value !== getValues("Pwd") && "비밀번호가 일치하지 않습니다"
-                  );
-                },
+              // validate: {
+              //   passWordCrossCheck: (value) => {
+              //     console.clear();
+              //     console.log("----------------value----------------");
+              //     console.log(value);
+              //     return value === getValues("Pwd");
+              //     // ? ""
+              //     // : "비밀번호가 일치하지 않습니다.";
+              //   },
+              // },
+              validate: (value) => {
+                return (
+                  value === getValues("Pwd") || "비밀번호가 일치 하지 않습니다"
+                );
               },
             })}
             errors={errors?.rePwd?.message}
@@ -321,13 +275,17 @@ function SignUpPart1() {
           errors={errors?.carNumber?.message}
         />
 
-        {isNextBtnLoading ? (
-          <ClipLoader className="text-blue" color="text-blue" size={30} />
+        {/* 여기도 로딩 처리를 해줘야 되낭? */}
+        {false ? (
+          <div className="py-40 text-center">
+            <ClipLoader className="text-blue" color="text-blue" size={30} />
+          </div>
         ) : (
           <Button
             text="다음"
             className="btn-extra mt-30"
-            isBtnCheck={isValid} // Id값 변경 되면 다시 비활성화 되어야 된다.
+            isBtnCheck={apiIdCheck && isValid} // Id값 변경 되면 다시 비활성화 되어야 된다.
+            disabled={!apiIdCheck && isValid}
             onClick={handleSubmit(onSubmit)}
           />
         )}
