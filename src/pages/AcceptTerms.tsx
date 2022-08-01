@@ -15,6 +15,7 @@ import hmsRequest from "../network";
 import { Terms } from "../apis/signUp/types/responses";
 import { fetchTermsList } from "../apis/signUp";
 import TermsList from "../components/signUp/TermsList";
+import string from "../constants/string";
 
 function AcceptTerms() {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ function AcceptTerms() {
   const isTermsListBtnCheck = allCheck || termsRequiredLengthCheck;
 
   return (
-    <Layout isHeader title="행복충전모바일 회원가입" backBtn>
+    <Layout isHeader title={string.MobileMembershipRegistration} backBtn>
       <div className="p-20">
         <div className="text-center mb-160">
           <p className="mb-6 font-bold mt-60 text-h2">약관 동의가 필요해요</p>
@@ -85,7 +86,7 @@ function AcceptTerms() {
           <p className="text-center py-150">로딩중입니다....</p>
         ) : (
           <TermsList
-            allCheckTitle="전체 약관에 동의합니다."
+            allCheckTitle={string.AcceptTheFullTerms}
             termsData={termsListData}
             termsCheckList={checkList}
             changeHandel={changeHandel}
@@ -104,7 +105,7 @@ function AcceptTerms() {
           </div>
         ) : (
           <Button
-            text="동의하고 회원가입"
+            text={string.AgreeAndSignUp}
             className={cls("mt-30  btn-extra w-full")}
             isBtnCheck={isTermsListBtnCheck}
             disabled={!termsRequiredLengthCheck}

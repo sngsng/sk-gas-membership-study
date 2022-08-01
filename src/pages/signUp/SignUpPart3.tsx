@@ -60,11 +60,11 @@ function SignInPark3() {
 
   console.log(userAPiData);
   return (
-    <Layout title="행복한충전모바일 회원가입">
+    <Layout title={string.MobileMembershipRegistration}>
       <div className="flex flex-col p-20">
         <h2 className="text-h2 mb-30">인증수단 선택</h2>
         <button className="mb-10 btn btn-fill btn-extra" type="button">
-          PASS 앱으로 인증완료
+          {string.AuthenticateWithApp}
         </button>
         <p className="dot">
           PASS 앱 푸시알림을 통한 본인인증을 완료한 후 위 버튼을 눌러주시면
@@ -79,7 +79,7 @@ function SignInPark3() {
           type="button"
           onClick={RequestForSmsAuthentication}
         >
-          휴대폰으로 인증하기
+          {string.AuthenticateWithPhone}
         </button>
         <p className="dot">
           입력하신 휴대폰 번호로 발송된 보안코드를 통해 본인인증을 진행합니다.

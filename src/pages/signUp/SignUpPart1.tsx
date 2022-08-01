@@ -84,31 +84,28 @@ function SignUpPart1() {
   };
 
   return (
-    <Layout title="행복충전모바일 회원가입">
+    <Layout title={string.MobileMembershipRegistration}>
       <form className="p-20" onSubmit={handleSubmit(onSubmit)}>
         <p className="text-h2 mb-30">가입정보를 입력해 주세요.</p>
 
         <div className="mb-40">
           <LabelInputBtn
             HtmlFor="id"
-            label="아이디 *"
-            btnText="중복확인"
+            label={string.Id}
+            btnText={string.CheckForDuplication}
             isLoading={false} // loadgin useQuery 사용
             isBtnCheck={isIdCheckBtn}
             maxLength={20}
-            placeholder="아이디를 입력해주세요"
+            placeholder={string.EnterID}
             register={register("Id", {
-              required:
-                "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
+              required: string.IdErrorMessage,
               pattern: {
                 value: regex.id,
-                message:
-                  "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
+                message: string.IdErrorMessage,
               },
               minLength: {
                 value: 5,
-                message:
-                  "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
+                message: string.IdErrorMessage,
               },
               onChange: () => setApiIdCheck(false),
             })}
@@ -122,21 +119,19 @@ function SignUpPart1() {
           <LabelInput
             HtmlFor="Pwd"
             // type="password"
-            label="비밀번호 *"
+            label={string.Pwd}
             className="mb-12"
-            placeholder="비밀번호를 입력해주세요"
+            placeholder={string.EnterPwd}
             maxLength={20}
             register={register("Pwd", {
-              required: "비밀번호를 입력해주세요",
+              required: string.EnterPwd,
               pattern: {
                 value: regex.passWord,
-                message:
-                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+                message: string.PassWordErrorMessage,
               },
               minLength: {
                 value: 8,
-                message:
-                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+                message: string.PassWordErrorMessage,
               },
             })}
             errors={errors?.Pwd?.message}
@@ -145,26 +140,22 @@ function SignUpPart1() {
           <LabelInput
             HtmlFor="rePwd"
             // type="password"
-            label="비밀번호 재입력 *"
+            label={string.RePwd}
             className="mb-12"
-            placeholder="비밀번호를 입력해주세요"
+            placeholder={string.EnterPwd}
             maxLength={20}
             register={register("rePwd", {
-              required: "비밀번호를 입력해주세요",
+              required: string.EnterPwd,
               pattern: {
                 value: regex.passWord,
-                message:
-                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+                message: string.PassWordErrorMessage,
               },
               minLength: {
                 value: 8,
-                message:
-                  "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
+                message: string.PassWordErrorMessage,
               },
               validate: (value) => {
-                return (
-                  value === getValues("Pwd") || "비밀번호가 일치 하지 않습니다"
-                );
+                return value === getValues("Pwd") || string.PassWordsNotMatch;
               },
             })}
             errors={errors?.rePwd?.message}
@@ -175,27 +166,26 @@ function SignUpPart1() {
 
         <LabelInput
           HtmlFor="carNumber"
-          label="차량번호 *"
-          placeholder="차량번호를 입력해 주세요(ex 00가 0000)"
+          label={string.CarNumber}
+          placeholder={string.EnterCarNumber}
           maxLength={10}
           register={register("carNumber", {
-            required: "차량번호를 입력해 주세요",
+            required: string.CarNumber,
             pattern: {
               value: regex.carNumber,
-              message: " 형식이 올바르지 않습니다 (ex 00가0000)",
+              message: string.CarErrorMessage,
             },
           })}
           errors={errors?.carNumber?.message}
         />
 
-        {/* 여기도 로딩 처리를 해줘야 되낭? */}
         {false ? (
           <div className="py-40 text-center">
             <ClipLoader className="text-blue" color="text-blue" size={30} />
           </div>
         ) : (
           <Button
-            text="다음"
+            text={string.Next}
             className="btn-extra mt-30"
             isBtnCheck={apiIdCheck && isValid}
             disabled={!apiIdCheck || !isValid}

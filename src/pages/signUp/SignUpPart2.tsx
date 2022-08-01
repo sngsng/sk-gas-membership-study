@@ -157,48 +157,74 @@ function SignInPark2() {
     }
   };
 
+  const { mutateAsync: NextSendData } = useMutation(sendSMS);
+
   // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
+    // mapping data redux
+    dispatch(
+      SignPart2DataMapping({
+        ...nextData,
+        birthday,
+        name,
+        gen,
+        phoneCorp,
+        phoneNo,
+        nation: "0",
+      })
+    );
 
-    setNextData({
+    const body = {
       ...nextData,
       birthday,
       name,
       gen,
-      phoneCorp: phoneCorp.value,
       phoneNo,
+      phoneCorp: phoneCorp.value,
+      nation: "0",
+    };
+
+    // 유저정보 redux
+    dispatch(signPart2DataAdd(body));
+
+    // 본인인증 app 인증요청 후 자료 리덕스에 담기
+    NextSendData(body).then((res) => {
+      const { certNum, trCert, check1 } = res;
+      dispatch(signUpPartApiData2({ certNum, trCert, check1 }));
+      // navigate(urls.SignUpPart3);
     });
-    // navigate(urls.SignUpPart3);
   };
 
   return (
-    <Layout title="행복충전모바일 회원가입">
+    <Layout title={string.MobileMembershipRegistration}>
       <form className="p-20">
-        <p className="mb-30 text-h2">본인인증</p>
+        <p className="mb-30 text-h2">{string.Authentication}</p>
 
+        {/* 이름 */}
         <LabelInput
           HtmlFor="name"
-          label="이름 *"
-          placeholder="이름을 입력해주세요"
+          label={string.Name}
+          placeholder={string.EnterName}
           className="mb-20 "
           maxLength={20}
           register={register("name", {
-            required: "이름을 입력해주세요",
-            minLength: { value: 2, message: "2글자 이상 입력해주세요" },
+            required: string.EnterName,
+            minLength: { value: 2, message: string.EnterMoreThan2 },
           })}
           errors={errors?.name?.message}
         />
 
+        {/* 생년월일 */}
         <LabelInput
           HtmlFor="birthday"
-          placeholder="생년월일을 입력해주세요"
-          label="생년월일 *"
+          label={string.Birth}
+          placeholder={string.EnterBirth}
           maxLength={8}
           className="mb-20 "
           register={register("birthday", {
-            required: "생년월일을 입력해주세요",
-            minLength: { value: 8, message: "생년월일 8자리를 입력해주세요" },
+            required: string.EnterBirth,
+            minLength: { value: 8, message: string.Enter8BirthDate },
           })}
           errors={errors?.birthday?.message}
         />
@@ -211,9 +237,9 @@ function SignInPark2() {
             return (
               <LabelSelectBtn
                 name="gen"
-                label="성별 *"
-                choice1="남자"
-                choice2="여자"
+                label={string.Gen}
+                choice1={string.Man}
+                choice2={string.Woman}
                 setValue={setValue}
                 value={value}
               />
@@ -225,30 +251,32 @@ function SignInPark2() {
         <Controller
           control={control}
           name="phoneCorp"
-          rules={{ required: "통신사를 선택해주세요" }}
+          rules={{ required: string.Agency }}
           render={({ field: { onChange } }) => {
             return (
               <SelectForm
                 HtmlFor="phoneCorp"
-                label="통신사 *"
-                placeholder="통신사를 선택해 주세요"
+                label={string.Agency}
+                placeholder={string.EnterAgency}
                 onChange={onChange}
                 options={options}
                 errors={errors?.phoneCorp?.message}
+                defaultValue={singPart2MappingData.phoneCorp}
               />
             );
           }}
         />
 
+        {/* 휴대폰 */}
         <LabelInput
           HtmlFor="phoneNo"
-          label="휴대폰 *"
-          placeholder="휴대폰 번호를 입력해주세요"
+          label={string.PhoneNumber}
+          placeholder={string.EnterPhoneNumber}
           maxLength={11}
           className="mb-20"
           register={register("phoneNo", {
-            required: "휴대폰 번호를 입력해주세요",
-            minLength: { value: 11, message: "휴대폰 11자리를 입력해주세요" },
+            required: string.EnterPhoneNumber,
+            minLength: { value: 11, message: string.Enter11PhoneMessage },
           })}
           errors={errors?.phoneNo?.message}
         />
@@ -257,7 +285,7 @@ function SignInPark2() {
       {/* 약관 */}
       <div className="p-20">
         <TermsList
-          allCheckTitle="본인인증 약관에 전체 동의합니다."
+          allCheckTitle={string.FullyAgreeTerms}
           changeHandel={changeHandel}
           termsData={fetchPassAuthenticationTermsList()}
           termsAllCheckHandel={termsAllCheckHandel}
@@ -267,7 +295,7 @@ function SignInPark2() {
 
         {/* btn 컴포넌트 */}
         <Button
-          text="동의하고 회원가입"
+          text={string.AgreeAndSignUp}
           className="p-20"
           isBtnCheck={isValid && termsLengthComparison}
           disabled={!(isValid && termsLengthComparison)}
