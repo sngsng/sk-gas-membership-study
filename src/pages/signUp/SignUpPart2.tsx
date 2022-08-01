@@ -57,7 +57,7 @@ function SignInPark2() {
     formState: { errors, isValid },
     control,
     setValue,
-    getValues,
+    trigger,
   } = useForm<SignUpPart2SubmitType>({
     defaultValues: {
       gen: "0",
@@ -73,7 +73,9 @@ function SignInPark2() {
     setValue("gen", gen || "");
     setValue("phoneNo", phoneNo || "");
     setValue("phoneCorp", phoneCorp || "");
+
     if (termsCheckList.length !== 0) {
+      trigger(["birthday", "name", "gen", "phoneNo", "phoneCorp"]);
       setTermsCheckList(termsCheckList);
     }
   }, []);
@@ -194,7 +196,7 @@ function SignInPark2() {
     NextSendData(body).then((res) => {
       const { certNum, trCert, check1 } = res;
       dispatch(signUpPartApiData2({ certNum, trCert, check1 }));
-      // navigate(urls.SignUpPart3);
+      navigate(urls.SignUpPart3);
     });
   };
 
