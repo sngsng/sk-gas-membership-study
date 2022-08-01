@@ -43,7 +43,7 @@ function LabelInputBtn({
         )}
       >
         {label}
-        <div className="flex">
+        <div className="flex mt-8">
           <input
             id={HtmlFor}
             type={type}

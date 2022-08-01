@@ -54,7 +54,7 @@ const options = [
 function SignInPark2() {
   // const navigate = useNavigate();
   const [nextData, setNextData] = useState<Part2Data>();
-  const [termsCheckList, setTermsCheckList] = useState<Terms[] | any>([]);
+  const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
   const termsDataLength = fetchPassAuthenticationTermsList().length;
   const termsCheckListLength = termsCheckList.length;
   const termsLengthComparison = termsCheckListLength === termsDataLength;

@@ -3,7 +3,7 @@ import hmsRequest from "../../network";
 import { TermsIdCheckBody } from "./types/requests";
 import { Terms } from "./types/responses";
 
-// eslint-disable-next-line consistent-return
+// 약관리스트 불러오기.
 export const fetchTermsList = async () => {
   try {
     const { data } = await hmsRequest(ApiUrls.TERMS_LIST, {

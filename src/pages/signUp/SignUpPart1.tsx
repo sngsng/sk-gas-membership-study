@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useForm } from "react-hook-form";
 import { TermsIdCheckBody } from "../../apis/signUp/types/requests";
 import ApiUrls from "../../constants/api_urls";
 import regex from "../../util/regex";
-import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import hmsRequest from "../../network";
-import { useAppDispatch } from "../../store/hook";
-import { UserData1 } from "../../store/modules/types/signUp";
-import { signPart1DataAdd } from "../../store/modules/User";
-import cls from "../../util";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 import LabelInput from "../../components/signUp/LabelInput";
 import Button from "../../elements/Button";
 import LabelInputBtn from "../../components/signUp/LabelInputBtn";
+import { signPart1DataAdd } from "../../store/modules/User";
+import urls from "../../constants/urls";
+// import { useMutation } from "react-query";
+import { idCheckAPI } from "../../apis/signUp";
 
 interface SignUpPart1SubmitType {
   Id: string;
@@ -25,44 +25,32 @@ interface SignUpPart1SubmitType {
 }
 
 function SignUpPart1() {
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
   const {
     register,
     handleSubmit,
     getValues,
-    getFieldState,
-    formState: { errors, isValid, isDirty, isSubmitted, isSubmitSuccessful },
+    setValue,
+    formState: { errors, isValid },
   } = useForm<SignUpPart1SubmitType>({
     mode: "onChange",
+    reValidateMode: "onBlur",
   });
-
-  console.log("----------------isValid----------------");
-  console.log(errors);
-
-  const onSubmit = (data: SignUpPart1SubmitType) => {
-    console.log("----------------data----------------");
-    console.log(data);
-  };
-
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [apiIdCheck, setApiIdCheck] = useState(false);
+  const isIdCheckBtn = !!getValues("Id") && !errors.Id;
+  const userData = useAppSelector((state) => state.user);
 
-  const [isIdCheckLoading, setIdCheckLoading] = useState(false);
+  useEffect(() => {
+    const { iognId, iognPwd, carFrtNo, carTbkNo } = userData;
+    setValue("Id", iognId || "");
+    setValue("Pwd", iognPwd || "");
+    setValue("rePwd", iognPwd || "");
+    setValue("carNumber", `${carFrtNo}${carTbkNo}` || "");
+  }, []);
 
-  const [userId, setUserId] = useState("");
-
-  // dispatch로 다음 데이터 넘기는 곳
-  const [nextData, setNextData] = useState<UserData1>({
-    iognId: "",
-    iognPwd: "",
-    carFrtNo: "",
-    carTbkNo: "",
-  });
-
-  // id 중복체크 (api)
+  // id 중복체크 (api) // 파일 옮기기  //상태관리는...?
   const idCheckAPI = async (userId: TermsIdCheckBody) => {
-    setUserId(userId.lognId);
     try {
       const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, userId);
       const { dupYn } = data.responseData;
@@ -77,87 +65,23 @@ function SignUpPart1() {
       }
     } catch (err) {
       console.log(err);
-    } finally {
-      setIdCheckLoading(false);
     }
   };
 
-  // // 비밀번호 체크
-  // const handlePasswordCheck = () => {
-  //   if (
-  //     (passWordRef.current?.value &&
-  //       regex.passWord.test(passWordRef.current.value)) ||
-  //     !passWordRef.current?.value
-  //   ) {
-  //     setPasswordCheck(false);
-  //   } else {
-  //     setPasswordCheck(true);
-  //   }
+  // const { mutateAsync: test } = useMutation(idCheckAPI);
+  // console.log(test)
 
-  //   if (
-  //     passWordRef.current?.value &&
-  //     rePassWordRef.current?.value &&
-  //     passWordRef.current?.value !== rePassWordRef.current?.value &&
-  //     regex.passWord.test(rePassWordRef.current.value) &&
-  //     regex.passWord.test(passWordRef.current.value)
-  //   ) {
-  //     setPassWordCrossCheck(true);
-  //   } else if (
-  //     passWordRef.current?.value === rePassWordRef.current?.value ||
-  //     !regex.passWord.test(rePassWordRef.current?.value as string)
-  //   ) {
-  //     setPassWordCrossCheck(false);
-  //   }
-  // };
+  const onSubmit = (data: SignUpPart1SubmitType) => {
+    const part1Data = {
+      iognId: data.Id,
+      iognPwd: data.Pwd,
+      carFrtNo: data.carNumber.slice(0, 3),
+      carTbkNo: data.carNumber.slice(3),
+    };
 
-  // // 비밀번호 재확인 체크
-  // const handleRePasswordCheck = () => {
-  //   if (
-  //     (rePassWordRef.current?.value &&
-  //       regex.passWord.test(rePassWordRef.current.value)) ||
-  //     !rePassWordRef.current?.value
-  //   ) {
-  //     setRePasswordCheck(false);
-  //   } else {
-  //     setRePasswordCheck(true);
-  //   }
-
-  //   if (
-  //     passWordRef.current?.value &&
-  //     rePassWordRef.current?.value &&
-  //     passWordRef.current?.value !== rePassWordRef.current?.value &&
-  //     regex.passWord.test(rePassWordRef.current.value) &&
-  //     regex.passWord.test(passWordRef.current.value)
-  //   ) {
-  //     setPassWordCrossCheck(true);
-  //   } else if (
-  //     passWordRef.current?.value === rePassWordRef.current?.value ||
-  //     !regex.passWord.test(rePassWordRef.current?.value as string)
-  //   ) {
-  //     setPassWordCrossCheck(false);
-  //     setNextData({ ...nextData, iognPwd: rePassWordRef.current?.value });
-  //   }
-  // };
-
-  // // 차량번호 체크
-  // const handleCarNumberCheck = () => {
-  //   if (
-  //     (carNumberRef.current?.value &&
-  //       regex.carNumber.test(carNumberRef.current.value)) ||
-  //     !carNumberRef.current?.value
-  //   ) {
-  //     setCarNumberCheck(false);
-  //     // 차량 앞번호
-  //     const carFrtNo = carNumberRef.current?.value.slice(0, 3);
-  //     // 차량 뒷번호
-  //     const carTbkNo = carNumberRef.current?.value.slice(3);
-  //     setNextData({ ...nextData, carFrtNo, carTbkNo });
-  //   } else {
-  //     setCarNumberCheck(true);
-  //   }
-  // };
-
-  const isIdCheckBtn = !!getValues().Id && !errors.Id;
+    dispatch(signPart1DataAdd(part1Data));
+    navigate(urls.SignUpPart2);
+  };
 
   return (
     <Layout title="행복충전모바일 회원가입">
@@ -169,7 +93,7 @@ function SignUpPart1() {
             HtmlFor="id"
             label="아이디 *"
             btnText="중복확인"
-            isLoading={false}
+            isLoading={false} // loadgin useQuery 사용
             isBtnCheck={isIdCheckBtn}
             maxLength={20}
             placeholder="아이디를 입력해주세요"
@@ -192,7 +116,6 @@ function SignUpPart1() {
             onClick={() => {
               const userId = getValues().Id;
               idCheckAPI({ lognId: userId });
-              // useState로 상태관리. 또는 hookform에서 쓸만한 기능 있는지 체크하기.
             }}
           />
 
@@ -238,16 +161,6 @@ function SignUpPart1() {
                 message:
                   "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
               },
-              // validate: {
-              //   passWordCrossCheck: (value) => {
-              //     console.clear();
-              //     console.log("----------------value----------------");
-              //     console.log(value);
-              //     return value === getValues("Pwd");
-              //     // ? ""
-              //     // : "비밀번호가 일치하지 않습니다.";
-              //   },
-              // },
               validate: (value) => {
                 return (
                   value === getValues("Pwd") || "비밀번호가 일치 하지 않습니다"
