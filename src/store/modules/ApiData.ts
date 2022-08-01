@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface SignPart2 {
   certNum: string;
-  trCert: string;
+  trCert?: string;
   check1: string;
+  check2: string;
 }
 
 export interface SignPart3 extends SignPart2 {
-  check2: string;
   check3: string;
 }
 
@@ -27,6 +27,7 @@ export const UserApiData = createSlice({
       state.certNum = action.payload.certNum;
       state.trCert = action.payload.trCert;
       state.check1 = action.payload.check1;
+      state.check2 = action.payload.check2;
     },
     signUpPartApiData3: (state, action: PayloadAction<SignPart3>) => {
       state.check1 = action.payload.check1;

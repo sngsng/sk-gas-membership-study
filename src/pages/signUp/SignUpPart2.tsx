@@ -43,10 +43,8 @@ const options = [
 function SignInPark2() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const userData = useAppSelector((state) => state.user);
-  const apiData = useAppSelector((state) => state.userApiData);
   const singPart2MappingData = useAppSelector((state) => state.mappingData);
-  const [nextData, setNextData] = useState<Part2Data>();
+  const [apiTermsData, setApiTermsData] = useState<Part2Data>();
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
   const termsDataLength = fetchPassAuthenticationTermsList().length;
   const termsCheckListLength = termsCheckList.length;
@@ -89,8 +87,8 @@ function SignInPark2() {
           return terms;
         })
       );
-      setNextData({
-        ...nextData,
+      setApiTermsData({
+        ...apiTermsData,
         terms1chk: "Y",
         terms2chk: "Y",
         terms3chk: "Y",
@@ -98,8 +96,8 @@ function SignInPark2() {
       });
     } else {
       setTermsCheckList([]);
-      setNextData({
-        ...nextData,
+      setApiTermsData({
+        ...apiTermsData,
         terms1chk: "",
         terms2chk: "",
         terms3chk: "",
@@ -112,31 +110,31 @@ function SignInPark2() {
   const termsRequired = (index: number) => {
     switch (index) {
       case 1:
-        if (nextData?.terms1chk) {
-          setNextData({ ...nextData, terms1chk: "" });
+        if (apiTermsData?.terms1chk) {
+          setApiTermsData({ ...apiTermsData, terms1chk: "" });
         } else {
-          setNextData({ ...nextData, terms1chk: "Y" });
+          setApiTermsData({ ...apiTermsData, terms1chk: "Y" });
         }
         break;
       case 2:
-        if (nextData?.terms2chk) {
-          setNextData({ ...nextData, terms2chk: "" });
+        if (apiTermsData?.terms2chk) {
+          setApiTermsData({ ...apiTermsData, terms2chk: "" });
         } else {
-          setNextData({ ...nextData, terms2chk: "Y" });
+          setApiTermsData({ ...apiTermsData, terms2chk: "Y" });
         }
         break;
       case 3:
-        if (nextData?.terms3chk) {
-          setNextData({ ...nextData, terms3chk: "" });
+        if (apiTermsData?.terms3chk) {
+          setApiTermsData({ ...apiTermsData, terms3chk: "" });
         } else {
-          setNextData({ ...nextData, terms3chk: "Y" });
+          setApiTermsData({ ...apiTermsData, terms3chk: "Y" });
         }
         break;
       case 4:
-        if (nextData?.terms4chk) {
-          setNextData({ ...nextData, terms4chk: "" });
+        if (apiTermsData?.terms4chk) {
+          setApiTermsData({ ...apiTermsData, terms4chk: "" });
         } else {
-          setNextData({ ...nextData, terms4chk: "Y" });
+          setApiTermsData({ ...apiTermsData, terms4chk: "Y" });
         }
         break;
 
@@ -165,10 +163,11 @@ function SignInPark2() {
   // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
+
     // mapping data redux
     dispatch(
       SignPart2DataMapping({
-        ...nextData,
+        ...apiTermsData,
         birthday,
         name,
         gen,
@@ -180,22 +179,26 @@ function SignInPark2() {
     );
 
     const body = {
-      ...nextData,
+      ...apiTermsData,
       birthday,
       name,
-      gen,
+      gender: gen,
       phoneNo,
       phoneCorp: phoneCorp.value,
       nation: "0",
     };
+
+    console.log(body, "body");
 
     // 유저정보 redux
     dispatch(signPart2DataAdd(body));
 
     // 본인인증 app 인증요청 후 자료 리덕스에 담기
     NextSendData(body).then((res) => {
-      const { certNum, trCert, check1 } = res;
-      dispatch(signUpPartApiData2({ certNum, trCert, check1 }));
+      console.log("----------------nextdata----------------");
+      console.log("nextdata : ", res);
+      const { certNum, trCert, check1, check2 } = res;
+      dispatch(signUpPartApiData2({ certNum, trCert, check1, check2 }));
       navigate(urls.SignUpPart3);
     });
   };

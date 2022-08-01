@@ -32,6 +32,7 @@ function SignUpPart1() {
     getValues,
     setValue,
     formState: { errors, isValid },
+    trigger,
   } = useForm<SignUpPart1SubmitType>({
     mode: "onChange",
     reValidateMode: "onBlur",
@@ -42,13 +43,16 @@ function SignUpPart1() {
   const isIdCheckBtn = !!getValues("Id") && !errors.Id;
   const userData = useAppSelector((state) => state.user);
 
-  // 리덕스에 값이 있을때 값을 유무 체크후 넣어주기
+  // 리덕스에 값이 있을때 값을 유무 체크후 넣어주기 data Mapping
   useEffect(() => {
     const { iognId, iognPwd, carFrtNo, carTbkNo } = userData;
     setValue("Id", iognId || "");
     setValue("Pwd", iognPwd || "");
     setValue("rePwd", iognPwd || "");
     setValue("carNumber", `${carFrtNo}${carTbkNo}` || "");
+    if (getValues("Id").length !== 0) {
+      trigger(["Id"]);
+    }
   }, []);
 
   // id 중복체크 (api) // 파일 옮기기  // 상태관리는...? // mutation?? // query??

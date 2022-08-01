@@ -13,61 +13,43 @@ import { signUpPartApiData3 } from "../../store/modules/ApiData";
 interface RequestAuthenticationBody {
   certNum: string;
   check1: string;
-  trCert: string;
+  trCert?: string;
 }
 
 function SignInPark3() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const userAPiData = useAppSelector((state) => state.userApiData);
-  const test = useAppSelector((state) => state.user);
-  console.log("userAPiData : ", userAPiData);
-  console.log("test : ", test);
+
+  console.log(userAPiData);
 
   // api 호출. / api파일로 옮기기
   const RequestAuthentication = async (body: RequestAuthenticationBody) => {
-    console.log("2");
-
     const { data } = await hmsRequest(ApiUrls.REQUEST_SMS1, body);
     const { responseData } = data;
     return responseData;
   };
 
   const { mutateAsync: smsRequestPress } = useMutation(RequestAuthentication);
-  console.log("3");
 
   // 필요한 데이터 받아서 리덕스에 넣어줌.
   const RequestForSmsAuthentication = () => {
-    console.log("1");
     smsRequestPress(userAPiData).then((res) => {
-      console.log("----------------res----------------");
-      console.log(res);
-
-      // const { check1, check2, check3, certNum } = res;
-      // dispatch(
-      //   signUpPart3({
-      //     check1,
-      //     check2,
-      //     check3,
-      //     certNum,
-      //     trCert: "",
-      //     // 이 부분..
-      //   })
-      // );
+      console.log("part3 : ", res);
+      const { check1, check2, check3, certNum } = res;
+      dispatch(
+        signUpPartApiData3({
+          check1,
+          check2,
+          check3,
+          certNum,
+        })
+      );
     });
 
-    // navigate(urls.SignUpPart4);
-
-    // 필요한 데이터
-    // certNum, check1, check2, check3
-
-    // part4에서 필요한듯하다.
-    // smsNum <==
+    navigate(urls.SignUpPart4);
   };
 
-  // 다음 이동 페이지
-
-  console.log(userAPiData);
   return (
     <Layout title={string.MobileMembershipRegistration}>
       <div className="flex flex-col p-20">
