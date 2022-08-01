@@ -6,15 +6,15 @@ import { useQuery } from "react-query";
 import { CheckBoxOff, CheckBoxOn } from "../assets";
 import urls from "../constants/urls";
 import Layout from "../elements/Layout";
-import cls from "../util";
+import cls, { requiredLengthCheck } from "../util";
 import { useAppSelector, useAppDispatch } from "../store/hook/index";
 import { addCluAgrList } from "../store/modules/User";
-import TermsCheckList from "../components/TermsCheckList";
 import Button from "../elements/Button";
 import ApiUrls from "../constants/api_urls";
 import hmsRequest from "../network";
 import { Terms } from "../apis/signUp/types/responses";
 import { fetchTermsList } from "../apis/signUp";
+import TermsList from "../components/signUp/TermsList";
 
 function AcceptTerms() {
   const navigate = useNavigate();
@@ -64,23 +64,11 @@ function AcceptTerms() {
     }
   };
 
-  // Y 값 갯수 구하는 로직
-  function requiredLengthCheck(data: Terms[] | undefined) {
-    return data?.filter((terms) => {
-      return terms.mndtAgrYn === "Y";
-    }).length;
-  }
-
-  // 필수 Y 값 갯수
-  const termsListRequiredLength = requiredLengthCheck(termsListData);
-
-  // 클릭한 Y 값 갯수
-  const checkedTermsLength = requiredLengthCheck(checkList);
-
+  // 선택한 Y 값 갯수 같은지 체크
   const termsRequiredLengthCheck =
-    termsListRequiredLength === checkedTermsLength;
+    requiredLengthCheck(termsListData) === requiredLengthCheck(checkList);
 
-  // Y 값 갯수 같은지 체크
+  // 전체 Y 값 갯수 같거나 모두 체크된지 상태 여부
   const isTermsListBtnCheck = allCheck || termsRequiredLengthCheck;
 
   return (
@@ -93,26 +81,16 @@ function AcceptTerms() {
           </p>
         </div>
 
-        <div
-          className="flex items-center pb-20 mb-20 cursor-pointer border-b-1 border-gray300"
-          aria-hidden="true"
-          onClick={allCheckHandel}
-        >
-          <img
-            src={allCheck ? CheckBoxOn : CheckBoxOff}
-            alt="전체동의"
-            className="w-24 h-24 mr-10"
-          />
-          <p className="font-bold text-h2">전체 약관에 동의 합니다.</p>
-        </div>
-
         {isLoading ? (
           <p className="text-center py-150">로딩중입니다....</p>
         ) : (
-          <TermsCheckList
-            termsListData={termsListData}
+          <TermsList
+            allCheckTitle="전체 약관에 동의합니다."
+            termsData={termsListData}
+            termsCheckList={checkList}
             changeHandel={changeHandel}
-            checkList={checkList}
+            termsAllCheckHandel={allCheckHandel}
+            termsLengthComparison={isTermsListBtnCheck && allCheck}
           />
         )}
 

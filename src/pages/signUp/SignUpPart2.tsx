@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // import { useNavigate } from "react-router-dom";
@@ -103,28 +104,28 @@ function SignInPark2() {
   // terms "Y" 체크후 입력 & 제거 / util로 이동
   const termsRequired = (index: number) => {
     switch (index) {
-      case 0:
+      case 1:
         if (nextData?.terms1chk) {
           setNextData({ ...nextData, terms1chk: "" });
         } else {
           setNextData({ ...nextData, terms1chk: "Y" });
         }
         break;
-      case 1:
+      case 2:
         if (nextData?.terms2chk) {
           setNextData({ ...nextData, terms2chk: "" });
         } else {
           setNextData({ ...nextData, terms2chk: "Y" });
         }
         break;
-      case 2:
+      case 3:
         if (nextData?.terms3chk) {
           setNextData({ ...nextData, terms3chk: "" });
         } else {
           setNextData({ ...nextData, terms3chk: "Y" });
         }
         break;
-      case 3:
+      case 4:
         if (nextData?.terms4chk) {
           setNextData({ ...nextData, terms4chk: "" });
         } else {
@@ -145,18 +146,18 @@ function SignInPark2() {
   ) => {
     if (check && !!termsCheckList) {
       setTermsCheckList([...termsCheckList, terms]);
-
       !!index && termsRequired(index);
     } else {
+      !!index && termsRequired(index);
       setTermsCheckList(
         termsCheckList?.filter((value: Terms) => {
           return value.cluCd !== terms.cluCd;
         })
       );
-      !!index && termsRequired(index);
     }
   };
 
+  // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
 
@@ -258,7 +259,7 @@ function SignInPark2() {
         <TermsList
           allCheckTitle="본인인증 약관에 전체 동의합니다."
           changeHandel={changeHandel}
-          termsData={fetchPassAuthenticationTermsList}
+          termsData={fetchPassAuthenticationTermsList()}
           termsAllCheckHandel={termsAllCheckHandel}
           termsCheckList={termsCheckList}
           termsLengthComparison={termsLengthComparison}
