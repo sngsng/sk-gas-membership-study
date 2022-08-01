@@ -12,6 +12,10 @@ interface SelectFormProps {
     label: string;
   }[];
   errors?: string;
+  defaultValue: {
+    value: string;
+    label: string;
+  };
 
   onChange: (...event: any[]) => void;
 }
@@ -24,6 +28,7 @@ function SelectForm({
   onChange,
   options,
   errors,
+  defaultValue,
 }: SelectFormProps) {
   const styles = {
     input: (prev: any) => ({
@@ -63,6 +68,7 @@ function SelectForm({
         isSearchable={false}
         placeholder={placeholder}
         className={cls("font-normal text-b1", className)}
+        defaultValue={defaultValue.label === "" ? placeholder : defaultValue}
       />
       {errors && <p className="mt-8 font-normal error">{errors}</p>}
     </label>

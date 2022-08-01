@@ -3,11 +3,12 @@ import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import ApiUrls from "../../constants/api_urls";
+import string from "../../constants/string";
 import urls from "../../constants/urls";
 import Layout from "../../elements/Layout";
 import hmsRequest from "../../network";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { signUpPart3 } from "../../store/modules/ApiData";
+import { signUpPartApiData3 } from "../../store/modules/ApiData";
 
 interface RequestAuthenticationBody {
   certNum: string;
@@ -19,32 +20,40 @@ function SignInPark3() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const userAPiData = useAppSelector((state) => state.userApiData);
-  const test = useAppSelector((state) => state);
-  console.log(test);
+  const test = useAppSelector((state) => state.user);
+  console.log("userAPiData : ", userAPiData);
+  console.log("test : ", test);
 
   // api 호출. / api파일로 옮기기
   const RequestAuthentication = async (body: RequestAuthenticationBody) => {
+    console.log("2");
+
     const { data } = await hmsRequest(ApiUrls.REQUEST_SMS1, body);
     const { responseData } = data;
     return responseData;
   };
 
   const { mutateAsync: smsRequestPress } = useMutation(RequestAuthentication);
+  console.log("3");
 
   // 필요한 데이터 받아서 리덕스에 넣어줌.
   const RequestForSmsAuthentication = () => {
+    console.log("1");
     smsRequestPress(userAPiData).then((res) => {
-      const { check1, check2, check3, certNum } = res;
-      dispatch(
-        signUpPart3({
-          check1,
-          check2,
-          check3,
-          certNum,
-          trCert: "",
-          // 이 부분..
-        })
-      );
+      console.log("----------------res----------------");
+      console.log(res);
+
+      // const { check1, check2, check3, certNum } = res;
+      // dispatch(
+      //   signUpPart3({
+      //     check1,
+      //     check2,
+      //     check3,
+      //     certNum,
+      //     trCert: "",
+      //     // 이 부분..
+      //   })
+      // );
     });
 
     // navigate(urls.SignUpPart4);

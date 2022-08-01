@@ -14,8 +14,9 @@ import Button from "../../elements/Button";
 import LabelInputBtn from "../../components/signUp/LabelInputBtn";
 import { signPart1DataAdd } from "../../store/modules/User";
 import urls from "../../constants/urls";
+import string from "../../constants/string";
 // import { useMutation } from "react-query";
-import { idCheckAPI } from "../../apis/signUp";
+// import { idCheckAPI } from "../../apis/signUp";
 
 interface SignUpPart1SubmitType {
   Id: string;
@@ -41,6 +42,7 @@ function SignUpPart1() {
   const isIdCheckBtn = !!getValues("Id") && !errors.Id;
   const userData = useAppSelector((state) => state.user);
 
+  // 리덕스에 값이 있을때 값을 유무 체크후 넣어주기
   useEffect(() => {
     const { iognId, iognPwd, carFrtNo, carTbkNo } = userData;
     setValue("Id", iognId || "");
@@ -49,7 +51,7 @@ function SignUpPart1() {
     setValue("carNumber", `${carFrtNo}${carTbkNo}` || "");
   }, []);
 
-  // id 중복체크 (api) // 파일 옮기기  //상태관리는...?
+  // id 중복체크 (api) // 파일 옮기기  // 상태관리는...? // mutation?? // query??
   const idCheckAPI = async (userId: TermsIdCheckBody) => {
     try {
       const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, userId);
@@ -67,9 +69,6 @@ function SignUpPart1() {
       console.log(err);
     }
   };
-
-  // const { mutateAsync: test } = useMutation(idCheckAPI);
-  // console.log(test)
 
   const onSubmit = (data: SignUpPart1SubmitType) => {
     const part1Data = {

@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import * as yup from "yup";
 // import { yupResolver } from "@hookform/resolvers/yup";
-import { fetchPassAuthenticationTermsList } from "../../apis/signUp";
+import { useMutation } from "react-query";
+import { fetchPassAuthenticationTermsList, sendSMS } from "../../apis/signUp";
 import { Part2Data, Terms } from "../../apis/signUp/types/responses";
 import SelectForm from "../../components/signUp/SelectForm";
 import TermsList from "../../components/signUp/TermsList";
@@ -12,6 +13,12 @@ import LabelInput from "../../components/signUp/LabelInput";
 import Layout from "../../elements/Layout";
 import LabelSelectBtn from "../../components/signUp/LabelSelectBtn";
 import Button from "../../elements/Button";
+import urls from "../../constants/urls";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import { signPart2DataAdd } from "../../store/modules/User";
+import { signUpPartApiData2 } from "../../store/modules/ApiData";
+import { SignPart2DataMapping } from "../../store/modules/MappingData";
+import string from "../../constants/string";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -19,8 +26,8 @@ export interface SignUpPart2SubmitType {
   gen: "0" | "1";
   phoneNo: string;
   phoneCorp: {
-    value: string;
     label: string;
+    value: string;
   };
 }
 
@@ -33,27 +40,12 @@ const options = [
   { value: "LGM", label: "LG 알뜰폰" },
 ];
 
-// const schema = yup.object({
-//   name: yup
-//     .string()
-//     .required("이름을 입력해주세요")
-//     .min(2, "2글자 이상 입력해주세요"),
-//   birthday: yup
-//     .string()
-//     .required("생년월일을 입력해주세요")
-//     .min(8, "생년월일 8자리를 입력해주세요"),
-//   phoneNo: yup
-//     .string()
-//     .required("휴대폰 번호를 입력해주세요")
-//     .min(11, "휴대폰 11자리를 입력해주세요 "),
-//   //     phoneCorp: {
-//   //   value: string;
-//   //   label: string;
-//   // };
-// });
-
 function SignInPark2() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const userData = useAppSelector((state) => state.user);
+  const apiData = useAppSelector((state) => state.userApiData);
+  const singPart2MappingData = useAppSelector((state) => state.mappingData);
   const [nextData, setNextData] = useState<Part2Data>();
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
   const termsDataLength = fetchPassAuthenticationTermsList().length;
@@ -65,13 +57,26 @@ function SignInPark2() {
     formState: { errors, isValid },
     control,
     setValue,
+    getValues,
   } = useForm<SignUpPart2SubmitType>({
-    // resolver: yupResolver(schema),
     defaultValues: {
       gen: "0",
     },
     mode: "onChange",
   });
+
+  useEffect(() => {
+    const { birthday, gen, name, phoneCorp, phoneNo, termsCheckList } =
+      singPart2MappingData;
+    setValue("birthday", birthday || "");
+    setValue("name", name || "");
+    setValue("gen", gen || "");
+    setValue("phoneNo", phoneNo || "");
+    setValue("phoneCorp", phoneCorp || "");
+    if (termsCheckList.length !== 0) {
+      setTermsCheckList(termsCheckList);
+    }
+  }, []);
 
   // terms all 체크 클릭시
   const termsAllCheckHandel = () => {
@@ -139,11 +144,7 @@ function SignInPark2() {
   };
 
   // terms 개별 체크
-  const changeHandel = (
-    check: boolean,
-    terms: Terms,
-    index: number | undefined
-  ) => {
+  const changeHandel = (check: boolean, terms: Terms, index?: number) => {
     if (check && !!termsCheckList) {
       setTermsCheckList([...termsCheckList, terms]);
       !!index && termsRequired(index);
@@ -172,6 +173,7 @@ function SignInPark2() {
         phoneCorp,
         phoneNo,
         nation: "0",
+        termsCheckList,
       })
     );
 
