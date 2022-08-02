@@ -34,20 +34,24 @@ function SignInPark3() {
 
   // 필요한 데이터 받아서 리덕스에 넣어줌.
   const RequestForSmsAuthentication = () => {
-    smsRequestPress(userAPiData).then((res) => {
-      console.log("part3 : ", res);
-      const { check1, check2, check3, certNum } = res;
-      dispatch(
-        signUpPartApiData3({
-          check1,
-          check2,
-          check3,
-          certNum,
-        })
-      );
-    });
-
-    navigate(urls.SignUpPart4);
+    try {
+      smsRequestPress(userAPiData).then((res) => {
+        console.log("part3 : ", res);
+        const { check1, check2, check3, certNum } = res;
+        dispatch(
+          signUpPartApiData3({
+            check1,
+            check2,
+            check3,
+            certNum,
+          })
+        );
+      });
+    } catch (err) {
+      console.log("part3", err);
+    } finally {
+      navigate(urls.SignUpPart4);
+    }
   };
 
   return (

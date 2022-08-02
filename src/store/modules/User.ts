@@ -4,7 +4,7 @@ import { UserData1, UserData2, UserData3 } from "./types/signUp";
 
 // 상태의 유형 정의
 
-interface UserState extends UserData1, UserData2, UserData3 {
+export interface UserState extends UserData1, UserData2, UserData3 {
   // 약관동의 목록
   cluAgrList?: Terms[];
 }

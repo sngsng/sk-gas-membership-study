@@ -35,15 +35,13 @@ function App() {
         <Route path={urls.SignUpPart2} element={<SignUpPart2 />} />
         <Route path={urls.SignUpPart3} element={<SignUpPart3 />} />
         <Route path={urls.SignUpPart4} element={<SignUpPart4 />} />
-        <Route path={urls.SignUpPart5} element={<SignUpPart5 />} />
-
+        <Route path={urls.SignUpPart5} element={<SignUpPart5 />} />=
         <Route path={urls.FindId1} element={<FindId1 />} />
         <Route path={urls.FindId2} element={<FindId2 />} />
         <Route path={urls.FindId3} element={<FindId3 />} />
         <Route path={urls.FindId4} element={<FindId4 />} />
         <Route path={urls.FindId5} element={<FindId5 />} />
         <Route path={urls.FindIdResult} element={<FindIdResult />} />
-
         <Route path={urls.NotFound} element={<NotFound />} />
       </Routes>
       {/* <Modal /> */}

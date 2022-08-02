@@ -7,3 +7,11 @@ export interface TermsIdCheckBody {
   // 아이디 중복 체크 조회
   lognId: string;
 }
+
+export interface AuthNumberCheckBody {
+  certNum: string;
+  smsNum: string;
+  check1: string;
+  check2: string;
+  check3: string;
+}

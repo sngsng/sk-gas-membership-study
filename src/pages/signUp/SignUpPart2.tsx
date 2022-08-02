@@ -55,7 +55,9 @@ function SignInPark2() {
     formState: { errors, isValid },
     control,
     setValue,
+    getValues,
     trigger,
+    reset,
   } = useForm<SignUpPart2SubmitType>({
     defaultValues: {
       gen: "0",
@@ -63,6 +65,7 @@ function SignInPark2() {
     mode: "onChange",
   });
 
+  // data mapping
   useEffect(() => {
     const { birthday, gen, name, phoneCorp, phoneNo, termsCheckList } =
       singPart2MappingData;
@@ -72,12 +75,18 @@ function SignInPark2() {
     setValue("phoneNo", phoneNo || "");
     setValue("phoneCorp", phoneCorp || "");
 
+    // reset으로 MAPPIng 하는 방법 찾아보기
+    // 수동으로 유효성 검사
     if (termsCheckList.length !== 0) {
       trigger(["birthday", "name", "gen", "phoneNo", "phoneCorp"]);
       setTermsCheckList(termsCheckList);
     }
   }, []);
 
+  console.log(getValues("gen"));
+
+  // 데이터 기반으로 작성해야된다.. 서버에서 데이터가 어떻게 변해서 넘어올지 모르니.
+  // Body값은 나중에 해도 되는 문제이다.
   // terms all 체크 클릭시
   const termsAllCheckHandel = () => {
     if (!termsLengthComparison) {
@@ -106,6 +115,7 @@ function SignInPark2() {
     }
   };
 
+  // 이부분도 문제! 다시 바꿔줘야된다.!!!
   // terms "Y" 체크후 입력 & 제거 / util로 이동
   const termsRequired = (index: number) => {
     switch (index) {
@@ -143,6 +153,7 @@ function SignInPark2() {
     }
   };
 
+  // 문제!? 일단 다시 체크!!
   // terms 개별 체크
   const changeHandel = (check: boolean, terms: Terms, index?: number) => {
     if (check && !!termsCheckList) {
@@ -163,8 +174,9 @@ function SignInPark2() {
   // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
+    console.log("gen : ", gen);
 
-    // mapping data redux
+    // mapping data redux 넣기
     dispatch(
       SignPart2DataMapping({
         ...apiTermsData,
@@ -178,6 +190,19 @@ function SignInPark2() {
       })
     );
 
+    // 유저정보 redux
+    dispatch(
+      signPart2DataAdd({
+        ...apiTermsData,
+        birthday,
+        name,
+        gen,
+        phoneNo,
+        phoneCorp: phoneCorp.value,
+        nation: "0",
+      })
+    );
+
     const body = {
       ...apiTermsData,
       birthday,
@@ -188,12 +213,8 @@ function SignInPark2() {
       nation: "0",
     };
 
-    console.log(body, "body");
-
-    // 유저정보 redux
-    dispatch(signPart2DataAdd(body));
-
     // 본인인증 app 인증요청 후 자료 리덕스에 담기
+    // 에러 처리 하기!!!!!!!!
     NextSendData(body).then((res) => {
       console.log("----------------nextdata----------------");
       console.log("nextdata : ", res);

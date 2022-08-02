@@ -67,6 +67,8 @@ function TermsList({
   changeHandel,
   termsCheckList,
 }: TermsListProps) {
+  // all check 넣기
+
   return (
     <div>
       <div

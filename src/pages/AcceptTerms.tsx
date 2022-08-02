@@ -49,6 +49,15 @@ function AcceptTerms() {
     }
   };
 
+  const cluAgrList = checkList?.map((terms) => {
+    return {
+      cluCd: terms.cluCd,
+      cluVer: terms.cluVer,
+      agrYn: terms.mndtAgrYn,
+    };
+  });
+  console.log(cluAgrList);
+
   // all 버튼 클릭시
   const allCheckHandel = () => {
     if (!allCheck && termsListData) {
@@ -111,7 +120,7 @@ function AcceptTerms() {
             disabled={!termsRequiredLengthCheck}
             onClick={() => {
               navigate(urls.SignUpPart1);
-              dispatch(addCluAgrList(checkList as Terms[]));
+              dispatch(addCluAgrList(cluAgrList as Terms[]));
             }}
           />
         )}

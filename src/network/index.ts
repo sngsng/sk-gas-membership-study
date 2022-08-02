@@ -42,7 +42,7 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
     requestData: body,
   };
 
-  // console.log("baseBody : ", baseBody);
+  console.log("baseBody : ", baseBody);
 
   return axiosInstance.post(url, baseBody, config);
 };

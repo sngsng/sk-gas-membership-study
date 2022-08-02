@@ -1,6 +1,7 @@
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
-import { TermsIdCheckBody } from "./types/requests";
+import { UserState } from "../../store/modules/User";
+import { AuthNumberCheckBody, TermsIdCheckBody } from "./types/requests";
 import { Terms } from "./types/responses";
 
 // 약관리스트 불러오기.
@@ -12,25 +13,23 @@ export const fetchTermsList = async () => {
     const { cluList } = data.responseData;
     return cluList;
   } catch (err) {
-    console.log(err);
+    return console.log(err);
   }
 };
 
+// 아이디 중복 체크
 export const idCheckAPI = async (useId: TermsIdCheckBody) => {
   try {
     const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, useId);
     const { dupYn } = data.responseData;
 
-    if (dupYn === "Y") {
-      alert("중복된 아이디 입니다.");
-    } else if (dupYn === "N") {
-      alert("사용가능한 아이디입니다.");
-    }
+    return dupYn;
   } catch (err) {
-    console.log(err);
+    return console.log(err);
   }
 };
 
+// signPart2 약관 리스트
 export const fetchPassAuthenticationTermsList = (): Terms[] => {
   return [
     {
@@ -86,4 +85,34 @@ export const fetchPassAuthenticationTermsList = (): Terms[] => {
       cluShrtCtt: "(필수) 이용약관(전문) | 본인확인서비스",
     },
   ];
+};
+
+// 본인인증 APP 인증 요청
+export const sendSMS = async (body: Record<string, any>) => {
+  console.log("body : ", body);
+  try {
+    const { data } = await hmsRequest(ApiUrls.REQUEST_APP, body);
+    const { responseData } = data;
+    return responseData;
+  } catch (err) {
+    return console.log("sendSMS", err);
+  }
+};
+
+// 본인인증 SMS 인증확인
+export const authenticationNumberCheckApi = async (
+  body: AuthNumberCheckBody
+) => {
+  console.log("part4 body", body);
+  const { data } = await hmsRequest(ApiUrls.AUTH_NUMBER_CHECK, body);
+  const { responseData } = data;
+  return responseData;
+};
+
+export const signUpApi = async (body: UserState) => {
+  const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
+  return data;
+  const { responseData } = data;
+  // 뽑아낼만한 데이터?? 또는 에러 처리!
+  return responseData;
 };
