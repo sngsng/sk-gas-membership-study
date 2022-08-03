@@ -1,7 +1,5 @@
 const ApiUrls = {
-  BASE_URL:
-    // "https://cors-anywhere.herokuapp.com/https://appdev.happylpg.com/apis/hmsmob",
-    "https://appdev.happylpg.com/apis/hmsmob",
+  BASE_URL: process.env.REACT_APP_API_URL,
 
   // /**/ 회원가입 part
 
@@ -22,7 +20,7 @@ const ApiUrls = {
   SIGN_UP_REQUEST: "/mbr/join",
 
   // 로그인
-  LOGIN: "/comm/reqLogIn",
+  LOGIN: "/comm/reqLogin",
 };
 
 export default ApiUrls;

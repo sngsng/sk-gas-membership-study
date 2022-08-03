@@ -17,6 +17,6 @@ export interface AuthNumberCheckBody {
 }
 
 export interface loginBody {
-  mbrID: string;
+  loginID: string;
   mbrPW: string;
 }

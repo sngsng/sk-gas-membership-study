@@ -89,8 +89,11 @@ function Main() {
                     <div>{data.thumb && <img src={data.thumb} alt="/" />}</div>
                   </div>
                   <div className="p-20 min-h-40">
-                    {data.texts?.map((text) => (
-                      <p className="dot">{text}</p>
+                    {data.texts?.map((text, idx) => (
+                      // eslint-disable-next-line react/no-array-index-key
+                      <p className="dot" key={idx}>
+                        {text}
+                      </p>
                     ))}
                   </div>
                 </li>

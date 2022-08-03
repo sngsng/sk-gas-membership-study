@@ -1,9 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { format } from "date-fns"; // 날짜 데이터 불러오는 라이브러리
 import { Channel, ServiceCode } from "./types/enums";
-import ApiUrls from "../constants/api_urls";
 import { getAuthToken } from "../util/local-storage.utils";
-// import TermsListBody from "../apis/common/types/requests/TermsListBody";
 
 // /**
 //  * 공통 전문 Transaction 난수 생성 (날짜 + 6자리난수)
@@ -17,9 +15,8 @@ export const createTransactionNo = () => {
 };
 
 const hmsRequest = (url: string, body: Record<string, any>) => {
-  const axiosInstance = axios.create({
-    baseURL: ApiUrls.BASE_URL,
-  });
+  // console.log(process.env.NODE_ENV);
+  const axiosInstance = axios.create();
 
   // 헤더 설정
   const token = getAuthToken() || "";

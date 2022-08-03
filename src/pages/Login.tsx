@@ -41,7 +41,7 @@ function Login() {
 
   const onSubmit = async (data: LoginFormType) => {
     const body = {
-      mbrID: data.userId,
+      loginID: data.userId,
       mbrPW: data.userPwd,
     };
 
