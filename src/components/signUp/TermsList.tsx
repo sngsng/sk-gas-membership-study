@@ -1,21 +1,41 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useState } from "react";
 import { Terms } from "../../apis/signUp/types/responses";
 import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets";
-import cls from "../../util";
+import cls, { requiredLengthCheck } from "../../util";
 
 interface TermsListCheckBoxProps {
   terms: Terms;
-  changeHandel: (check: boolean, terms: Terms, index?: number) => void;
-  termsCheckList: any;
-  index: number;
+  termsCheckList: Terms[];
+  setTermsCheckList: React.Dispatch<React.SetStateAction<Terms[]>>;
 }
 
 function TermsListCheckBox({
   terms,
-  changeHandel,
   termsCheckList,
-  index,
+  setTermsCheckList,
 }: TermsListCheckBoxProps) {
+  // 체크 했는지 여부 체크
+  const isChecked = () => {
+    return (
+      termsCheckList.find((checked: Terms) => checked.cluCd === terms.cluCd) !==
+      undefined
+    );
+  };
+  //
+  //  개별 체크
+  const termsCheckHandle = (check: boolean, terms: Terms) => {
+    if (check) {
+      setTermsCheckList([...termsCheckList, terms]);
+    } else {
+      setTermsCheckList(
+        termsCheckList?.filter((value: Terms) => {
+          return value.cluCd !== terms.cluCd;
+        })
+      );
+    }
+  };
+
   return (
     <>
       <label className="mr-10 cursor-pointer" htmlFor={terms.cluCd}>
@@ -25,21 +45,13 @@ function TermsListCheckBox({
           id={terms.cluCd}
           value={terms.cluCd}
           onChange={(e) => {
-            changeHandel(e.currentTarget.checked, terms, index + 1);
+            termsCheckHandle(e.currentTarget.checked, terms);
           }}
-          checked={termsCheckList.find(
-            (checked: Terms) => checked.cluCd === terms.cluCd
-          )}
+          checked={isChecked()}
         />
         <img
           className="w-full min-w-24"
-          src={
-            termsCheckList.find(
-              (checked: Terms) => checked.cluCd === terms.cluCd
-            )
-              ? CheckOn
-              : CheckOff
-          }
+          src={isChecked() ? CheckOn : CheckOff}
           alt="체크버튼"
         />
       </label>
@@ -51,23 +63,41 @@ function TermsListCheckBox({
 interface TermsListProps {
   className?: string;
   allCheckTitle: string;
-  changeHandel: (check: boolean, terms: Terms, index?: number) => void;
-  termsData?: Terms[];
-  termsAllCheckHandel?: () => void;
-  termsCheckList: Terms[] | any;
-  termsLengthComparison?: boolean;
+  setTermsCheckList: React.Dispatch<React.SetStateAction<Terms[]>>;
+  termsListData?: Terms[];
+  termsCheckList: Terms[];
 }
 
 function TermsList({
   className = "",
   allCheckTitle,
-  termsLengthComparison = false,
-  termsAllCheckHandel,
-  termsData,
-  changeHandel,
+  termsListData,
   termsCheckList,
+  setTermsCheckList,
 }: TermsListProps) {
-  // all check 넣기
+  //
+  // allCheck 상태관리
+  const [allTermsChecked, setAllTermsChecked] = useState(false);
+  //
+  //
+  // checkList에 값이 변동 될때마다 실행해서 체크해주는거.
+  useEffect(() => {
+    setAllTermsChecked(termsListData?.length === termsCheckList?.length);
+  }, [termsCheckList]);
+  //
+  //
+  // allBtn press Fn
+  const termsAllCheckHandel = () => {
+    if (!allTermsChecked && !!termsListData) {
+      setAllTermsChecked(true);
+      setTermsCheckList([]);
+      setTermsCheckList(termsListData);
+    } else {
+      setAllTermsChecked(false);
+      setTermsCheckList([]);
+    }
+  };
+  //
 
   return (
     <div>
@@ -81,7 +111,7 @@ function TermsList({
         onClick={termsAllCheckHandel}
       >
         <img
-          src={termsLengthComparison ? CheckBoxOn : CheckBoxOff}
+          src={allTermsChecked ? CheckBoxOn : CheckBoxOff}
           alt="전체동의"
           className="w-24 h-24 mr-10"
         />
@@ -89,17 +119,16 @@ function TermsList({
       </div>
 
       <ul className="mb-30">
-        {!termsData ? (
+        {!termsListData ? (
           <p>로딩중입니다... </p>
         ) : (
-          termsData.map((terms, index) => {
+          termsListData.map((terms) => {
             return (
               <li className="flex mb-16 cursor-pointer" key={terms.cluCd}>
                 <TermsListCheckBox
-                  changeHandel={changeHandel}
                   termsCheckList={termsCheckList}
+                  setTermsCheckList={setTermsCheckList}
                   terms={terms}
-                  index={index}
                 />
               </li>
             );
