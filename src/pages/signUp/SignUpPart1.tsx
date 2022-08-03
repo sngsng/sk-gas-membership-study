@@ -3,11 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useForm } from "react-hook-form";
-import { TermsIdCheckBody } from "../../apis/signUp/types/requests";
-import ApiUrls from "../../constants/api_urls";
+import { useMutation } from "react-query";
 import regex from "../../util/regex";
 import Layout from "../../elements/Layout";
-import hmsRequest from "../../network";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import LabelInput from "../../components/signUp/LabelInput";
 import Button from "../../elements/Button";
@@ -15,8 +13,7 @@ import LabelInputBtn from "../../components/signUp/LabelInputBtn";
 import { signPart1DataAdd } from "../../store/modules/User";
 import urls from "../../constants/urls";
 import string from "../../constants/string";
-// import { useMutation } from "react-query";
-// import { idCheckAPI } from "../../apis/signUp";
+import { idCheckAPI } from "../../apis/signUp";
 
 interface SignUpPart1SubmitType {
   Id: string;
@@ -39,41 +36,49 @@ function SignUpPart1() {
   });
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [apiIdCheck, setApiIdCheck] = useState(false);
-  const isIdCheckBtn = !!getValues("Id") && !errors.Id;
+  //  상태관리
+  const [isIdCheck, setIdCheck] = useState(false);
+  //  redux
   const userData = useAppSelector((state) => state.user);
+  //  변수
+  const isIdCheckBtn = !!getValues("Id") && !errors.Id;
 
-  // 리덕스에 값이 있을때 값을 유무 체크후 넣어주기 data Mapping
+  //
+  // data Mapping
   useEffect(() => {
     const { iognId, iognPwd, carFrtNo, carTbkNo } = userData;
     setValue("Id", iognId || "");
     setValue("Pwd", iognPwd || "");
     setValue("rePwd", iognPwd || "");
     setValue("carNumber", `${carFrtNo}${carTbkNo}` || "");
-    if (getValues("Id").length !== 0) {
-      trigger(["Id"]);
+
+    //  조건 체크
+    // getValues("Id").length > 0
+    if (getValues("Id")) {
+      console.log("part1 : 유효성 검사");
+      trigger(["Id", "Pwd", "carNumber", "rePwd"]);
+      setIdCheck(true);
     }
   }, []);
 
-  // id 중복체크 (api) // 파일 옮기기  // 상태관리는...? // mutation?? // query??
-  const idCheckAPI = async (userId: TermsIdCheckBody) => {
-    try {
-      const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, userId);
-      const { dupYn } = data.responseData;
+  // 아이디 중복 체크
+  const { mutateAsync: idCheckMutation, isLoading: idCheckLoading } =
+    useMutation(idCheckAPI);
 
-      if (dupYn === "Y") {
+  const idCheckHandle = () => {
+    const userId = getValues().Id;
+    idCheckMutation({ lognId: userId }).then((res) => {
+      if (res === "Y") {
+        setIdCheck(false);
         alert("중복된 아이디 입니다.");
-        setApiIdCheck(false);
-      }
-      if (dupYn === "N") {
+      } else if (res === "N") {
+        setIdCheck(true);
         alert("사용가능한 아이디입니다.");
-        setApiIdCheck(true);
       }
-    } catch (err) {
-      console.log(err);
-    }
+    });
   };
 
+  // pageMove Data
   const onSubmit = (data: SignUpPart1SubmitType) => {
     const part1Data = {
       iognId: data.Id,
@@ -82,6 +87,10 @@ function SignUpPart1() {
       carTbkNo: data.carNumber.slice(3),
     };
 
+    console.clear();
+    console.log("----------------part1Data----------------");
+    console.log(part1Data);
+    //
     dispatch(signPart1DataAdd(part1Data));
     navigate(urls.SignUpPart2);
   };
@@ -96,10 +105,11 @@ function SignUpPart1() {
             HtmlFor="id"
             label={string.Id}
             btnText={string.CheckForDuplication}
-            isLoading={false} // loadgin useQuery 사용
+            isLoading={idCheckLoading}
             isBtnCheck={isIdCheckBtn}
             maxLength={20}
             placeholder={string.EnterID}
+            onClick={idCheckHandle}
             register={register("Id", {
               required: string.IdErrorMessage,
               pattern: {
@@ -110,13 +120,10 @@ function SignUpPart1() {
                 value: 5,
                 message: string.IdErrorMessage,
               },
-              onChange: () => setApiIdCheck(false),
+              // 입력시 상태를 false로 만들어주기
+              onChange: () => setIdCheck(false),
             })}
             errors={errors?.Id?.message}
-            onClick={() => {
-              const userId = getValues().Id;
-              idCheckAPI({ lognId: userId });
-            }}
           />
 
           <LabelInput
@@ -157,6 +164,7 @@ function SignUpPart1() {
                 value: 8,
                 message: string.PassWordErrorMessage,
               },
+              //  비밀번호 일치 여부 체크
               validate: (value) => {
                 return value === getValues("Pwd") || string.PassWordsNotMatch;
               },
@@ -182,19 +190,13 @@ function SignUpPart1() {
           errors={errors?.carNumber?.message}
         />
 
-        {false ? (
-          <div className="py-40 text-center">
-            <ClipLoader className="text-blue" color="text-blue" size={30} />
-          </div>
-        ) : (
-          <Button
-            text={string.Next}
-            className="btn-extra mt-30"
-            isBtnCheck={apiIdCheck && isValid}
-            disabled={!apiIdCheck || !isValid}
-            onClick={handleSubmit(onSubmit)}
-          />
-        )}
+        <Button
+          text={string.Next}
+          className="btn-extra mt-30"
+          isBtnCheck={isIdCheck && isValid}
+          disabled={!isIdCheck || !isValid}
+          onClick={handleSubmit(onSubmit)}
+        />
       </form>
     </Layout>
   );

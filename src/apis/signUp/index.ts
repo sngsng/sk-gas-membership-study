@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
 import { UserState } from "../../store/modules/User";
@@ -18,14 +19,13 @@ export const fetchTermsList = async () => {
 };
 
 // 아이디 중복 체크
-export const idCheckAPI = async (useId: TermsIdCheckBody) => {
+export const idCheckAPI = async (userId: TermsIdCheckBody) => {
   try {
-    const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, useId);
+    const { data } = await hmsRequest(ApiUrls.TERMS_ID_CHECK, userId);
     const { dupYn } = data.responseData;
-
     return dupYn;
   } catch (err) {
-    return console.log(err);
+    return console.log("idCheckAPI : ", err);
   }
 };
 
@@ -95,7 +95,7 @@ export const sendSMS = async (body: Record<string, any>) => {
     const { responseData } = data;
     return responseData;
   } catch (err) {
-    return console.log("sendSMS", err);
+    return console.log("sendSMS : ", err);
   }
 };
 
@@ -103,17 +103,25 @@ export const sendSMS = async (body: Record<string, any>) => {
 export const authenticationNumberCheckApi = async (
   body: AuthNumberCheckBody
 ) => {
-  console.log("part4 body", body);
-  const { data } = await hmsRequest(ApiUrls.AUTH_NUMBER_CHECK, body);
-  const { responseData } = data;
-  return responseData;
+  try {
+    console.log("part4 body", body);
+    const { data } = await hmsRequest(ApiUrls.AUTH_NUMBER_CHECK, body);
+    const { responseData } = data;
+    return responseData;
+  } catch (err) {
+    return console.log("authenticationNumberCheckApi : ", err);
+  }
 };
 
 // 회원가입
 export const signUpApi = async (body: UserState) => {
-  const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
-  return data;
-  const { responseData } = data;
-  // 뽑아낼만한 데이터?? 또는 에러 처리!
-  return responseData;
+  try {
+    const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
+    return data;
+    const { responseData } = data;
+    // 뽑아낼만한 데이터?? 또는 에러 처리!
+    return responseData;
+  } catch (err) {
+    return console.log("signUpApi : ", err);
+  }
 };

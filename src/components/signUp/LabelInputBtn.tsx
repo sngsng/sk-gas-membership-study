@@ -57,7 +57,11 @@ function LabelInputBtn({
 
           <div className="flex items-center justify-center min-h-60">
             {isLoading ? (
-              <ClipLoader className="text-blue" color="text-blue" size={30} />
+              <ClipLoader
+                className="text-blue ml-45"
+                color="text-blue"
+                size={30}
+              />
             ) : (
               <Button
                 className="ml-10 min-h-60 text-b1 min-w-101"
