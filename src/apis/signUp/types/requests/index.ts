@@ -9,14 +9,10 @@ export interface TermsIdCheckBody {
 }
 
 export interface AuthNumberCheckBody {
+  // SMS 인증 요청
   certNum: string;
   smsNum?: string;
   check1: string;
   check2: string;
   check3: string;
-}
-
-export interface loginBody {
-  loginID: string;
-  mbrPW: string;
 }

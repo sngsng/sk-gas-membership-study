@@ -3,7 +3,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 import cls from "../../util";
 
 interface LabelInputProps {
-  HtmlFor: string;
+  HtmlFor?: string;
   type?: "text" | "password" | "number" | "checkBox";
   placeholder: string;
   label?: string;

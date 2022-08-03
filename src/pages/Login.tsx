@@ -3,7 +3,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
-import { loginBody } from "../apis/signUp/types/requests";
+import loginApi from "../apis/login";
+import LabelInput from "../components/signUp/LabelInput";
 import ApiUrls from "../constants/api_urls";
 import string from "../constants/string";
 import urls from "../constants/urls";
@@ -30,12 +31,6 @@ function Login() {
     mode: "onChange",
   });
 
-  const loginApi = async (body: loginBody) => {
-    await hmsRequest(ApiUrls.LOGIN, body).then((res) =>
-      console.log("res : ", res)
-    );
-  };
-
   const { mutateAsync: LoginMutation, isLoading: loginLoading } =
     useMutation(loginApi);
 
@@ -48,8 +43,14 @@ function Login() {
     console.log("----------------body----------------");
     console.log(body);
 
-    LoginMutation(body);
-    // navigate(urls.Main);
+    LoginMutation(body).then((res) => {
+      console.log("유저정보 받아온거 : ", res);
+
+      // 여기에서 유저 정보 redux에 저장하기.
+      // dispatch(userInfo(res.user));
+
+      // navigate(urls.Main);
+    });
   };
   return (
     <Layout isHeader isMenu={false} title="로그인" backBtn>
@@ -57,17 +58,18 @@ function Login() {
         action="submit"
         className="flex flex-col justify-center w-full p-20 mx-auto h-250 "
       >
-        <input
-          type="text"
+        <LabelInput
+          // className="mb-10"
           placeholder="아이디를 입력해주세요"
-          className="bg-white px-16 py-20 h-60 rounded border-[#e8e8e8] border-1 mb-10 outline-none focus:border-blue placeholder:text-[#6b7280]"
-          {...register("userId", { required: true, pattern: regex.id })}
+          register={register("userId", { required: true, pattern: regex.id })}
         />
-        <input
-          type="password"
+        <LabelInput
+          className="mb-20"
           placeholder="비밀번호를 입력해주세요"
-          className="bg-white px-16 py-20 h-60 rounded border-[#e8e8e8] border-1 outline-none focus:border-blue mb-20 placeholder:text-[#6b7280]"
-          {...register("userPwd", { required: true, pattern: regex.passWord })}
+          register={register("userPwd", {
+            required: true,
+            pattern: regex.passWord,
+          })}
         />
         <Button
           text="로그인"
@@ -90,6 +92,3 @@ function Login() {
 }
 
 export default Login;
-
-// 로그인 버튼 : id & pw 전부 입력시 버튼(bg) 색 #3882f6 | 텍스트 색 text-white로 변경
-// input : 입력시 border-[#2563eb] bg-[#e8f0fe] 로 변경
