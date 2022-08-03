@@ -14,10 +14,15 @@ const ApiUrls = {
   REQUEST_APP: "/mbr/reqKmcCertApp",
   // 본인인증 SMS 전송요청
   REQUEST_SMS1: "/mbr/sndKmcCertSms",
+  // 본인인증 SMS 재요청
+  REQUEST_SMS_RETRY: "/mbr/resndKmcCertSms",
   // 본인인증 SMS 인증확인
   AUTH_NUMBER_CHECK: "/mbr/chkKmcCertSms",
   // 회원가입 요청
   SIGN_UP_REQUEST: "/mbr/join",
+
+  // 로그인
+  LOGIN: "/comm/reqLogIn",
 };
 
 export default ApiUrls;

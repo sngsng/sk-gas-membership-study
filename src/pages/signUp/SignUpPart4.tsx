@@ -93,7 +93,31 @@ function SignInPark4() {
       SignUp(res.CI);
     });
   };
+  const smsRetryApi = async (body: AuthNumberCheckBody) => {
+    const { data } = await hmsRequest(ApiUrls.REQUEST_SMS_RETRY, body);
+    console.log(data);
+    return data;
+  };
 
+  const { mutateAsync: smsRetryMutation, isLoading: smsRetryLoading } =
+    useMutation(smsRetryApi);
+
+  const smsRetry = () => {
+    // retry 했을시 버튼에 로딩 처리..
+    // 문자 수신 되지 않나요? 에 조건 건어서 여러번 클릭 방지
+    setIsButton(false);
+    smsRetryMutation({
+      check1,
+      check2,
+      check3,
+      certNum,
+    }).then((res) => {
+      // api 인증재요청
+      setIsTimer(!isTimer);
+      console.log(res);
+    });
+    // 함수
+  };
   return (
     <Layout title="행복충전모바일 회원가입">
       <div className="flex flex-col p-20">
@@ -125,13 +149,7 @@ function SignInPark4() {
         <p
           className="text-center text-gray-500 underline cursor-pointer text-b3"
           aria-hidden="true"
-          onClick={() => {
-            if (isButton) {
-              // api 인증재요청
-              setIsButton(false);
-              setIsTimer(!isTimer);
-            }
-          }}
+          onClick={smsRetry}
         >
           문자가 수신되지 않나요?
         </p>

@@ -1,4 +1,5 @@
-import React, { ButtonHTMLAttributes } from "react";
+// import React, { ButtonHTMLAttributes } from "react";
+import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import ClipLoader from "react-spinners/ClipLoader";
 import Button from "../../elements/Button";
@@ -16,7 +17,8 @@ interface LabelInputBtnProps {
   isLoading: boolean;
   isBtnCheck: boolean;
   btnText: string;
-  onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+  // onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+  onClick?: () => void;
 }
 
 function LabelInputBtn({

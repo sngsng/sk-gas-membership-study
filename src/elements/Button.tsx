@@ -1,11 +1,13 @@
-import React, { ButtonHTMLAttributes } from "react";
+// import React, { ButtonHTMLAttributes } from "react";
+import React from "react";
 import cls from "../util";
 
 interface ButtonProps {
   text: string;
   className: string;
   disabled?: boolean;
-  onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+  // onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
+  onClick?: () => void;
   isBtnCheck?: boolean;
 }
 

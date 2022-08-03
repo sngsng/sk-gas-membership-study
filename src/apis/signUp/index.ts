@@ -109,6 +109,7 @@ export const authenticationNumberCheckApi = async (
   return responseData;
 };
 
+// 회원가입
 export const signUpApi = async (body: UserState) => {
   const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
   return data;
