@@ -16,8 +16,6 @@ import { userSignUpData } from "../store/modules/User";
 import cls from "../util";
 import regex from "../util/regex";
 
-// input 값 다 있으면 버튼의 스타일 바뀜
-
 interface LoginFormType {
   userId: string;
   userPwd: string;
@@ -26,6 +24,7 @@ interface LoginFormType {
 function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  //
   // hook-Form
   const {
     register,
@@ -59,7 +58,6 @@ function Login() {
         className="flex flex-col justify-center w-full p-20 mx-auto h-250 "
       >
         <LabelInput
-          // className="mb-10"
           placeholder="아이디를 입력해주세요"
           register={register("userId", { required: true, pattern: regex.id })}
         />

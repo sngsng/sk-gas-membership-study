@@ -14,31 +14,22 @@ import { signUpPart3ApiData } from "../../store/modules/ApiData";
 function SignInPark3() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  //
   // redux
   const userApiData = useAppSelector((state) => state.userApiData);
 
-  console.log("----------------userApiData!!!!----------------");
-  console.log(userApiData);
-
+  // SMS 인증문자 요청
   const { mutateAsync: smsRequestPress, isLoading } = useMutation(
     RequestAuthentication
   );
 
-  // 필요한 데이터 받아서 리덕스에 넣어줌.
   const RequestForSmsAuthentication = () => {
-    // console.clear();
-    console.log("----------------userApiData----------------");
-    console.log(userApiData);
     //
     // SMS 인증문자 요청
     smsRequestPress(userApiData).then((res) => {
-      //
-      console.log("----------------smsRequest : res----------------");
-      console.log(res);
-      //
       const { check1, check2, check3, certNum } = res;
       //
-      // api redux
+      // api redex
       dispatch(
         signUpPart3ApiData({
           check1,

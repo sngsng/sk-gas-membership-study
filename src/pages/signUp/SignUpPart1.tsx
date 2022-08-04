@@ -86,10 +86,6 @@ function SignUpPart1() {
       carTbkNo: data.carNumber.slice(3),
     };
 
-    console.clear();
-    console.log("----------------part1Data----------------");
-    console.log(part1Data);
-    //
     dispatch(signPart1DataAdd(part1Data));
     navigate(urls.SignUpPart2);
   };
@@ -127,7 +123,7 @@ function SignUpPart1() {
 
           <LabelInput
             HtmlFor="Pwd"
-            // type="password"
+            type="password"
             label={string.Pwd}
             className="mb-12"
             placeholder={string.EnterPwd}
@@ -148,7 +144,7 @@ function SignUpPart1() {
 
           <LabelInput
             HtmlFor="rePwd"
-            // type="password"
+            type="password"
             label={string.RePwd}
             className="mb-12"
             placeholder={string.EnterPwd}

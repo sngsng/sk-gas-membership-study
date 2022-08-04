@@ -85,8 +85,6 @@ function SignInPark2() {
 
     // reset으로 MAPPIng 하는 방법 찾아보기
     if (termsCheckList.length > 0) {
-      console.clear();
-      console.log("----------------test!!----------------");
       console.log("part2 : 유효성 검사");
 
       trigger(["birthday", "name", "gen", "phoneNo", "phoneCorp"]);

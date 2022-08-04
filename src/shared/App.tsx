@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Main from "../pages/Main";
@@ -22,6 +23,8 @@ import FindIdResult from "../pages/findId/FindIdResult";
 import FindId1 from "../pages/findId/FindId1";
 
 function App() {
+  const isLogin = localStorage.getItem("token");
+
   return (
     <BrowserRouter>
       <Routes>

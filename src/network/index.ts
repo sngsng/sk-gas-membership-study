@@ -17,7 +17,7 @@ export const createTransactionNo = () => {
 const hmsRequest = (url: string, body: Record<string, any>) => {
   // console.log(process.env.NODE_ENV);
   const axiosInstance = axios.create();
-
+  //
   // 헤더 설정
   const token = getAuthToken() || "";
   const config: AxiosRequestConfig = {
