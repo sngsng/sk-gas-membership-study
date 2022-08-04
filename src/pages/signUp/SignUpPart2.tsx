@@ -13,7 +13,7 @@ import LabelSelectBtn from "../../components/signUp/LabelSelectBtn";
 import Button from "../../elements/Button";
 import urls from "../../constants/urls";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { signPart2DataAdd } from "../../store/modules/User";
+import { signPart2DataAdd } from "../../store/modules/SignUp";
 import { signUpPart2ApiData } from "../../store/modules/ApiData";
 import { SignPart2DataMapping } from "../../store/modules/MappingData";
 import string from "../../constants/string";
@@ -44,6 +44,9 @@ function SignInPark2() {
   //
   // 상태관리
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
+  console.clear();
+  console.log("----------------termsCheckList----------------");
+  console.log(termsCheckList);
   //
   // redux
   const singPart2MappingData = useAppSelector((state) => state.mappingData);
@@ -118,6 +121,10 @@ function SignInPark2() {
         gen,
         phoneCorp,
         termsCheckList,
+        terms1chk: "Y",
+        terms2chk: "Y",
+        terms3chk: "Y",
+        terms4chk: "Y",
       })
     );
 
@@ -143,9 +150,6 @@ function SignInPark2() {
 
     // 본인인증 app 인증요청 후 자료 리덕스에 담기
     NextSendData(body).then((res) => {
-      console.clear();
-      console.log("----------------res part2!!!----------------");
-      console.log(res);
       const { certNum, trCert, check1, check2 } = res;
       //
       // api redux

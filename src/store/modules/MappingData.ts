@@ -9,6 +9,10 @@ interface SignPart2DataMappingType {
   phoneCorp: { value: string; label: string };
   nation: string;
   termsCheckList: Terms[];
+  terms1chk?: string;
+  terms2chk?: string;
+  terms3chk?: string;
+  terms4chk?: string;
 }
 
 const initialState: SignPart2DataMappingType = {
@@ -19,6 +23,10 @@ const initialState: SignPart2DataMappingType = {
   nation: "0",
   birthday: "",
   termsCheckList: [],
+  terms1chk: "",
+  terms2chk: "",
+  terms3chk: "",
+  terms4chk: "",
 };
 
 export const MappingData = createSlice({

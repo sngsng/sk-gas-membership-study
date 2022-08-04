@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ClipLoader from "react-spinners/ClipLoader";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import regex from "../../util/regex";
@@ -10,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hook";
 import LabelInput from "../../components/signUp/LabelInput";
 import Button from "../../elements/Button";
 import LabelInputBtn from "../../components/signUp/LabelInputBtn";
-import { signPart1DataAdd } from "../../store/modules/User";
+import { signPart1DataAdd } from "../../store/modules/SignUp";
 import urls from "../../constants/urls";
 import string from "../../constants/string";
 import { idCheckAPI } from "../../apis/signUp";
@@ -39,7 +38,7 @@ function SignUpPart1() {
   //  상태관리
   const [isIdCheck, setIdCheck] = useState(false);
   //  redux
-  const userData = useAppSelector((state) => state.user);
+  const userData = useAppSelector((state) => state.signUp);
   //  변수
   const isIdCheckBtn = !!getValues("Id") && !errors.Id;
 

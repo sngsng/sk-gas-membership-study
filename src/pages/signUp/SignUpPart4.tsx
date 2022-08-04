@@ -11,10 +11,12 @@ import {
 import LabelInput from "../../components/signUp/LabelInput";
 import Timer from "../../components/signUp/Timer";
 import string from "../../constants/string";
+import urls from "../../constants/urls";
 import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
+import { userSignUpData } from "../../store/modules/User";
 import regex from "../../util/regex";
 
 function SignInPark4() {
@@ -22,7 +24,7 @@ function SignInPark4() {
   const dispatch = useAppDispatch();
   // redux
   const signApiData = useAppSelector((state) => state.userApiData);
-  const userData = useAppSelector((state) => state.user);
+  const userData = useAppSelector((state) => state.signUp);
   // hook-Form
   const {
     register,
@@ -35,19 +37,16 @@ function SignInPark4() {
   // 상태관리
   const [isButton, setIsButton] = useState(false);
   const [isTimer, setIsTimer] = useState(false);
-  //
-  // 변수
+  const [isSmsRetry, setIsSmsRetry] = useState(false);
 
-  //
   // body값
   const { certNum, check1, check2, check3 } = signApiData;
-
-  // console.clear();
-  console.log("----------------signApiData----------------");
-  console.log(signApiData);
-
-  // console.log("----------------userData----------------");
-  // console.log(userData);
+  const commonData = {
+    certNum,
+    check1,
+    check2,
+    check3,
+  };
 
   // SMS 인증 확인
   const {
@@ -66,9 +65,7 @@ function SignInPark4() {
   //
   // 회원가입 요청
   const SignUp = (CI: string) => {
-    console.log("----------------CI----------------");
-    console.log(CI);
-
+    //
     const body = {
       lognId: userData.iognId,
       lognPwd: userData.iognPwd,
@@ -84,12 +81,21 @@ function SignInPark4() {
       cluAgrList: userData.cluAgrList,
     };
 
-    console.log("----------------body----------------");
-    console.log(body);
-
     startSignUp(body).then((res) => {
-      console.log(res);
-      // navigate(urls.SignUpPart5, { replace: true });
+      //
+      // user redux
+      dispatch(
+        userSignUpData({
+          CI,
+          loginID: userData.iognId,
+          carNo1: userData.carFrtNo,
+          carNo2: userData.carTbkNo,
+          mbrNM: userData.mbrNm,
+          mbrID: res.mbrId,
+        })
+      );
+
+      navigate(urls.SignUpPart5, { replace: true });
     });
   };
 
@@ -97,61 +103,69 @@ function SignInPark4() {
   // SMS 인증 확인
   const authCheckApi = () => {
     const body = {
-      certNum,
-      check1,
-      check2,
-      check3,
+      ...commonData,
       smsNum: getValues("author"),
     };
     authenticationCheckPress(body).then((res) => {
+      // 에러처리
+      //
+      // 모달 만들어서 띄워줘야될 곳
+      // if (result === "Y") {
+      //   console.log("성공");
+      // } else if (result === "N") {
+      //   console.log("실패");
+      // } else if (result === "F") {
+      //   console.log("일 5회 인증실패");
+      // } else if (result === "E") {
+      //   console.log("오류");
+      // }
       SignUp(res.CI);
     });
   };
 
   // SMS 인증 재요청
   const smsRetry = () => {
-    // retry 했을시 버튼에 로딩 처리..
-    // 문자 수신 되지 않나요? 에 조건 건어서 여러번 클릭 방지
-    //
     // 버튼 활성화
     setIsButton(false);
-    //
-    // api 인증재요청
-    smsRetryMutation({
-      check1,
-      check2,
-      check3,
-      certNum,
-    }).then((res) => {
-      // 타이머 다시 시작
-      setIsTimer(!isTimer);
-      //
-      console.log("----------------sms retry : res----------------");
-      console.log(res);
-      //
-      const { check1, check2, check3, certNum, result } = res;
-      //
-      // api redux
-      dispatch(
-        signUpPart3ApiData({
-          check1,
-          check2,
-          check3,
-          certNum,
-        })
-      );
-      //
-      // 모달 만들어서 띄워줘야될 곳
-      if (result === "Y") {
-        console.log("성공");
-      } else if (result === "N") {
-        console.log("실패");
-      } else if (result === "F") {
-        console.log("일 5회 인증실패");
-      } else if (result === "E") {
-        console.log("오류");
-      }
-    });
+
+    if (!isSmsRetry) {
+      setIsSmsRetry(true);
+      // api 인증재요청
+      smsRetryMutation({
+        ...commonData,
+      }).then((res) => {
+        // 타이머 다시 시작
+        setIsTimer(!isTimer);
+        setIsSmsRetry(false);
+        const { check1, check2, check3, certNum, result } = res;
+        //
+        // api redux
+        dispatch(
+          signUpPart3ApiData({
+            check1,
+            check2,
+            check3,
+            certNum,
+          })
+        );
+        //
+        // 모달 만들어서 띄워줘야될 곳
+        if (result === "Y") {
+          console.log("성공");
+          setIsSmsRetry(true);
+        } else if (result === "N") {
+          console.log("실패");
+          setIsSmsRetry(false);
+        } else if (result === "F") {
+          console.log("일 5회 인증실패");
+          setIsSmsRetry(true);
+        } else if (result === "E") {
+          console.log("오류");
+          alert("오류!! 모달 띄우기!");
+          setIsSmsRetry(false);
+        }
+      });
+    }
   };
 
   return (

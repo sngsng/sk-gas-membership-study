@@ -1,4 +1,4 @@
-export interface UserData1 {
+export interface SignUpData1 {
   // 로그인ID
   iognId?: string;
 
@@ -12,7 +12,7 @@ export interface UserData1 {
   carTbkNo?: string;
 }
 
-export interface UserData2 {
+export interface SignUpData2 {
   // 회원명
   mbrNm?: string;
 
@@ -29,7 +29,7 @@ export interface UserData2 {
   ntnl?: string;
 }
 
-export interface UserData3 {
+export interface SignUpData3 {
   // 차량 제조사코드
   carManufrCd?: string;
 

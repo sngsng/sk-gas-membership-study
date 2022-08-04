@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Logo } from "../assets";
 import Layout from "../elements/Layout";
 import { useAppDispatch } from "../store/hook";
-import { addCluAgrList } from "../store/modules/User";
+import { addCluAgrList } from "../store/modules/SignUp";
 
 function SignIn() {
   const navigate = useNavigate();

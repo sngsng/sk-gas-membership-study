@@ -23,7 +23,7 @@ function SignUpPart5() {
           className="btn btn-fill btn-extra"
           type="button"
           onClick={() => {
-            navigate("/");
+            navigate("/", { replace: true });
           }}
         >
           홈으로

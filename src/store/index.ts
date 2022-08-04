@@ -1,13 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import UserApiDataReducer from "./modules/ApiData";
-import UserReducer from "./modules/User";
+import SignUpReducer from "./modules/SignUp";
 import MappingDataReducer from "./modules/MappingData";
+import UserReducer from "./modules/User";
 
 export const store = configureStore({
   reducer: {
-    user: UserReducer,
+    signUp: SignUpReducer,
     userApiData: UserApiDataReducer,
     mappingData: MappingDataReducer,
+    user: UserReducer,
   },
 });
 

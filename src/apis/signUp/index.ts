@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
-import { UserState } from "../../store/modules/User";
+import { SignUpState } from "../../store/modules/SignUp";
 import {
   AuthNumberCheckBody,
   RequestAuthenticationBody,
@@ -139,12 +139,10 @@ export const authenticationNumberCheckApi = async (
 };
 
 // 회원가입
-export const signUpApi = async (body: UserState) => {
+export const signUpApi = async (body: SignUpState) => {
   try {
     const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
-    return data;
     const { responseData } = data;
-    // 뽑아낼만한 데이터?? 또는 에러 처리!
     return responseData;
   } catch (err) {
     return console.log("signUpApi : ", err);

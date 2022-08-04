@@ -6,7 +6,7 @@ import urls from "../constants/urls";
 import Layout from "../elements/Layout";
 import cls, { requiredLengthCheck } from "../util";
 import { useAppSelector, useAppDispatch } from "../store/hook/index";
-import { addCluAgrList } from "../store/modules/User";
+import { addCluAgrList } from "../store/modules/SignUp";
 import Button from "../elements/Button";
 import { Terms } from "../apis/signUp/types/responses";
 import { fetchTermsList } from "../apis/signUp";
@@ -17,7 +17,7 @@ function AcceptTerms() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   // redux
-  const userCheckedList = useAppSelector((state) => state.user.cluAgrList); // 다음 페이지로 갔다가 올때
+  const userCheckedList = useAppSelector((state) => state.signUp.cluAgrList); // 다음 페이지로 갔다가 올때
 
   // state
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>(

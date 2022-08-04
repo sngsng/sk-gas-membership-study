@@ -26,7 +26,7 @@ function SignInPark3() {
 
   // 필요한 데이터 받아서 리덕스에 넣어줌.
   const RequestForSmsAuthentication = () => {
-    console.clear();
+    // console.clear();
     console.log("----------------userApiData----------------");
     console.log(userApiData);
     //
