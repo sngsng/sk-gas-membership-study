@@ -31,7 +31,7 @@ export interface SignUpPart2SubmitType {
   };
 }
 
-const options = [
+const phoneCorpOptions = [
   { value: "SKT", label: "SK텔레콤" },
   { value: "KTF", label: "KT" },
   { value: "LGT", label: "LG U+" },
@@ -43,23 +43,30 @@ const options = [
 function SignInPark2() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const singPart2MappingData = useAppSelector((state) => state.mappingData);
-  const [apiTermsData, setApiTermsData] = useState<Part2Data>();
+  //
+  // 상태관리
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
+  //
+  // redux
+  const singPart2MappingData = useAppSelector((state) => state.mappingData);
+  //
+  // 변수
   const termsDataLength = fetchPassAuthenticationTermsList().length;
   const termsCheckListLength = termsCheckList.length;
   const termsLengthComparison = termsCheckListLength === termsDataLength;
+  //
+  // useForm
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
     control,
     setValue,
-    getValues,
     trigger,
     reset,
   } = useForm<SignUpPart2SubmitType>({
     defaultValues: {
+      // 초기값
       gen: "0",
     },
     mode: "onChange",
@@ -76,150 +83,71 @@ function SignInPark2() {
     setValue("phoneCorp", phoneCorp || "");
 
     // reset으로 MAPPIng 하는 방법 찾아보기
-    // 수동으로 유효성 검사
-    if (termsCheckList.length !== 0) {
+    if (termsCheckList.length > 0) {
+      console.clear();
+      console.log("----------------test!!----------------");
+      console.log("part2 : 유효성 검사");
+
       trigger(["birthday", "name", "gen", "phoneNo", "phoneCorp"]);
       setTermsCheckList(termsCheckList);
     }
+
+    console.log("----------------termsCheckList----------------");
+    console.log(termsCheckList);
   }, []);
 
-  console.log(getValues("gen"));
-
-  // 데이터 기반으로 작성해야된다.. 서버에서 데이터가 어떻게 변해서 넘어올지 모르니.
-  // Body값은 나중에 해도 되는 문제이다.
-  // terms all 체크 클릭시
-  const termsAllCheckHandel = () => {
-    if (!termsLengthComparison) {
-      setTermsCheckList([]);
-      setTermsCheckList(
-        fetchPassAuthenticationTermsList().map((terms) => {
-          return terms;
-        })
-      );
-      setApiTermsData({
-        ...apiTermsData,
-        terms1chk: "Y",
-        terms2chk: "Y",
-        terms3chk: "Y",
-        terms4chk: "Y",
-      });
-    } else {
-      setTermsCheckList([]);
-      setApiTermsData({
-        ...apiTermsData,
-        terms1chk: "",
-        terms2chk: "",
-        terms3chk: "",
-        terms4chk: "",
-      });
-    }
-  };
-
-  // 이부분도 문제! 다시 바꿔줘야된다.!!!
-  // terms "Y" 체크후 입력 & 제거 / util로 이동
-  const termsRequired = (index: number) => {
-    switch (index) {
-      case 1:
-        if (apiTermsData?.terms1chk) {
-          setApiTermsData({ ...apiTermsData, terms1chk: "" });
-        } else {
-          setApiTermsData({ ...apiTermsData, terms1chk: "Y" });
-        }
-        break;
-      case 2:
-        if (apiTermsData?.terms2chk) {
-          setApiTermsData({ ...apiTermsData, terms2chk: "" });
-        } else {
-          setApiTermsData({ ...apiTermsData, terms2chk: "Y" });
-        }
-        break;
-      case 3:
-        if (apiTermsData?.terms3chk) {
-          setApiTermsData({ ...apiTermsData, terms3chk: "" });
-        } else {
-          setApiTermsData({ ...apiTermsData, terms3chk: "Y" });
-        }
-        break;
-      case 4:
-        if (apiTermsData?.terms4chk) {
-          setApiTermsData({ ...apiTermsData, terms4chk: "" });
-        } else {
-          setApiTermsData({ ...apiTermsData, terms4chk: "Y" });
-        }
-        break;
-
-      default:
-        "";
-    }
-  };
-
-  // 문제!? 일단 다시 체크!!
-  // terms 개별 체크
-  const changeHandel = (check: boolean, terms: Terms, index?: number) => {
-    if (check && !!termsCheckList) {
-      setTermsCheckList([...termsCheckList, terms]);
-      !!index && termsRequired(index);
-    } else {
-      !!index && termsRequired(index);
-      setTermsCheckList(
-        termsCheckList?.filter((value: Terms) => {
-          return value.cluCd !== terms.cluCd;
-        })
-      );
-    }
-  };
-
   const { mutateAsync: NextSendData } = useMutation(sendSMS);
+
+  console.log(
+    "----------------fetchPassAuthenticationTermsList()----------------"
+  );
+  console.log(fetchPassAuthenticationTermsList());
 
   // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
-    console.log("gen : ", gen);
+    const commonData = {
+      name,
+      birthday,
+      gen,
+      phoneNo,
+      nation: "0",
+    };
 
-    // mapping data redux 넣기
+    // mapping redux 넣기
     dispatch(
       SignPart2DataMapping({
-        ...apiTermsData,
-        birthday,
-        name,
-        gen,
+        ...commonData,
         phoneCorp,
-        phoneNo,
-        nation: "0",
         termsCheckList,
       })
     );
 
-    // 유저정보 redux
+    // user redux
     dispatch(
       signPart2DataAdd({
-        ...apiTermsData,
-        birthday,
-        name,
-        gen,
-        phoneNo,
+        ...commonData,
         phoneCorp: phoneCorp.value,
-        nation: "0",
       })
     );
 
+    // body값 부분만 수정하면 될듯?
     const body = {
-      ...apiTermsData,
-      birthday,
-      name,
-      gender: gen,
-      phoneNo,
+      ...commonData,
       phoneCorp: phoneCorp.value,
-      nation: "0",
+      terms1chk: "Y",
+      terms2chk: "Y",
+      terms3chk: "Y",
+      terms4chk: "Y", // <== 이거!!!!
     };
 
     // 본인인증 app 인증요청 후 자료 리덕스에 담기
-    // 에러 처리 하기!!!!!!!!
     NextSendData(body).then((res) => {
-      console.log("----------------nextdata----------------");
-      console.log("nextdata : ", res);
       const { certNum, trCert, check1, check2 } = res;
+      //
+      // api redux
       dispatch(signUpPartApiData2({ certNum, trCert, check1, check2 }));
+      //
       navigate(urls.SignUpPart3);
     });
   };
@@ -287,7 +215,7 @@ function SignInPark2() {
                 label={string.Agency}
                 placeholder={string.EnterAgency}
                 onChange={onChange}
-                options={options}
+                options={phoneCorpOptions}
                 errors={errors?.phoneCorp?.message}
                 defaultValue={singPart2MappingData.phoneCorp}
               />
@@ -314,11 +242,9 @@ function SignInPark2() {
       <div className="p-20">
         <TermsList
           allCheckTitle={string.FullyAgreeTerms}
-          changeHandel={changeHandel}
-          termsData={fetchPassAuthenticationTermsList()}
-          termsAllCheckHandel={termsAllCheckHandel}
+          termsListData={fetchPassAuthenticationTermsList()}
           termsCheckList={termsCheckList}
-          termsLengthComparison={termsLengthComparison}
+          setTermsCheckList={setTermsCheckList}
         />
 
         {/* btn 컴포넌트 */}
