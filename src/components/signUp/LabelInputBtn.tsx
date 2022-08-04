@@ -1,7 +1,6 @@
 // import React, { ButtonHTMLAttributes } from "react";
 import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
-import ClipLoader from "react-spinners/ClipLoader";
 import Button from "../../elements/Button";
 import cls from "../../util";
 
@@ -56,21 +55,14 @@ function LabelInputBtn({
           />
 
           <div className="flex items-center justify-center min-h-60">
-            {isLoading ? (
-              <ClipLoader
-                className="text-blue ml-45"
-                color="text-blue"
-                size={30}
-              />
-            ) : (
-              <Button
-                className="ml-10 min-h-60 text-b1 min-w-101"
-                text={btnText}
-                disabled={!isBtnCheck}
-                isBtnCheck={isBtnCheck}
-                onClick={onClick}
-              />
-            )}
+            <Button
+              className="ml-10 min-h-60 text-b1 min-w-101"
+              text={btnText}
+              disabled={!isBtnCheck}
+              isBtnCheck={isBtnCheck}
+              isLoading={isLoading}
+              onClick={onClick}
+            />
           </div>
         </div>
         {errors && <p className="mt-8 error">{errors}</p>}

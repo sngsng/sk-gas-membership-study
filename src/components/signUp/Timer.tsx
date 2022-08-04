@@ -39,7 +39,7 @@ function Timer({ className = "", setIsButton, isTimer }: TimerProps) {
   }, [sec]);
 
   return (
-    <p className={cls("absolute top-52 right-20 text-b1", className)}>
+    <p className={cls("absolute  text-b1", className)}>
       {`0${min}`}:{sec < 10 ? `0${sec}` : sec}
     </p>
   );

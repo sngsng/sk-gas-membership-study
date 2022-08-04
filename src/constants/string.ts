@@ -61,6 +61,8 @@ export default {
   CheckForDuplication: "중복확인",
 
   // 인증관련
+  AuthLabel: "인증번호 *",
+  AuthPlaceholder: "발송된 숫자 6자리를 입력해주세요",
   AuthenticateWithPhone: "휴대폰으로 인증하기",
   AuthenticateWithApp: "PASS 앱으로 인증완료",
 

@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-// import * as yup from "yup";
-// import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "react-query";
 import { fetchPassAuthenticationTermsList, sendSMS } from "../../apis/signUp";
 import { Part2Data, Terms } from "../../apis/signUp/types/responses";
@@ -16,7 +14,7 @@ import Button from "../../elements/Button";
 import urls from "../../constants/urls";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signPart2DataAdd } from "../../store/modules/User";
-import { signUpPartApiData2 } from "../../store/modules/ApiData";
+import { signUpPart2ApiData } from "../../store/modules/ApiData";
 import { SignPart2DataMapping } from "../../store/modules/MappingData";
 import string from "../../constants/string";
 
@@ -96,7 +94,7 @@ function SignInPark2() {
     console.log(termsCheckList);
   }, []);
 
-  const { mutateAsync: NextSendData } = useMutation(sendSMS);
+  const { mutateAsync: NextSendData, isLoading } = useMutation(sendSMS);
 
   console.log(
     "----------------fetchPassAuthenticationTermsList()----------------"
@@ -109,7 +107,6 @@ function SignInPark2() {
     const commonData = {
       name,
       birthday,
-      gen,
       phoneNo,
       nation: "0",
     };
@@ -118,6 +115,7 @@ function SignInPark2() {
     dispatch(
       SignPart2DataMapping({
         ...commonData,
+        gen,
         phoneCorp,
         termsCheckList,
       })
@@ -127,6 +125,7 @@ function SignInPark2() {
     dispatch(
       signPart2DataAdd({
         ...commonData,
+        gen,
         phoneCorp: phoneCorp.value,
       })
     );
@@ -134,6 +133,7 @@ function SignInPark2() {
     // body값 부분만 수정하면 될듯?
     const body = {
       ...commonData,
+      gender: gen,
       phoneCorp: phoneCorp.value,
       terms1chk: "Y",
       terms2chk: "Y",
@@ -143,10 +143,13 @@ function SignInPark2() {
 
     // 본인인증 app 인증요청 후 자료 리덕스에 담기
     NextSendData(body).then((res) => {
+      console.clear();
+      console.log("----------------res part2!!!----------------");
+      console.log(res);
       const { certNum, trCert, check1, check2 } = res;
       //
       // api redux
-      dispatch(signUpPartApiData2({ certNum, trCert, check1, check2 }));
+      dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
       //
       navigate(urls.SignUpPart3);
     });
@@ -253,6 +256,7 @@ function SignInPark2() {
           className="p-20"
           isBtnCheck={isValid && termsLengthComparison}
           disabled={!(isValid && termsLengthComparison)}
+          isLoading={isLoading}
           onClick={handleSubmit(onSubmit)}
         />
       </div>

@@ -8,6 +8,13 @@ export interface TermsIdCheckBody {
   lognId: string;
 }
 
+export interface RequestAuthenticationBody {
+  // 본인인증 SMS 전송요청
+  certNum: string;
+  check1: string;
+  trCert?: string;
+}
+
 export interface AuthNumberCheckBody {
   // SMS 인증 요청
   certNum: string;

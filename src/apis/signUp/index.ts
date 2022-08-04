@@ -2,7 +2,11 @@
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
 import { UserState } from "../../store/modules/User";
-import { AuthNumberCheckBody, TermsIdCheckBody } from "./types/requests";
+import {
+  AuthNumberCheckBody,
+  RequestAuthenticationBody,
+  TermsIdCheckBody,
+} from "./types/requests";
 import { Terms } from "./types/responses";
 
 // 약관리스트 불러오기.
@@ -14,7 +18,7 @@ export const fetchTermsList = async () => {
     const { cluList } = data.responseData;
     return cluList;
   } catch (err) {
-    return console.log(err);
+    return console.log("fetchTermsList : ", err);
   }
 };
 
@@ -97,6 +101,27 @@ export const sendSMS = async (body: Record<string, any>) => {
   } catch (err) {
     return console.log("sendSMS : ", err);
   }
+};
+
+// 본인인증 SMS 전송요청
+export const RequestAuthentication = async (
+  body: RequestAuthenticationBody
+) => {
+  try {
+    const { data } = await hmsRequest(ApiUrls.REQUEST_SMS1, body);
+    const { responseData } = data;
+    return responseData;
+  } catch (err) {
+    return console.log("RequestAuthentication : ", err);
+  }
+};
+
+// 본인인증 SMS 재요청
+export const smsRetryApi = async (body: AuthNumberCheckBody) => {
+  const { data } = await hmsRequest(ApiUrls.REQUEST_SMS_RETRY, body);
+  const { responseData } = data;
+  console.log("smsRetryApi  : ", responseData);
+  return responseData;
 };
 
 // 본인인증 SMS 인증확인

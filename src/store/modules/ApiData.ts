@@ -23,13 +23,13 @@ export const UserApiData = createSlice({
   name: "UserApiData",
   initialState,
   reducers: {
-    signUpPartApiData2: (state, action: PayloadAction<SignPart2>) => {
+    signUpPart2ApiData: (state, action: PayloadAction<SignPart2>) => {
       state.certNum = action.payload.certNum;
       state.trCert = action.payload.trCert;
       state.check1 = action.payload.check1;
       state.check2 = action.payload.check2;
     },
-    signUpPartApiData3: (state, action: PayloadAction<SignPart3>) => {
+    signUpPart3ApiData: (state, action: PayloadAction<SignPart3>) => {
       state.check1 = action.payload.check1;
       state.check2 = action.payload.check2;
       state.check3 = action.payload.check3;
@@ -38,6 +38,6 @@ export const UserApiData = createSlice({
   },
 });
 
-export const { signUpPartApiData2, signUpPartApiData3 } = UserApiData.actions;
+export const { signUpPart2ApiData, signUpPart3ApiData } = UserApiData.actions;
 
 export default UserApiData.reducer;
