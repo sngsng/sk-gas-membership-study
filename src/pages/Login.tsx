@@ -11,6 +11,8 @@ import urls from "../constants/urls";
 import Button from "../elements/Button";
 import Layout from "../elements/Layout";
 import hmsRequest from "../network";
+import { useAppDispatch, useAppSelector } from "../store/hook";
+import { userSignUpData } from "../store/modules/User";
 import cls from "../util";
 import regex from "../util/regex";
 
@@ -23,6 +25,8 @@ interface LoginFormType {
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  // hook-Form
   const {
     register,
     handleSubmit,
@@ -31,6 +35,7 @@ function Login() {
     mode: "onChange",
   });
 
+  // 로그인
   const { mutateAsync: LoginMutation, isLoading: loginLoading } =
     useMutation(loginApi);
 
@@ -40,16 +45,11 @@ function Login() {
       mbrPW: data.userPwd,
     };
 
-    console.log("----------------body----------------");
-    console.log(body);
-
     LoginMutation(body).then((res) => {
-      console.log("유저정보 받아온거 : ", res);
-
-      // 여기에서 유저 정보 redux에 저장하기.
-      // dispatch(userInfo(res.user));
-
-      // navigate(urls.Main);
+      //
+      // user redux
+      dispatch(userSignUpData(res.user));
+      navigate(urls.Main);
     });
   };
   return (
@@ -75,9 +75,9 @@ function Login() {
           text="로그인"
           className="btn-extra"
           isBtnCheck={isValid}
+          isLoading={loginLoading}
           onClick={handleSubmit(onSubmit)}
         />
-        {/* 버튼 로딩 하는거 */}
       </form>
       <div className="text-center">
         <Link
