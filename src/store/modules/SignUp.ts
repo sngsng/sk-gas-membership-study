@@ -49,10 +49,31 @@ export const SignUp = createSlice({
       state.ntnl = action.payload.nation;
       state.mbrNm = action.payload.name;
     },
+    signDataReset: (state) => {
+      state.iognId = "";
+      state.iognPwd = "";
+      state.ci = "";
+      state.carFrtNo = "";
+      state.carTbkNo = "";
+      state.carManufrCd = "";
+      state.carModelCd = "";
+      state.mbrNm = "";
+      state.hpNo = "";
+      state.birth = "";
+      state.gen = "";
+      state.ntnl = "";
+      state.mbrFg = "";
+      state.prnBizlcNo = "";
+      state.cluAgrList = [];
+    },
   },
 });
 
-export const { addCluAgrList, signPart1DataAdd, signPart2DataAdd } =
-  SignUp.actions;
+export const {
+  addCluAgrList,
+  signPart1DataAdd,
+  signPart2DataAdd,
+  signDataReset,
+} = SignUp.actions;
 
 export default SignUp.reducer;

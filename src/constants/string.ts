@@ -56,6 +56,7 @@ export default {
   // button 메세지
   Next: "다음",
   Check: "확인",
+  Cancel: "취소",
 
   AgreeAndSignUp: "동의하고 회원가입",
   CheckForDuplication: "중복확인",
@@ -66,6 +67,8 @@ export default {
   AuthenticateWithPhone: "휴대폰으로 인증하기",
   AuthenticateWithApp: "PASS 앱으로 인증완료",
 
-  // 마케팅 메세지
-  //  :"※ 본 마케팅 수신 동의 시 혜택으로 충전 할인 서비스가 제공됩니다."
+  // Mobal
+  AuthFailed: "인증실패",
+  AuthFailed5: "일 5회 인증실패",
+  Error: "오류",
 };

@@ -45,9 +45,22 @@ export const MappingData = createSlice({
       state.birthday = action.payload.birthday;
       state.termsCheckList = action.payload.termsCheckList;
     },
+    mappingDataReset: (state) => {
+      state.name = "";
+      state.phoneNo = "";
+      state.gen = "0";
+      state.phoneCorp = { value: "", label: "" };
+      state.nation = "0";
+      state.birthday = "";
+      state.termsCheckList = [];
+      state.terms1chk = "";
+      state.terms2chk = "";
+      state.terms3chk = "";
+      state.terms4chk = "";
+    },
   },
 });
 
-export const { SignPart2DataMapping } = MappingData.actions;
+export const { SignPart2DataMapping, mappingDataReset } = MappingData.actions;
 
 export default MappingData.reducer;

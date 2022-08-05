@@ -8,6 +8,20 @@ export interface TermsIdCheckBody {
   lognId: string;
 }
 
+export interface RequestAppBody {
+  // 본인인증 APP 인증요청
+  name: string;
+  phoneNo: string;
+  birthday: string;
+  gender: "0" | "1";
+  phoneCorp: string;
+  nation: string;
+  terms1chk: string;
+  terms2chk: string;
+  terms3chk: string;
+  terms4chk: string;
+}
+
 export interface RequestAuthenticationBody {
   // 본인인증 SMS 전송요청
   certNum: string;

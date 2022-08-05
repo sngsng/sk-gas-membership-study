@@ -29,6 +29,8 @@ export interface UserDataType {
   // 개인사업자 여부
   // prnBizYn?: string;
   prnBizYn?: "N" | "Y";
+
+  isLogin?: boolean;
 }
 
 export interface favoriteCjargePlaceType {

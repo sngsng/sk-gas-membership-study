@@ -35,9 +35,17 @@ export const UserApiData = createSlice({
       state.check3 = action.payload.check3;
       state.certNum = action.payload.certNum;
     },
+    apiDataReset: (state) => {
+      state.certNum = "";
+      state.check1 = "";
+      state.check2 = "";
+      state.check3 = "";
+      state.trCert = "";
+    },
   },
 });
 
-export const { signUpPart2ApiData, signUpPart3ApiData } = UserApiData.actions;
+export const { signUpPart2ApiData, signUpPart3ApiData, apiDataReset } =
+  UserApiData.actions;
 
 export default UserApiData.reducer;

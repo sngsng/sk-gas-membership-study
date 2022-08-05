@@ -13,6 +13,7 @@ import { signPart1DataAdd } from "../../store/modules/SignUp";
 import urls from "../../constants/urls";
 import string from "../../constants/string";
 import { idCheckAPI } from "../../apis/signUp";
+import { openModal } from "../../store/modules/Modal";
 
 interface SignUpPart1SubmitType {
   Id: string;
@@ -22,6 +23,7 @@ interface SignUpPart1SubmitType {
 }
 
 function SignUpPart1() {
+  // hook-Form
   const {
     register,
     handleSubmit,
@@ -33,16 +35,19 @@ function SignUpPart1() {
     mode: "onChange",
     reValidateMode: "onBlur",
   });
+  //
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   //  상태관리
   const [isIdCheck, setIdCheck] = useState(false);
+
   //  redux
   const userData = useAppSelector((state) => state.signUp);
+
   //  변수
   const isIdCheckBtn = !!getValues("Id") && !errors.Id;
 
-  //
   // data Mapping
   useEffect(() => {
     const { iognId, iognPwd, carFrtNo, carTbkNo } = userData;
@@ -66,13 +71,30 @@ function SignUpPart1() {
 
   const idCheckHandle = () => {
     const userId = getValues().Id;
+
     idCheckMutation({ lognId: userId }).then((res) => {
       if (res === "Y") {
         setIdCheck(false);
-        alert("중복된 아이디 입니다.");
+        //
+        dispatch(
+          openModal({
+            title: "중복된 아이디 입니다.",
+            subTitle: "다른 아이디를 입력해 주세요",
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+        //
       } else if (res === "N") {
         setIdCheck(true);
-        alert("사용가능한 아이디입니다.");
+        //
+        dispatch(
+          openModal({
+            title: "사용가능한 아이디 입니다.",
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
       }
     });
   };
@@ -159,7 +181,7 @@ function SignUpPart1() {
                 value: 8,
                 message: string.PassWordErrorMessage,
               },
-              //  비밀번호 일치 여부 체크
+              //  비밀번호 CROSS 체크
               validate: (value) => {
                 return value === getValues("Pwd") || string.PassWordsNotMatch;
               },

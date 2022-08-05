@@ -10,6 +10,7 @@ import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
+import { openModal } from "../../store/modules/Modal";
 
 function SignInPark3() {
   const navigate = useNavigate();
@@ -27,18 +28,51 @@ function SignInPark3() {
     //
     // SMS 인증문자 요청
     smsRequestPress(userApiData).then((res) => {
-      const { check1, check2, check3, certNum } = res;
-      //
-      // api redex
-      dispatch(
-        signUpPart3ApiData({
-          check1,
-          check2,
-          check3,
-          certNum,
-        })
-      );
-      navigate(urls.SignUpPart4);
+      console.log("----------------RequestAuthentication----------------");
+      console.log(res);
+
+      const { check1, check2, check3, certNum, result } = res;
+
+      if (result === "Y") {
+        //
+        // api redex
+        dispatch(
+          signUpPart3ApiData({
+            check1,
+            check2,
+            check3,
+            certNum,
+          })
+        );
+        navigate(urls.SignUpPart4);
+        //
+      } else if (result === "N") {
+        dispatch(
+          openModal({
+            title: string.AuthFailed,
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      } else if (result === "F") {
+        dispatch(
+          openModal({
+            title: "인증 횟수 초과",
+            subTitle:
+              "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      } else if (result === "E") {
+        dispatch(
+          openModal({
+            title: string.Error,
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      }
     });
   };
 

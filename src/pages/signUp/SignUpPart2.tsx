@@ -17,6 +17,7 @@ import { signPart2DataAdd } from "../../store/modules/SignUp";
 import { signUpPart2ApiData } from "../../store/modules/ApiData";
 import { SignPart2DataMapping } from "../../store/modules/MappingData";
 import string from "../../constants/string";
+import { openModal } from "../../store/modules/Modal";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -126,7 +127,7 @@ function SignInPark2() {
       })
     );
 
-    // user redux
+    // sign redux
     dispatch(
       signPart2DataAdd({
         ...commonData,
@@ -135,7 +136,6 @@ function SignInPark2() {
       })
     );
 
-    // body값 부분만 수정하면 될듯?
     const body = {
       ...commonData,
       gender: gen,
@@ -146,14 +146,46 @@ function SignInPark2() {
       terms4chk: "Y", // <== 이거!!!!
     };
 
-    // 본인인증 app 인증요청 후 자료 리덕스에 담기
+
+    // 본인인증 app 인증요청
     NextSendData(body).then((res) => {
-      const { certNum, trCert, check1, check2 } = res;
+      const { certNum, trCert, check1, check2, result } = res;
+
+      // 에러처리
+      if (result === "Y") {
+        // api redex
+        dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
+        //
+        navigate(urls.SignUpPart3);
+        //
+      } else if (result === "N") {
+        dispatch(
+          openModal({
+            title: string.AuthFailed,
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      } else if (result === "F") {
+        dispatch(
+          openModal({
+            title: "인증 횟수 초과",
+            subTitle:
+              "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      } else if (result === "E") {
+        dispatch(
+          openModal({
+            title: string.Error,
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      }
       //
-      // api redux
-      dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
-      //
-      navigate(urls.SignUpPart3);
     });
   };
 

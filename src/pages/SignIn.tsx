@@ -3,14 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { Logo } from "../assets";
 import Layout from "../elements/Layout";
 import { useAppDispatch } from "../store/hook";
-import { addCluAgrList } from "../store/modules/SignUp";
+import { apiDataReset } from "../store/modules/ApiData";
+import { mappingDataReset } from "../store/modules/MappingData";
+import { signDataReset } from "../store/modules/SignUp";
 
 function SignIn() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(addCluAgrList([]));
+    dispatch(signDataReset());
+    dispatch(apiDataReset());
+    dispatch(mappingDataReset());
   }, []);
 
   return (

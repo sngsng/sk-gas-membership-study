@@ -12,6 +12,9 @@ const initialState: UserDataType = {
   mbrID: "",
   mbrNM: "",
   prnBizYn: "N",
+
+  // 로그인 여부
+  isLogin: false,
 };
 
 export const User = createSlice({
@@ -28,9 +31,22 @@ export const User = createSlice({
       state.mbrNM = action.payload.mbrNM;
       state.mbrID = action.payload.mbrID;
     },
+    userDataReset: (state) => {
+      state.CI = "";
+      state.carNo1 = "";
+      state.carNo2 = "";
+      state.favoriteChargePlace = [];
+      state.favoriteChargePlaceCnt = 0;
+      state.loginID = "";
+      state.lvlCd = "01";
+      state.mbrID = "";
+      state.mbrNM = "";
+      state.prnBizYn = "N";
+      state.isLogin = false;
+    },
   },
 });
 
-export const { userSignUpData } = User.actions;
+export const { userSignUpData, userDataReset } = User.actions;
 
 export default User.reducer;

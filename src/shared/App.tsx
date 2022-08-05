@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect } from "react";
+/* eslint-disable react/jsx-no-undef */
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Main from "../pages/Main";
@@ -21,48 +22,56 @@ import FindId4 from "../pages/findId/FindId4";
 import FindId5 from "../pages/findId/FindId5";
 import FindIdResult from "../pages/findId/FindIdResult";
 import FindId1 from "../pages/findId/FindId1";
+import Modal from "./Modal";
 
 function App() {
   const isLogin = localStorage.getItem("token");
+
+  console.clear();
+  console.log("----------------isLogin----------------");
+  console.log(!isLogin);
+
+  // 고민
+  // useEffect(() => {
+  //   if (isLogin) {
+  //     // location.replace(urls.Main);
+  //   }
+  // }, []);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path={urls.Main} element={<Main />} />
         <Route path={urls.Home} element={<Home />} />
-        <Route path={urls.Mypage} element={<Mypage />} />
-        <Route path={urls.Login} element={<Login />} />
-        <Route path={urls.SignIn} element={<SignIn />} />
-        <Route path={urls.AccepTerms} element={<AcceptTerms />} />
-        <Route path={urls.SignUpPart1} element={<SignUpPart1 />} />
-        <Route path={urls.SignUpPart2} element={<SignUpPart2 />} />
-        <Route path={urls.SignUpPart3} element={<SignUpPart3 />} />
-        <Route path={urls.SignUpPart4} element={<SignUpPart4 />} />
-        <Route path={urls.SignUpPart5} element={<SignUpPart5 />} />=
-        <Route path={urls.FindId1} element={<FindId1 />} />
-        <Route path={urls.FindId2} element={<FindId2 />} />
-        <Route path={urls.FindId3} element={<FindId3 />} />
-        <Route path={urls.FindId4} element={<FindId4 />} />
-        <Route path={urls.FindId5} element={<FindId5 />} />
-        <Route path={urls.FindIdResult} element={<FindIdResult />} />
+        {isLogin && (
+          <>
+            <Route path={urls.Mypage} element={<Mypage />} />
+          </>
+        )}
+        {!isLogin && (
+          // {/* // 함수 ! 토큰 있는지 체크후 있으면 home으로 가게 만들어야됨... */}
+          <>
+            <Route path={urls.Login} element={<Login />} />
+            <Route path={urls.SignIn} element={<SignIn />} />
+            <Route path={urls.AccepTerms} element={<AcceptTerms />} />
+            <Route path={urls.SignUpPart1} element={<SignUpPart1 />} />
+            <Route path={urls.SignUpPart2} element={<SignUpPart2 />} />
+            <Route path={urls.SignUpPart3} element={<SignUpPart3 />} />
+            <Route path={urls.SignUpPart4} element={<SignUpPart4 />} />
+            <Route path={urls.SignUpPart5} element={<SignUpPart5 />} />
+            <Route path={urls.FindId1} element={<FindId1 />} />
+            <Route path={urls.FindId2} element={<FindId2 />} />
+            <Route path={urls.FindId3} element={<FindId3 />} />
+            <Route path={urls.FindId4} element={<FindId4 />} />
+            <Route path={urls.FindId5} element={<FindId5 />} />
+            <Route path={urls.FindIdResult} element={<FindIdResult />} />
+          </>
+        )}
         <Route path={urls.NotFound} element={<NotFound />} />
       </Routes>
-      {/* <Modal /> */}
+      <Modal />
     </BrowserRouter>
   );
 }
 
 export default App;
-
-// 모달 전체적으로 사용하는거
-
-// function Modal() {
-//   return (
-//     <div className="relative">
-//       <div>
-//         <p>title</p>
-//         <button type="button">확인</button>
-//       </div>
-//     </div>
-//   );
-// }

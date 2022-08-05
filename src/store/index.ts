@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  configureStore,
-  combineReducers,
-  getDefaultMiddleware,
-} from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import logger from "redux-logger";
 import {
   FLUSH,
@@ -20,6 +16,7 @@ import UserApiDataReducer from "./modules/ApiData";
 import SignUpReducer from "./modules/SignUp";
 import MappingDataReducer from "./modules/MappingData";
 import UserReducer from "./modules/User";
+import ModalReducer from "./modules/Modal";
 
 const persistConfig = {
   key: "root",
@@ -32,6 +29,7 @@ const rootReducer = combineReducers({
   userApiData: UserApiDataReducer,
   mappingData: MappingDataReducer,
   user: UserReducer,
+  modal: ModalReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -43,8 +41,8 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-      // }).concat(logger),
-    }),
+    }).concat(logger),
+  // }),
 });
 
 export const persistor = persistStore(store);

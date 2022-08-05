@@ -13,9 +13,8 @@ const loginApi = async (body: loginBody) => {
 
   localStorage.setItem("token", headers.authorization);
   const { responseData } = data;
-  // 토큰을 굳이 다른곳에서 할필요는 없을듯..!
-  return { user: responseData, auth: headers.authorization };
-  // data에서 토큰값이랑 유저 정보 return? 후에 접근 막기 (회원가입부분으로 접근하는거!)
+
+  return { user: responseData };
 };
 
 export default loginApi;

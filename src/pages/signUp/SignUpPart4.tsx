@@ -16,6 +16,7 @@ import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
+import { openModal } from "../../store/modules/Modal";
 import { userSignUpData } from "../../store/modules/User";
 import regex from "../../util/regex";
 
@@ -107,19 +108,41 @@ function SignInPark4() {
       smsNum: getValues("author"),
     };
     authenticationCheckPress(body).then((res) => {
-      // 에러처리
+      const { result } = res;
       //
-      // 모달 만들어서 띄워줘야될 곳
-      // if (result === "Y") {
-      //   console.log("성공");
-      // } else if (result === "N") {
-      //   console.log("실패");
-      // } else if (result === "F") {
-      //   console.log("일 5회 인증실패");
-      // } else if (result === "E") {
-      //   console.log("오류");
-      // }
-      SignUp(res.CI);
+      // 에러처리
+      if (result === "Y") {
+        //
+        SignUp(res.CI);
+        //
+      } else if (result === "N") {
+        //
+        dispatch(
+          openModal({
+            title: string.AuthFailed,
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      } else if (result === "F") {
+        //
+        dispatch(
+          openModal({
+            title: string.AuthFailed5,
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      } else if (result === "E") {
+        //
+        dispatch(
+          openModal({
+            title: string.Error,
+            checkLabel: string.Check,
+            checkFocus: true,
+          })
+        );
+      }
     });
   };
 
@@ -149,20 +172,41 @@ function SignInPark4() {
           })
         );
         //
-        // 모달 만들어서 띄워줘야될 곳
+        // 에러처리
         if (result === "Y") {
-          console.log("성공");
+          //
           setIsSmsRetry(true);
+          //
         } else if (result === "N") {
-          console.log("실패");
+          //
           setIsSmsRetry(false);
+          dispatch(
+            openModal({
+              title: string.AuthFailed,
+              checkLabel: string.Check,
+              checkFocus: true,
+            })
+          );
         } else if (result === "F") {
-          console.log("일 5회 인증실패");
+          //
           setIsSmsRetry(true);
+          dispatch(
+            openModal({
+              title: string.AuthFailed5,
+              checkLabel: string.Check,
+              checkFocus: true,
+            })
+          );
         } else if (result === "E") {
-          console.log("오류");
-          alert("오류!! 모달 띄우기!");
+          //
           setIsSmsRetry(false);
+          dispatch(
+            openModal({
+              title: string.Error,
+              checkLabel: string.Check,
+              checkFocus: true,
+            })
+          );
         }
       });
     }
