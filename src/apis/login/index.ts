@@ -1,5 +1,6 @@
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
+import { login } from "../../util/Auth";
 import { loginBody } from "./types/requests";
 
 const loginApi = async (body: loginBody) => {
@@ -11,7 +12,8 @@ const loginApi = async (body: loginBody) => {
   console.log("----------------header----------------");
   console.log(headers);
 
-  localStorage.setItem("token", headers.authorization);
+  // localStorage.setItem("token", headers.authorization);
+  login(headers.authorization);
   const { responseData } = data;
 
   return { user: responseData };

@@ -1,7 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
+/* eslint-disable */
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 
 import Main from "../pages/Main";
 import NotFound from "../pages/NotFound";
@@ -23,50 +28,59 @@ import FindId5 from "../pages/findId/FindId5";
 import FindIdResult from "../pages/findId/FindIdResult";
 import FindId1 from "../pages/findId/FindId1";
 import Modal from "./Modal";
+import { useAppSelector } from "../store/hook";
+import { isLogin } from "../util/Auth";
+// import Permit from "./Permit";
+
+function AuthRoute() {
+  const isUser = useAppSelector((state) => state.user);
+
+  if (!isLogin() && !isUser) {
+    return <Navigate to={urls.SignIn} replace />;
+  }
+
+  return <Outlet />;
+}
+
+function NoAuthRoute() {
+  const isUser = useAppSelector((state) => state.user);
+
+  if (isLogin() && isUser) {
+    return <Navigate to={urls.Main} replace />;
+  }
+
+  return <Outlet />;
+}
 
 function App() {
-  const isLogin = localStorage.getItem("token");
-
-  console.clear();
-  console.log("----------------isLogin----------------");
-  console.log(!isLogin);
-
-  // 고민
-  // useEffect(() => {
-  //   if (isLogin) {
-  //     // location.replace(urls.Main);
-  //   }
-  // }, []);
-
+  // useEffect(() => {}, []);
   return (
     <BrowserRouter>
       <Routes>
         <Route path={urls.Main} element={<Main />} />
-        <Route path={urls.Home} element={<Home />} />
-        {isLogin && (
-          <>
-            <Route path={urls.Mypage} element={<Mypage />} />
-          </>
-        )}
-        {!isLogin && (
-          // {/* // 함수 ! 토큰 있는지 체크후 있으면 home으로 가게 만들어야됨... */}
-          <>
-            <Route path={urls.Login} element={<Login />} />
-            <Route path={urls.SignIn} element={<SignIn />} />
-            <Route path={urls.AccepTerms} element={<AcceptTerms />} />
-            <Route path={urls.SignUpPart1} element={<SignUpPart1 />} />
-            <Route path={urls.SignUpPart2} element={<SignUpPart2 />} />
-            <Route path={urls.SignUpPart3} element={<SignUpPart3 />} />
-            <Route path={urls.SignUpPart4} element={<SignUpPart4 />} />
-            <Route path={urls.SignUpPart5} element={<SignUpPart5 />} />
-            <Route path={urls.FindId1} element={<FindId1 />} />
-            <Route path={urls.FindId2} element={<FindId2 />} />
-            <Route path={urls.FindId3} element={<FindId3 />} />
-            <Route path={urls.FindId4} element={<FindId4 />} />
-            <Route path={urls.FindId5} element={<FindId5 />} />
-            <Route path={urls.FindIdResult} element={<FindIdResult />} />
-          </>
-        )}
+
+        <Route element={<AuthRoute />}>
+          <Route path={urls.Mypage} element={<Mypage />} />
+          <Route path={urls.Home} element={<Home />} />
+        </Route>
+
+        <Route element={<NoAuthRoute />}>
+          <Route path={urls.Login} element={<Login />} />
+          <Route path={urls.SignIn} element={<SignIn />} />
+          <Route path={urls.AccepTerms} element={<AcceptTerms />} />
+          <Route path={urls.SignUpPart1} element={<SignUpPart1 />} />
+          <Route path={urls.SignUpPart2} element={<SignUpPart2 />} />
+          <Route path={urls.SignUpPart3} element={<SignUpPart3 />} />
+          <Route path={urls.SignUpPart4} element={<SignUpPart4 />} />
+          <Route path={urls.SignUpPart5} element={<SignUpPart5 />} />
+          <Route path={urls.FindId1} element={<FindId1 />} />
+          <Route path={urls.FindId2} element={<FindId2 />} />
+          <Route path={urls.FindId3} element={<FindId3 />} />
+          <Route path={urls.FindId4} element={<FindId4 />} />
+          <Route path={urls.FindId5} element={<FindId5 />} />
+          <Route path={urls.FindIdResult} element={<FindIdResult />} />
+        </Route>
+
         <Route path={urls.NotFound} element={<NotFound />} />
       </Routes>
       <Modal />
