@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from "react";
 import {
   BrowserRouter,
@@ -30,7 +29,6 @@ import FindId1 from "../pages/findId/FindId1";
 import Modal from "./Modal";
 import { useAppSelector } from "../store/hook";
 import { isLogin } from "../util/Auth";
-// import Permit from "./Permit";
 
 function AuthRoute() {
   const isUser = useAppSelector((state) => state.user);

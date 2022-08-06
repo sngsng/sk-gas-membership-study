@@ -12,6 +12,7 @@ import Button from "../elements/Button";
 import Layout from "../elements/Layout";
 import hmsRequest from "../network";
 import { useAppDispatch, useAppSelector } from "../store/hook";
+import { openModal } from "../store/modules/Modal";
 import { userSignUpData } from "../store/modules/User";
 import cls from "../util";
 import regex from "../util/regex";
@@ -45,10 +46,24 @@ function Login() {
     };
 
     LoginMutation(body).then((res) => {
+      const { user, detailMsg } = res;
       //
-      // user redux
-      dispatch(userSignUpData(res.user));
-      navigate(urls.Main);
+      if (detailMsg === "정상") {
+        // user redux
+        dispatch(userSignUpData(user));
+        navigate(urls.Main);
+        //
+      } else {
+        // 에러처리
+        dispatch(
+          openModal({
+            title: detailMsg,
+            subTitle: "다시한번 확인 해주세요",
+            checkFocus: true,
+            checkLabel: string.Check,
+          })
+        );
+      }
     });
   };
   return (

@@ -6,17 +6,12 @@ import { loginBody } from "./types/requests";
 const loginApi = async (body: loginBody) => {
   const { data, headers } = await hmsRequest(ApiUrls.LOGIN, body);
 
-  console.log("----------------login data----------------");
-  console.log(data);
-
-  console.log("----------------header----------------");
-  console.log(headers);
-
-  // localStorage.setItem("token", headers.authorization);
+  // 토큰 저장
   login(headers.authorization);
-  const { responseData } = data;
 
-  return { user: responseData };
+  const { responseData, detailMsg } = data;
+
+  return { user: responseData, detailMsg };
 };
 
 export default loginApi;
