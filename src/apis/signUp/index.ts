@@ -95,12 +95,8 @@ export const fetchPassAuthenticationTermsList = (): Terms[] => {
 
 // 본인인증 APP 인증 요청
 export const sendSMS = async (body: RequestAppBody) => {
-  console.log("body : ", body);
   try {
     const { data } = await hmsRequest(ApiUrls.REQUEST_APP, body);
-    console.log("----------------sendSMS data----------------");
-    console.log(data);
-
     const { responseData } = data;
     return responseData;
   } catch (err) {
@@ -115,9 +111,6 @@ export const RequestAuthentication = async (
   try {
     const { data } = await hmsRequest(ApiUrls.REQUEST_SMS1, body);
     const { responseData } = data;
-    console.log("----------------본인인증 SMS 전송요청----------------");
-    console.log(responseData);
-
     return responseData;
   } catch (err) {
     return console.log("RequestAuthentication : ", err);
@@ -129,7 +122,6 @@ export const smsRetryApi = async (body: AuthNumberCheckBody) => {
   try {
     const { data } = await hmsRequest(ApiUrls.REQUEST_SMS_RETRY, body);
     const { responseData } = data;
-    console.log("smsRetryApi  : ", responseData);
     return responseData;
   } catch (err) {
     console.log("smsRetryApi : ", err);
@@ -156,15 +148,11 @@ export const signUpApi = async (body: SignUpState) => {
     const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
     const { responseData } = data;
 
-    console.log("----------------회원가입!!!----------------");
-    console.log(responseData);
-
-    if (body) {
-      loginApi({
-        loginID: body.iognId,
-        mbrPW: body.iognPwd,
-      });
-    }
+    // then 사용해서 loginApi 호출하기!!
+    loginApi({
+      loginID: body.lognId,
+      mbrPW: body.lognPwd,
+    });
 
     return responseData;
   } catch (err) {

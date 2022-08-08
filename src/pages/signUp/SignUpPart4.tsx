@@ -68,8 +68,8 @@ function SignInPark4() {
   const SignUp = (CI: string) => {
     //
     const body = {
-      lognId: userData.iognId,
-      lognPwd: userData.iognPwd,
+      lognId: userData.lognId,
+      lognPwd: userData.lognPwd,
       ci: CI,
       carFrtNo: userData.carFrtNo,
       carTbkNo: userData.carTbkNo,
@@ -82,22 +82,25 @@ function SignInPark4() {
       cluAgrList: userData.cluAgrList,
     };
 
+    console.log(body);
+
+    // try{  !! 에러 처리
     startSignUp(body).then((res) => {
       //
       // user redux
       dispatch(
         userSignUpData({
           CI,
-          loginID: userData.iognId,
+          loginID: userData.lognId,
           carNo1: userData.carFrtNo,
           carNo2: userData.carTbkNo,
           mbrNM: userData.mbrNm,
           mbrID: res.mbrId,
         })
       );
-
       navigate(urls.SignUpPart5, { replace: true });
     });
+    // }
   };
 
   //

@@ -11,8 +11,8 @@ export interface SignUpState extends SignUpData1, SignUpData2, SignUpData3 {
 
 // 해당 유형을 사용하여 초기 상태 정의
 const initialState: SignUpState = {
-  iognId: "",
-  iognPwd: "",
+  lognId: "",
+  lognPwd: "",
   ci: "",
   carFrtNo: "",
   carTbkNo: "",
@@ -37,8 +37,8 @@ export const SignUp = createSlice({
       state.cluAgrList = action.payload;
     },
     signPart1DataAdd: (state, action: PayloadAction<SignUpState>) => {
-      state.iognId = action.payload.iognId;
-      state.iognPwd = action.payload.iognPwd;
+      state.lognId = action.payload.lognId;
+      state.lognPwd = action.payload.lognPwd;
       state.carFrtNo = action.payload.carFrtNo;
       state.carTbkNo = action.payload.carTbkNo;
     },
@@ -50,8 +50,8 @@ export const SignUp = createSlice({
       state.mbrNm = action.payload.name;
     },
     signDataReset: (state) => {
-      state.iognId = "";
-      state.iognPwd = "";
+      state.lognId = "";
+      state.lognPwd = "";
       state.ci = "";
       state.carFrtNo = "";
       state.carTbkNo = "";

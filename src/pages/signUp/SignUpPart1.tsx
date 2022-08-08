@@ -50,10 +50,10 @@ function SignUpPart1() {
 
   // data Mapping
   useEffect(() => {
-    const { iognId, iognPwd, carFrtNo, carTbkNo } = userData;
-    setValue("Id", iognId || "");
-    setValue("Pwd", iognPwd || "");
-    setValue("rePwd", iognPwd || "");
+    const { lognId, lognPwd, carFrtNo, carTbkNo } = userData;
+    setValue("Id", lognId || "");
+    setValue("Pwd", lognPwd || "");
+    setValue("rePwd", lognPwd || "");
     setValue("carNumber", `${carFrtNo}${carTbkNo}` || "");
 
     //  조건 체크
@@ -102,8 +102,8 @@ function SignUpPart1() {
   // pageMove Data
   const onSubmit = (data: SignUpPart1SubmitType) => {
     const part1Data = {
-      iognId: data.Id,
-      iognPwd: data.Pwd,
+      lognId: data.Id,
+      lognPwd: data.Pwd,
       carFrtNo: data.carNumber.slice(0, 3),
       carTbkNo: data.carNumber.slice(3),
     };

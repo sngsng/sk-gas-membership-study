@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IModal {
-  isModal?: false | true;
+  isModal?: boolean;
   checkType?: "fill" | "line";
   cancelType?: "fill" | "line";
 
@@ -9,8 +9,8 @@ interface IModal {
   subTitle?: string;
   checkLabel?: string;
   cancelLabel?: string;
-  checkFocus?: false | true;
-  cancelFocus?: false | true;
+  checkFocus?: boolean;
+  cancelFocus?: boolean;
 }
 
 const initialState: IModal = {
@@ -50,7 +50,6 @@ const Modal = createSlice({
       state.cancelLabel = "";
       state.cancelType = "fill";
       state.checkType = "fill";
-      // focus는 한곳만 선택할수 있게!
       state.checkFocus = false;
       state.cancelFocus = false;
     },

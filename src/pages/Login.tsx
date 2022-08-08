@@ -1,20 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import loginApi from "../apis/login";
 import LabelInput from "../components/signUp/LabelInput";
-import ApiUrls from "../constants/api_urls";
 import string from "../constants/string";
 import urls from "../constants/urls";
 import Button from "../elements/Button";
 import Layout from "../elements/Layout";
-import hmsRequest from "../network";
-import { useAppDispatch, useAppSelector } from "../store/hook";
+import { useAppDispatch } from "../store/hook";
 import { openModal } from "../store/modules/Modal";
 import { userSignUpData } from "../store/modules/User";
-import cls from "../util";
 import regex from "../util/regex";
 
 interface LoginFormType {
@@ -49,6 +45,7 @@ function Login() {
       const { user, detailMsg } = res;
       //
       if (detailMsg === "정상") {
+        // 코드로 처리
         // user redux
         dispatch(userSignUpData(user));
         navigate(urls.Main);
@@ -64,6 +61,8 @@ function Login() {
           })
         );
       }
+      // try cath
+      // 인터셉트
     });
   };
   return (

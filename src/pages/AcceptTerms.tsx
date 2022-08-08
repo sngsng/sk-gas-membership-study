@@ -48,10 +48,6 @@ function AcceptTerms() {
       };
     });
     //
-    console.clear();
-    console.log("----------------cluAgrList----------------");
-    console.log(cluAgrList);
-    //
     dispatch(addCluAgrList(cluAgrList));
     navigate(urls.SignUpPart1);
   };

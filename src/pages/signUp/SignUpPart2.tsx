@@ -45,9 +45,6 @@ function SignInPark2() {
   //
   // 상태관리
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
-  console.clear();
-  console.log("----------------termsCheckList----------------");
-  console.log(termsCheckList);
   //
   // redux
   const singPart2MappingData = useAppSelector((state) => state.mappingData);
@@ -91,21 +88,35 @@ function SignInPark2() {
       trigger(["birthday", "name", "gen", "phoneNo", "phoneCorp"]);
       setTermsCheckList(termsCheckList);
     }
-
-    console.log("----------------termsCheckList----------------");
-    console.log(termsCheckList);
   }, []);
 
   const { mutateAsync: NextSendData, isLoading } = useMutation(sendSMS);
 
-  console.log(
-    "----------------fetchPassAuthenticationTermsList()----------------"
-  );
-  console.log(fetchPassAuthenticationTermsList());
+  // console.log(
+  // "----------------fetchPassAuthenticationTermsList()----------------"
+  // );
+  // console.log(termsCheckList);
+  // console.log(fetchPassAuthenticationTermsList());
+
+  // let arr = [];
+  // for (let i = 1; i < termsCheckList.length; i++) {
+  //   let keyName = "terms" + i + "check";
+  //   // let count = Math.floor(Math.random() * 10);
+  //   let newTermsKey: any = new Object();
+  //   newTermsKey[keyName] = "Y";
+  //   arr.push(newTermsKey);
+  // }
+
+  // arr.forEach(function (value) {
+  //   console.log(value);
+  // });
+
+  // console.log(arr);
 
   // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
+
     const commonData = {
       name,
       birthday,
@@ -127,7 +138,7 @@ function SignInPark2() {
       })
     );
 
-    // sign redux
+    // signUp redux
     dispatch(
       signPart2DataAdd({
         ...commonData,

@@ -1,9 +1,9 @@
 export interface SignUpData1 {
   // 로그인ID
-  iognId?: string;
+  lognId?: string;
 
   //로그인비밀번호
-  iognPwd?: string;
+  lognPwd?: string;
 
   // 차량 앞번호
   carFrtNo?: string;

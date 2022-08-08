@@ -15,10 +15,6 @@ function BottomMenu() {
   const isLogin = localStorage.getItem("token");
   const pathName = location.pathname;
 
-  console.clear();
-  console.log("----------------location----------------");
-  console.log(location);
-
   return (
     <div className="fixed bottom-0 left-0 right-0 flex justify-center w-full mx-auto bg-white max-w-480 min-w-360 h-54 ">
       <NavLink to="/" className="cursor-pointer w-[33%] text-center py-5">

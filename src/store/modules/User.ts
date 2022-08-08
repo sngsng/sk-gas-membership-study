@@ -22,14 +22,13 @@ export const User = createSlice({
   initialState,
   reducers: {
     userSignUpData: (state, action: PayloadAction<UserDataType>) => {
-      console.log("============state, action===============");
-      console.log("s", state, "a", action);
       state.CI = action.payload.CI;
       state.loginID = action.payload.loginID;
       state.carNo1 = action.payload.carNo1;
       state.carNo2 = action.payload.carNo2;
       state.mbrNM = action.payload.mbrNM;
       state.mbrID = action.payload.mbrID;
+      state.isLogin = true;
     },
     userDataReset: (state) => {
       state.CI = "";

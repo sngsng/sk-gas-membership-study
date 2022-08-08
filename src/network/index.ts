@@ -41,7 +41,7 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
 
   console.log("baseBody : ", baseBody);
 
-  return axiosInstance.post(url, baseBody, config);
+  return axiosInstance.post(url, baseBody, config); // 인터셉트 axios
 };
 
 export default hmsRequest;

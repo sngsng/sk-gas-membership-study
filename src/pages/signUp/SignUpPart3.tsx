@@ -28,13 +28,9 @@ function SignInPark3() {
     //
     // SMS 인증문자 요청
     smsRequestPress(userApiData).then((res) => {
-      console.log("----------------RequestAuthentication----------------");
-      console.log(res);
-
       const { check1, check2, check3, certNum, result } = res;
 
       if (result === "Y") {
-        //
         // api redex
         dispatch(
           signUpPart3ApiData({
