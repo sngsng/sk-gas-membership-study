@@ -11,6 +11,7 @@ import Button from "../elements/Button";
 import Layout from "../elements/Layout";
 import useModal from "../hooks/useModal";
 import { useAppDispatch } from "../store/hook";
+import { UserDataType } from "../store/modules/types/user";
 
 import { userSignUpData } from "../store/modules/User";
 import regex from "../util/regex";
@@ -44,21 +45,17 @@ function Login() {
       mbrPW: data.userPwd,
     };
 
-    LoginMutation(body).then((res) => {
-      const { user, detailMsg } = res;
-      //
-      if (detailMsg === "정상") {
-        // user redux
-        dispatch(userSignUpData(user));
-        navigate(urls.Main);
-        //
-      } else {
-        // 에러처리
-        showAlert({ title: detailMsg, message: string.TryMessage });
-      }
-      // try cath
-      // 인터셉트
-    });
+    LoginMutation(body)
+      .then((res) => {
+        const { user, token } = res;
+        console.log("token", !!token);
+        if (token) {
+          console.log("component !!! login", res);
+          // user redux
+          dispatch(userSignUpData(user));
+        }
+      })
+      .catch((err) => showAlert({ title: err.detailMsg }));
   };
   return (
     <Layout isHeader isMenu={false} title="로그인" backBtn>
@@ -68,14 +65,13 @@ function Login() {
       >
         <LabelInput
           placeholder="아이디를 입력해주세요"
-          register={register("userId", { required: true, pattern: regex.id })}
+          register={register("userId", { required: true })}
         />
         <LabelInput
           className="mb-20"
           placeholder="비밀번호를 입력해주세요"
           register={register("userPwd", {
             required: true,
-            pattern: regex.passWord,
           })}
         />
         <Button
