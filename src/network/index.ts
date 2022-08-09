@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { format } from "date-fns"; // 날짜 데이터 불러오는 라이브러리
 import { Channel, ResponseCode, ServiceCode } from "./types/enums";
 import { getAuthToken } from "../util/local-storage.utils";
-import { BaseApiResponse } from "./types/interface";
 
 // /**
 //  * 공통 전문 Transaction 난수 생성 (날짜 + 6자리난수)

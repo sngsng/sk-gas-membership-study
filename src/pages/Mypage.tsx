@@ -6,7 +6,7 @@ import Layout from "../elements/Layout";
 import useModal from "../hooks/useModal";
 import { useAppDispatch } from "../store/hook";
 import { userDataReset } from "../store/modules/User";
-import { logout } from "../util/Auth";
+import { resetToken } from "../util/Auth";
 
 function Mypage() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ function Mypage() {
   const logoutHandel = () => {
     navigate(urls.Main, { replace: true });
     dispatch(userDataReset());
-    logout();
+    resetToken();
   };
 
   return (

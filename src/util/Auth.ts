@@ -1,11 +1,10 @@
-/* eslint-disable no-restricted-globals */
-// import urls from "../constants/urls";
+export const setToken = (token: string) => {
+  console.log("login token set!!");
 
-export const login = (token: string) => {
   localStorage.setItem("token", token);
 };
 
-export const logout = () => {
+export const resetToken = () => {
   localStorage.removeItem("token");
   // location.replace(urls.Main);
 };

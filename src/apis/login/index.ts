@@ -1,21 +1,20 @@
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
-import { login } from "../../util/Auth";
+
+import { setToken } from "../../util/Auth";
 
 import { loginBody } from "./types/requests";
+import { LoginResponse } from "./types/responses";
 
-const loginApi = async (body: loginBody) => {
+const loginApi = async (body: loginBody): Promise<LoginResponse> => {
   const { data, headers } = await hmsRequest(ApiUrls.LOGIN, body);
 
+  const { responseData } = data;
   const { authorization } = headers;
-  const { responseData, detailMsg } = data;
 
-  if (detailMsg === "정상") {
-    // 토큰 저장
-    login(authorization);
-  }
+  setToken(authorization);
 
-  return { user: responseData, detailMsg };
+  return { user: responseData, token: authorization };
 };
 
 export default loginApi;
