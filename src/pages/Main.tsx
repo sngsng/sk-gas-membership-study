@@ -65,7 +65,7 @@ const datas: Data[] = [
 function Main() {
   return (
     <Layout title="행복트럭 B2, B7 가입" backBtn={false} isMenu>
-      <div className="relative w-full h-[100%] mx-auto bg-[#f8f8f8]">
+      <div className="relative w-full h-[95vh] mx-auto bg-[#f8f8f8]">
         <main className="p-20 h-[100%] pb-74">
           <ul className="h-[100%]">
             {datas.map((data) => {

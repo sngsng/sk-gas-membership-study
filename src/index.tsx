@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import App from "./shared/App";
 import { persistor, store } from "./store";
+import GlobalModal from "./components/Modal/GlobalModal";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <QueryClientProvider client={queryClient}>
         <App />
+        <GlobalModal />
       </QueryClientProvider>
     </PersistGate>
   </Provider>

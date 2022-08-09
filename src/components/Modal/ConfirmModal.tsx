@@ -2,55 +2,62 @@
 import React from "react";
 import Button from "../../elements/Button";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { closeModal } from "../../store/modules/Modal";
 import BaseModal from "./BaseModal";
 
-function AlertModal() {
-  const {
-    isModal,
-    cancelLabel,
-    checkLabel,
-    subTitle,
-    title,
-    checkType,
-    cancelType,
-    checkFocus,
-    cancelFocus,
-  } = useAppSelector((state) => state.modal);
-  const dispatch = useAppDispatch();
+export interface ConfirmModalProps {
+  title: string;
+  message?: string;
+  className?: string;
+  firstFocus?: boolean;
+  secondFocus?: boolean;
+  isBtnCheck?: boolean;
+  firstBtnType?: "fill" | "line";
+  firstBtnText?: string;
+  secondBtnType?: "fill" | "line";
+  secondBtnText?: string;
+  onClickFirstHandle: () => void;
+  onClickSecondHandle: () => void;
+  closeHandle: () => void;
+}
 
+function ConfirmModal({
+  title,
+  message,
+  firstFocus = true,
+  secondFocus = false,
+  isBtnCheck = true,
+  className = "",
+  firstBtnType = "fill",
+  firstBtnText,
+  secondBtnType = "line",
+  secondBtnText,
+  onClickFirstHandle,
+  onClickSecondHandle,
+  closeHandle,
+}: ConfirmModalProps) {
   return (
-    <BaseModal isModal>
+    <BaseModal className={className} closeHandle={closeHandle}>
       {title && <p className="mb-8 font-semibold">{title}</p>}
-      {subTitle && <p className="mb-12">{subTitle}</p>}
-      {checkLabel && (
-        <Button
-          className="p-12 "
-          text={checkLabel}
-          type={checkType}
-          isBtnCheck
-          setFocus={checkFocus}
-          onClick={() => {
-            console.log("확인");
-            dispatch(closeModal());
-          }}
-        />
-      )}
-      {cancelLabel && (
-        <Button
-          className="p-12 mt-12"
-          text={cancelLabel}
-          type={cancelType}
-          isBtnCheck
-          setFocus={cancelFocus}
-          onClick={() => {
-            console.log("취소");
-            dispatch(closeModal());
-          }}
-        />
-      )}
+      {message && <p className="mb-12">{message}</p>}
+
+      <Button
+        className="p-12 "
+        text={firstBtnText || "확인"}
+        type={firstBtnType}
+        isBtnCheck={isBtnCheck}
+        setFocus={firstFocus}
+        onClick={onClickFirstHandle}
+      />
+
+      <Button
+        className="p-12 mt-12"
+        text={secondBtnText || "취소"}
+        type={secondBtnType}
+        isBtnCheck={isBtnCheck}
+        setFocus={secondFocus}
+        onClick={onClickSecondHandle}
+      />
     </BaseModal>
   );
 }
-
-export default AlertModal;
+export default ConfirmModal;

@@ -1,61 +1,28 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AlertModalProps } from "../../components/Modal/AlertModal";
+import { ConfirmModalProps } from "../../components/Modal/ConfirmModal";
 
-interface IModal {
-  isModal?: boolean;
-  checkType?: "fill" | "line";
-  cancelType?: "fill" | "line";
-
-  title?: string;
-  subTitle?: string;
-  checkLabel?: string;
-  cancelLabel?: string;
-  checkFocus?: boolean;
-  cancelFocus?: boolean;
+export interface IModal {
+  modalType: "ConfirmModal" | "AlertModal" | null;
+  modalProps: ConfirmModalProps | AlertModalProps | null;
 }
 
 const initialState: IModal = {
-  isModal: false,
-  checkType: "fill",
-  cancelType: "fill",
-
-  title: "",
-  subTitle: "",
-  checkLabel: "",
-  cancelLabel: "",
-  checkFocus: false,
-  cancelFocus: false,
+  modalType: null,
+  modalProps: null,
 };
 
 const Modal = createSlice({
   name: "Modal",
   initialState,
   reducers: {
-    openModal: (state, actions: PayloadAction<IModal>) => {
-      state.isModal = true;
-      state.title = actions.payload.title;
-      state.subTitle = actions.payload.subTitle;
-      state.checkLabel = actions.payload.checkLabel;
-      state.cancelLabel = actions.payload.cancelLabel;
-      state.cancelType = actions.payload.cancelType;
-      state.checkType = actions.payload.checkType;
-      // focus는 한곳만 선택할수 있게!
-      state.checkFocus = actions.payload.checkFocus;
-      state.cancelFocus = actions.payload.cancelFocus;
-    },
-    closeModal: (state) => {
-      state.isModal = false;
-      state.title = "";
-      state.subTitle = "";
-      state.checkLabel = "";
-      state.cancelLabel = "";
-      state.cancelType = "fill";
-      state.checkType = "fill";
-      state.checkFocus = false;
-      state.cancelFocus = false;
+    setModal: (state, action: PayloadAction<IModal>) => {
+      state.modalType = action.payload.modalType;
+      state.modalProps = action.payload.modalProps;
     },
   },
 });
 
-export const { openModal, closeModal } = Modal.actions;
+export const { setModal } = Modal.actions;
 
 export default Modal.reducer;
