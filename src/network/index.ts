@@ -1,7 +1,9 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { format } from "date-fns"; // 날짜 데이터 불러오는 라이브러리
 import { Channel, ResponseCode, ServiceCode } from "./types/enums";
 import { getAuthToken } from "../util/local-storage.utils";
+import { BaseApiResponse } from "./types/interface";
 
 // /**
 //  * 공통 전문 Transaction 난수 생성 (날짜 + 6자리난수)
@@ -15,7 +17,6 @@ export const createTransactionNo = () => {
 };
 
 const hmsRequest = (url: string, body: Record<string, any>) => {
-  // console.log(process.env.NODE_ENV);
   const axiosInstance = axios.create();
   //
   // 헤더 설정
@@ -27,6 +28,7 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
       "Cache-Control": "no-cache",
       authorization: token,
     },
+    // timeout: 10,
     withCredentials: true,
   };
 
@@ -39,12 +41,14 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
     requestData: body,
   };
 
-  const onFulfilled = (response: AxiosResponse) => {
-    if (response.data.resCode !== ResponseCode.SUCCESS) {
-      const customError = new Error(response.data.detailMsg, response.data);
-      return Promise.reject(customError);
+  const onFulfilled = (res: AxiosResponse) => {
+    const { data } = res;
+    const { resCode } = data;
+    if (resCode !== ResponseCode.SUCCESS) {
+      console.log(new Error(data.detailMsg));
+      return Promise.reject(data);
     }
-    return response;
+    return res;
   };
 
   axiosInstance.interceptors.response.use(onFulfilled);
@@ -55,32 +59,3 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
 };
 
 export default hmsRequest;
-
-// const getTermsList = (body: TermsListBody) => {
-//   return axios({
-//     method: "post",
-//     url: `${ApiUrls.BASE_URL}${ApiUrls.TERMS_LIST}`,
-//     headers: {
-//     "Content-Type": "application/json;charset=utf-8",
-//     Accept: "application/json;charset=utf-8",
-//     "Cache-Control": "no-cache",
-//     authorization: token,
-//     },
-//     withCredentials: true,
-//     data: {
-//       serviceCode: ServiceCode.SK_WEB,
-//       chnl: Channel.MOBILE_WEB,
-//       version: "1.0",
-//       trcNo,
-//       requestData: body,
-//     },
-//   })
-//     .then((data) => {
-//       console.log(data);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
-
-// export default getTermsList;
