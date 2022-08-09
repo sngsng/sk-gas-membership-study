@@ -1,6 +1,6 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { format } from "date-fns"; // 날짜 데이터 불러오는 라이브러리
-import { Channel, ServiceCode } from "./types/enums";
+import { Channel, ResponseCode, ServiceCode } from "./types/enums";
 import { getAuthToken } from "../util/local-storage.utils";
 
 // /**
@@ -39,9 +39,19 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
     requestData: body,
   };
 
+  const onFulfilled = (response: AxiosResponse) => {
+    if (response.data.resCode !== ResponseCode.SUCCESS) {
+      const customError = new Error(response.data.detailMsg, response.data);
+      return Promise.reject(customError);
+    }
+    return response;
+  };
+
+  axiosInstance.interceptors.response.use(onFulfilled);
+
   console.log("baseBody : ", baseBody);
 
-  return axiosInstance.post(url, baseBody, config); // 인터셉트 axios
+  return axiosInstance.post(url, baseBody, config);
 };
 
 export default hmsRequest;
