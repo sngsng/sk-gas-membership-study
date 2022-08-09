@@ -14,9 +14,9 @@ import string from "../../constants/string";
 import urls from "../../constants/urls";
 import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
+import useModal from "../../hooks/useModal";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
-import { openModal } from "../../store/modules/Modal";
 import { userSignUpData } from "../../store/modules/User";
 import regex from "../../util/regex";
 
@@ -26,6 +26,10 @@ function SignInPark4() {
   // redux
   const signApiData = useAppSelector((state) => state.userApiData);
   const userData = useAppSelector((state) => state.signUp);
+  //
+  // modal
+  const { showAlert } = useModal();
+  //
   // hook-Form
   const {
     register,
@@ -112,6 +116,12 @@ function SignInPark4() {
     };
     authenticationCheckPress(body).then((res) => {
       const { result } = res;
+      console.log(
+        "----------------authenticationNumberCheckApi----------------"
+      );
+
+      console.log("----------------res----------------");
+      console.log(res);
       //
       // 에러처리
       if (result === "Y") {
@@ -119,32 +129,13 @@ function SignInPark4() {
         SignUp(res.CI);
         //
       } else if (result === "N") {
+        showAlert({ title: string.AuthFailed });
         //
-        dispatch(
-          openModal({
-            title: string.AuthFailed,
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
       } else if (result === "F") {
+        showAlert({ title: string.AuthFailed5 });
         //
-        dispatch(
-          openModal({
-            title: string.AuthFailed5,
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
       } else if (result === "E") {
-        //
-        dispatch(
-          openModal({
-            title: string.Error,
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({ title: string.Error });
       }
     });
   };
@@ -177,39 +168,19 @@ function SignInPark4() {
         //
         // 에러처리
         if (result === "Y") {
-          //
           setIsSmsRetry(true);
           //
         } else if (result === "N") {
-          //
           setIsSmsRetry(false);
-          dispatch(
-            openModal({
-              title: string.AuthFailed,
-              checkLabel: string.Check,
-              checkFocus: true,
-            })
-          );
+          showAlert({ title: string.AuthFailed });
+          //
         } else if (result === "F") {
-          //
           setIsSmsRetry(true);
-          dispatch(
-            openModal({
-              title: string.AuthFailed5,
-              checkLabel: string.Check,
-              checkFocus: true,
-            })
-          );
-        } else if (result === "E") {
+          showAlert({ title: string.AuthFailed5 });
           //
+        } else if (result === "E") {
           setIsSmsRetry(false);
-          dispatch(
-            openModal({
-              title: string.Error,
-              checkLabel: string.Check,
-              checkFocus: true,
-            })
-          );
+          showAlert({ title: string.Error });
         }
       });
     }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
@@ -8,8 +9,9 @@ import string from "../constants/string";
 import urls from "../constants/urls";
 import Button from "../elements/Button";
 import Layout from "../elements/Layout";
+import useModal from "../hooks/useModal";
 import { useAppDispatch } from "../store/hook";
-import { openModal } from "../store/modules/Modal";
+
 import { userSignUpData } from "../store/modules/User";
 import regex from "../util/regex";
 
@@ -21,6 +23,7 @@ interface LoginFormType {
 function Login() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { showAlert } = useModal();
   //
   // hook-Form
   const {
@@ -45,21 +48,13 @@ function Login() {
       const { user, detailMsg } = res;
       //
       if (detailMsg === "정상") {
-        // 코드로 처리
         // user redux
         dispatch(userSignUpData(user));
         navigate(urls.Main);
         //
       } else {
         // 에러처리
-        dispatch(
-          openModal({
-            title: detailMsg,
-            subTitle: "다시한번 확인 해주세요",
-            checkFocus: true,
-            checkLabel: string.Check,
-          })
-        );
+        showAlert({ title: detailMsg, message: string.TryMessage });
       }
       // try cath
       // 인터셉트

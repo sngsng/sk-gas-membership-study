@@ -25,7 +25,7 @@ function AlertModal({
   return (
     <BaseModal className={className} closeHandle={closeHandle}>
       {title && <p className="mb-8 font-semibold">{title}</p>}
-      {message && <p className="mb-12 text-b1">{message}</p>}
+      {message && <p className="mb-20 text-b1">{message}</p>}
 
       <Button
         className="p-12 "

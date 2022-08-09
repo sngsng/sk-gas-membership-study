@@ -8,13 +8,16 @@ import string from "../../constants/string";
 import urls from "../../constants/urls";
 import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
+import useModal from "../../hooks/useModal";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
-import { openModal } from "../../store/modules/Modal";
 
 function SignInPark3() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  //
+  // modal
+  const { showAlert } = useModal();
   //
   // redux
   const userApiData = useAppSelector((state) => state.userApiData);
@@ -43,31 +46,15 @@ function SignInPark3() {
         navigate(urls.SignUpPart4);
         //
       } else if (result === "N") {
-        dispatch(
-          openModal({
-            title: string.AuthFailed,
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({ title: string.AuthFailed });
       } else if (result === "F") {
-        dispatch(
-          openModal({
-            title: "인증 횟수 초과",
-            subTitle:
-              "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({
+          title: "인증 횟수 초과",
+          message:
+            "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
+        });
       } else if (result === "E") {
-        dispatch(
-          openModal({
-            title: string.Error,
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({ title: string.Error });
       }
     });
   };
@@ -81,7 +68,7 @@ function SignInPark3() {
           isBtnCheck
           text={string.AuthenticateWithApp}
           onClick={() => {
-            console.log("준비중...");
+            showAlert({ title: "준비중" });
           }}
         />
         <p className="dot">

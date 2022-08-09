@@ -17,7 +17,7 @@ import { signPart2DataAdd } from "../../store/modules/SignUp";
 import { signUpPart2ApiData } from "../../store/modules/ApiData";
 import { SignPart2DataMapping } from "../../store/modules/MappingData";
 import string from "../../constants/string";
-import { openModal } from "../../store/modules/Modal";
+import useModal from "../../hooks/useModal";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -54,6 +54,9 @@ function SignInPark2() {
   const termsCheckListLength = termsCheckList.length;
   const termsLengthComparison = termsCheckListLength === termsDataLength;
   //
+  // modal
+  const { showAlert } = useModal();
+
   // useForm
   const {
     register,
@@ -157,10 +160,16 @@ function SignInPark2() {
       terms4chk: "Y", // <== 이거!!!!
     };
 
+    console.log("----------------body----------------");
+    console.log(body);
 
     // 본인인증 app 인증요청
     NextSendData(body).then((res) => {
       const { certNum, trCert, check1, check2, result } = res;
+
+      console.log("----------------app 인증요청----------------");
+      console.log(res);
+      // app 요청 횟수 초과해도 F로 넘어오지 않는다!!
 
       // 에러처리
       if (result === "Y") {
@@ -170,31 +179,18 @@ function SignInPark2() {
         navigate(urls.SignUpPart3);
         //
       } else if (result === "N") {
-        dispatch(
-          openModal({
-            title: string.AuthFailed,
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({ title: string.AuthFailed });
       } else if (result === "F") {
-        dispatch(
-          openModal({
-            title: "인증 횟수 초과",
-            subTitle:
-              "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({
+          title: "인증 횟수 초과",
+          message:
+            "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
+        });
       } else if (result === "E") {
-        dispatch(
-          openModal({
-            title: string.Error,
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({
+          title: string.Error,
+          message: "인증횟수 초과 가능성 있음!",
+        });
       }
       //
     });

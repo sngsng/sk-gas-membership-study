@@ -71,4 +71,5 @@ export default {
   AuthFailed: "인증실패",
   AuthFailed5: "일 5회 인증실패",
   Error: "오류",
+  TryMessage: "다시 한번 확인 해주세요",
 };

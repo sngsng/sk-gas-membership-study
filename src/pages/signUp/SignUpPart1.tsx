@@ -13,7 +13,7 @@ import { signPart1DataAdd } from "../../store/modules/SignUp";
 import urls from "../../constants/urls";
 import string from "../../constants/string";
 import { idCheckAPI } from "../../apis/signUp";
-import { openModal } from "../../store/modules/Modal";
+import useModal from "../../hooks/useModal";
 
 interface SignUpPart1SubmitType {
   Id: string;
@@ -38,6 +38,7 @@ function SignUpPart1() {
   //
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { showAlert } = useModal();
 
   //  상태관리
   const [isIdCheck, setIdCheck] = useState(false);
@@ -73,28 +74,21 @@ function SignUpPart1() {
     const userId = getValues().Id;
 
     idCheckMutation({ lognId: userId }).then((res) => {
+      // 에러처리
       if (res === "Y") {
         setIdCheck(false);
         //
-        dispatch(
-          openModal({
-            title: "중복된 아이디 입니다.",
-            subTitle: "다른 아이디를 입력해 주세요",
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({
+          title: string.DuplicateID,
+          message: "다른 아이디를 입력해 주세요",
+        });
         //
       } else if (res === "N") {
         setIdCheck(true);
         //
-        dispatch(
-          openModal({
-            title: "사용가능한 아이디 입니다.",
-            checkLabel: string.Check,
-            checkFocus: true,
-          })
-        );
+        showAlert({
+          title: string.AvailableID,
+        });
       }
     });
   };
