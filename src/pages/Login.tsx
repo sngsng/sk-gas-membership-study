@@ -31,8 +31,13 @@ function Login() {
   });
 
   // 로그인
-  const { mutateAsync: LoginMutation, isLoading: loginLoading } =
-    useMutation(loginApi);
+  const { mutateAsync: LoginMutation, isLoading } = useMutation(loginApi, {
+    onError(error, variables, context) {
+      console.log("error : ", error);
+      console.log("variables : ", variables);
+      console.log("context : ", context);
+    },
+  });
 
   const onSubmit = async (data: LoginFormType) => {
     const body = {
@@ -40,16 +45,16 @@ function Login() {
       mbrPW: data.userPwd,
     };
 
-    LoginMutation(body)
-      .then((res) => {
-        const { user, token } = res;
-
-        if (token) {
-          // user redux
-          dispatch(userSignUpData(user));
-        }
-      })
-      .catch((err) => showAlert({ title: err.detailMsg }));
+    try {
+      const { user, token } = await LoginMutation(body);
+      if (token) {
+        // user redux
+        dispatch(userSignUpData(user));
+      }
+    } catch (err) {
+      const error = err as InterceptorError;
+      showAlert({ title: error.detailMsg });
+    }
   };
   return (
     <Layout isHeader isMenu={false} title="로그인" backBtn>
@@ -72,7 +77,7 @@ function Login() {
           text="로그인"
           className="btn-extra"
           isBtnCheck={isValid}
-          isLoading={loginLoading}
+          isLoading={isLoading}
           onClick={handleSubmit(onSubmit)}
         />
       </form>

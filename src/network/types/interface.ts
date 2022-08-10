@@ -6,3 +6,10 @@ export interface BaseApiResponse<Response = any> {
   trcNo: string;
   responseData?: Response;
 }
+
+export interface InterceptorError {
+  resCode: string;
+  detailMsg: string;
+  trcNo: string;
+  responseData: null;
+}
