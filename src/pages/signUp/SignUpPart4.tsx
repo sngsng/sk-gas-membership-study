@@ -90,6 +90,7 @@ function SignInPark4() {
 
     // try{  !! 에러 처리
     startSignUp(body).then((res) => {
+      console.log("회원가입 : ", res);
       //
       // user redux
       dispatch(
@@ -119,9 +120,7 @@ function SignInPark4() {
       console.log(
         "----------------authenticationNumberCheckApi----------------"
       );
-
-      console.log("----------------res----------------");
-      console.log(res);
+      console.log(result);
       //
       // 에러처리
       if (result === "Y") {

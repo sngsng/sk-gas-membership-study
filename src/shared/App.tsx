@@ -27,11 +27,8 @@ import FindId4 from "../pages/findId/FindId4";
 import FindId5 from "../pages/findId/FindId5";
 import FindIdResult from "../pages/findId/FindIdResult";
 import FindId1 from "../pages/findId/FindId1";
-import BaseModal from "../components/Modal/BaseModal";
 import { useAppDispatch, useAppSelector } from "../store/hook";
 import { isLogin } from "../util/Auth";
-import AlertModal from "../components/Modal/AlertModal";
-import { closeModal, openModal } from "../store/modules/Modal";
 
 function AuthRoute() {
   const isUser = useAppSelector((state) => state.user);
@@ -54,8 +51,6 @@ function NoAuthRoute() {
 }
 
 function App() {
-  const dispatch = useAppDispatch();
-  const { isModal } = useAppSelector((state) => state.modal);
   return (
     <BrowserRouter>
       <Routes>
@@ -85,12 +80,6 @@ function App() {
 
         <Route path={urls.NotFound} element={<NotFound />} />
       </Routes>
-      {/* <BaseModal /> */}
-      <AlertModal //글로벌 모달로 정하고 그 안에서 다양한 타입으로 나눠서 해줘야 될듯 하다.
-        title="test!!" // dispatch로 on/off를 하고 내용 같은것도 보내니...
-        closeModal={() => dispatch(closeModal())} // 루팡처럼... 한번에 무엇인지 알려면... 함수나... 이제 보니 거의 hook처럼 만들어서 사용하네;;;
-        isModal={isModal}
-      />
     </BrowserRouter>
   );
 }

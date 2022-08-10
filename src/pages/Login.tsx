@@ -22,7 +22,6 @@ interface LoginFormType {
 }
 
 function Login() {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { showAlert } = useModal();
   //
@@ -48,9 +47,8 @@ function Login() {
     LoginMutation(body)
       .then((res) => {
         const { user, token } = res;
-        console.log("token", !!token);
+
         if (token) {
-          console.log("component !!! login", res);
           // user redux
           dispatch(userSignUpData(user));
         }

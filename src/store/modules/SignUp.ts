@@ -37,6 +37,8 @@ export const SignUp = createSlice({
       state.cluAgrList = action.payload;
     },
     signPart1DataAdd: (state, action: PayloadAction<SignUpState>) => {
+      console.log("----------------signUp action ----------------");
+      console.log(action);
       state.lognId = action.payload.lognId;
       state.lognPwd = action.payload.lognPwd;
       state.carFrtNo = action.payload.carFrtNo;

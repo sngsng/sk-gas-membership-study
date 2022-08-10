@@ -147,13 +147,10 @@ export const signUpApi = async (body: SignUpState) => {
   try {
     const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
     const { responseData } = data;
-
-    // then 사용해서 loginApi 호출하기!!
-    loginApi({
+    await loginApi({
       loginID: body.lognId,
       mbrPW: body.lognPwd,
     });
-
     return responseData;
   } catch (err) {
     return console.log("signUpApi : ", err);

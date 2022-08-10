@@ -10,6 +10,7 @@ const loginApi = async (body: loginBody): Promise<LoginResponse> => {
   const { data, headers } = await hmsRequest(ApiUrls.LOGIN, body);
 
   const { responseData } = data;
+
   const { authorization } = headers;
 
   setToken(authorization);
