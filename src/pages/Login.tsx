@@ -1,20 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import loginApi from "../apis/login";
 import LabelInput from "../components/signUp/LabelInput";
-import string from "../constants/string";
 import urls from "../constants/urls";
 import Button from "../elements/Button";
 import Layout from "../elements/Layout";
 import useModal from "../hooks/useModal";
+import { InterceptorError } from "../network/types/interface";
 import { useAppDispatch } from "../store/hook";
-import { UserDataType } from "../store/modules/types/user";
-
 import { userSignUpData } from "../store/modules/User";
-import regex from "../util/regex";
 
 interface LoginFormType {
   userId: string;

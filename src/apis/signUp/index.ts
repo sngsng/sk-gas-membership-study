@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import ApiUrls from "../../constants/api_urls";
 import hmsRequest from "../../network";
 import { SignUpState } from "../../store/modules/SignUp";
@@ -124,7 +123,7 @@ export const smsRetryApi = async (body: AuthNumberCheckBody) => {
     const { responseData } = data;
     return responseData;
   } catch (err) {
-    console.log("smsRetryApi : ", err);
+    return console.log("smsRetryApi : ", err);
   }
 };
 

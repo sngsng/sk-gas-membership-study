@@ -39,7 +39,7 @@ function SignUpPart1() {
   const dispatch = useAppDispatch();
   const { showAlert } = useModal();
 
-  //  상태관리
+  //  state
   const [isIdCheck, setIdCheck] = useState(false);
 
   //  redux

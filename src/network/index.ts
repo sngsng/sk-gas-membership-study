@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { format } from "date-fns"; // 날짜 데이터 불러오는 라이브러리
 import { Channel, ResponseCode, ServiceCode } from "./types/enums";
