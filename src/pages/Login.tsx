@@ -31,13 +31,7 @@ function Login() {
   });
 
   // 로그인
-  const { mutateAsync: LoginMutation, isLoading } = useMutation(loginApi, {
-    onError(error, variables, context) {
-      console.log("error : ", error);
-      console.log("variables : ", variables);
-      console.log("context : ", context);
-    },
-  });
+  const { mutateAsync: LoginMutation, isLoading } = useMutation(loginApi);
 
   const onSubmit = async (data: LoginFormType) => {
     const body = {

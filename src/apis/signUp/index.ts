@@ -143,15 +143,11 @@ export const authenticationNumberCheckApi = async (
 
 // 회원가입
 export const signUpApi = async (body: SignUpState) => {
-  try {
-    const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
-    const { responseData } = data;
-    await loginApi({
-      loginID: body.lognId,
-      mbrPW: body.lognPwd,
-    });
-    return responseData;
-  } catch (err) {
-    return console.log("signUpApi : ", err);
-  }
+  const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
+  const { responseData } = data;
+  await loginApi({
+    loginID: body.lognId,
+    mbrPW: body.lognPwd,
+  });
+  return responseData;
 };

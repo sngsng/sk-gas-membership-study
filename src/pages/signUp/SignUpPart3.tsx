@@ -54,7 +54,7 @@ function SignInPark3() {
             "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
         });
       } else if (result === "E") {
-        showAlert({ title: string.Error });
+        showAlert({ title: `SMS 문자 요청 ${string.Error}` });
       }
     });
   };

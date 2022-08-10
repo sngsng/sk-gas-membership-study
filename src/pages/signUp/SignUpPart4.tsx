@@ -15,6 +15,7 @@ import urls from "../../constants/urls";
 import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
 import useModal from "../../hooks/useModal";
+import { InterceptorError } from "../../network/types/interface";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
 import { userSignUpData } from "../../store/modules/User";
@@ -69,7 +70,17 @@ function SignInPark4() {
 
   //
   // 회원가입 요청
-  const SignUp = (CI: string) => {
+  const SignUp = async (CI: string) => {
+    //
+    // 데이터 정리 ( 넘기는 데이터 )
+    const cluAgrList = userData.cluAgrList?.map((terms) => {
+      return {
+        cluCd: terms.cluCd,
+        cluVer: terms.cluVer,
+        agrYn: terms.mndtAgrYn,
+      };
+    });
+
     //
     const body = {
       lognId: userData.lognId,
@@ -83,16 +94,12 @@ function SignInPark4() {
       gen: userData.gen === "0" ? "M" : "F",
       ntnl: "N",
       mbrFg: "1",
-      cluAgrList: userData.cluAgrList,
+      cluAgrList,
     };
 
     console.log(body);
-
-    // try{  !! 에러 처리
-    startSignUp(body).then((res) => {
-      console.log("회원가입 : ", res);
-      //
-      // user redux
+    try {
+      const { data } = await startSignUp(body);
       dispatch(
         userSignUpData({
           CI,
@@ -100,12 +107,14 @@ function SignInPark4() {
           carNo1: userData.carFrtNo,
           carNo2: userData.carTbkNo,
           mbrNM: userData.mbrNm,
-          mbrID: res.mbrId,
+          mbrID: data.mbrId,
         })
       );
       navigate(urls.SignUpPart5, { replace: true });
-    });
-    // }
+    } catch (err) {
+      const error = err as InterceptorError;
+      showAlert({ title: ` 회원가입 ${error.detailMsg}` });
+    }
   };
 
   //
@@ -134,7 +143,7 @@ function SignInPark4() {
         showAlert({ title: string.AuthFailed5 });
         //
       } else if (result === "E") {
-        showAlert({ title: string.Error });
+        showAlert({ title: `SMS 인증 ${string.Error}` });
       }
     });
   };
@@ -179,7 +188,7 @@ function SignInPark4() {
           //
         } else if (result === "E") {
           setIsSmsRetry(false);
-          showAlert({ title: string.Error });
+          showAlert({ title: `SMS 재요청 ${string.Error}` });
         }
       });
     }
@@ -212,7 +221,7 @@ function SignInPark4() {
         <Button
           className="mb-10 btn-extra"
           text={string.Check}
-          disabled={!isValid}
+          // disabled={!isValid}
           isBtnCheck={!isButton}
           isLoading={authNumberLoading || smsRetryLoading || SignUpLoading}
           onClick={authCheckApi}

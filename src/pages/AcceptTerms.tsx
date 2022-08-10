@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -18,7 +19,7 @@ function AcceptTerms() {
   const dispatch = useAppDispatch();
   // redux
   const userCheckedList = useAppSelector((state) => state.signUp.cluAgrList); // 다음 페이지로 갔다가 올때
-
+  //
   // state
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>(
     userCheckedList || []
@@ -28,27 +29,19 @@ function AcceptTerms() {
     "termsListData",
     fetchTermsList
   );
-  //
+
   // 선택한 Y 값 갯수 같은지 체크
-  const termsRequiredLengthCheck =
+  const termsRequiredLengthCheck = () =>
     requiredLengthCheck(termsListData) === requiredLengthCheck(termsCheckList);
 
   // 전체 Y 값 갯수 같거나 모두 체크된지 상태 여부
   const isTermsListBtnCheck =
-    termsRequiredLengthCheck || termsListData?.length === termsCheckList.length;
+    termsRequiredLengthCheck() ||
+    termsListData?.length === termsCheckList.length;
 
   const pageMoveHandle = () => {
     //
-    // 데이터 정리 ( 넘기는 데이터 )
-    const cluAgrList = termsCheckList?.map((terms) => {
-      return {
-        cluCd: terms.cluCd,
-        cluVer: terms.cluVer,
-        agrYn: terms.mndtAgrYn,
-      };
-    });
-    //
-    dispatch(addCluAgrList(cluAgrList));
+    dispatch(addCluAgrList(termsCheckList));
     navigate(urls.SignUpPart1);
   };
 
@@ -86,7 +79,7 @@ function AcceptTerms() {
             text={string.AgreeAndSignUp}
             className={cls("mt-30  btn-extra w-full")}
             isBtnCheck={isTermsListBtnCheck}
-            disabled={!termsRequiredLengthCheck}
+            disabled={!termsRequiredLengthCheck()}
             onClick={pageMoveHandle}
           />
         )}
