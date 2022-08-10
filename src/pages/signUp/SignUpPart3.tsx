@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";

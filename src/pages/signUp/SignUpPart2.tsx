@@ -178,14 +178,7 @@ function SignInPark2() {
       const { certNum, trCert, check1, check2, result, smsFlag } = res;
       // smsFlag ==> N 일 경우 그냥 평소 대로
 
-      console.log("----------------res----------------");
-      console.log(res);
-
-      // 에러처리 -----------------
       if (result === "Y" && smsFlag === "Y") {
-        //
-        //  // test용 if
-        // if (smsFlag === "Y") {
         //
         dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
 
@@ -193,7 +186,6 @@ function SignInPark2() {
         smsRequest({ certNum, check1, trCert })
           .then((res) => {
             const { check1, check2, check3, certNum } = res;
-
             //
             dispatch(
               signUpPart3ApiData({
@@ -203,10 +195,6 @@ function SignInPark2() {
                 certNum,
               })
             );
-
-            console.log("----------------sms 인증 번호 요청----------------");
-
-            console.log("sms 인증 번호 요청 : ", res);
           })
           .catch((err) => {
             const error = err as InterceptorError;
@@ -215,9 +203,6 @@ function SignInPark2() {
 
         navigate(urls.SignUpPart4);
       } else if (result === "Y" && smsFlag === "N") {
-        //
-        //  // test용 if
-        // } else if (smsFlag === "N") {
         //   // api redex
         dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
         //
@@ -242,7 +227,6 @@ function SignInPark2() {
           message: "인증횟수 초과 가능성 있음!",
         });
       }
-      //  ---------
     });
   };
 
