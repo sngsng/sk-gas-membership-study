@@ -4,7 +4,7 @@ export default {
   Mypage: "/mypage",
   SignIn: "/sign-in",
   Login: "/login",
-  AccepTerms: "/accept-terms",
+  AcceptTerms: "/accept-terms",
   AcceptTermsDetail: "/accept-terms/detail",
   NotFound: "*",
   SignUpPart1: "/member/sign-up-part1",
