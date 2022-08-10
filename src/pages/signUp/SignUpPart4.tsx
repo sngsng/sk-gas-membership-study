@@ -98,23 +98,27 @@ function SignInPark4() {
     };
 
     console.log(body);
-    try {
-      const { data } = await startSignUp(body);
-      dispatch(
-        userSignUpData({
-          CI,
-          loginID: userData.lognId,
-          carNo1: userData.carFrtNo,
-          carNo2: userData.carTbkNo,
-          mbrNM: userData.mbrNm,
-          mbrID: data.mbrId,
-        })
-      );
-      navigate(urls.SignUpPart5, { replace: true });
-    } catch (err) {
-      const error = err as InterceptorError;
-      showAlert({ title: ` 회원가입 ${error.detailMsg}` });
-    }
+
+    startSignUp(body)
+      .then((mbrId) => {
+        dispatch(
+          userSignUpData({
+            CI,
+            loginID: userData.lognId,
+            carNo1: userData.carFrtNo,
+            carNo2: userData.carTbkNo,
+            mbrNM: userData.mbrNm,
+            mbrID: mbrId,
+          })
+        );
+        navigate(urls.SignUpPart5, { replace: true });
+        console.log("part4 signUp data : ", mbrId);
+      })
+      .catch((err) => {
+        console.log("signUp : ", err);
+        const error = err as InterceptorError;
+        showAlert({ title: ` 회원가입 ${error.detailMsg}` });
+      });
   };
 
   //
@@ -163,20 +167,23 @@ function SignInPark4() {
         setIsTimer(!isTimer);
         setIsSmsRetry(false);
         const { check1, check2, check3, certNum, result } = res;
+
+        console.log("인증 재요청 : ", res);
         //
-        // api redux
-        dispatch(
-          signUpPart3ApiData({
-            check1,
-            check2,
-            check3,
-            certNum,
-          })
-        );
         //
         // 에러처리
         if (result === "Y") {
           setIsSmsRetry(true);
+
+          // api redux
+          dispatch(
+            signUpPart3ApiData({
+              check1,
+              check2,
+              check3,
+              certNum,
+            })
+          );
           //
         } else if (result === "N") {
           setIsSmsRetry(false);

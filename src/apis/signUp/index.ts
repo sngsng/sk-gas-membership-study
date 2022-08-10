@@ -96,6 +96,10 @@ export const fetchPassAuthenticationTermsList = (): Terms[] => {
 export const sendSMS = async (body: RequestAppBody) => {
   try {
     const { data } = await hmsRequest(ApiUrls.REQUEST_APP, body);
+
+    console.log("----------------sms send----------------");
+    console.log(data);
+
     const { responseData } = data;
     return responseData;
   } catch (err) {
@@ -107,13 +111,9 @@ export const sendSMS = async (body: RequestAppBody) => {
 export const RequestAuthentication = async (
   body: RequestAuthenticationBody
 ) => {
-  try {
-    const { data } = await hmsRequest(ApiUrls.REQUEST_SMS1, body);
-    const { responseData } = data;
-    return responseData;
-  } catch (err) {
-    return console.log("RequestAuthentication : ", err);
-  }
+  const { data } = await hmsRequest(ApiUrls.REQUEST_SMS1, body);
+  const { responseData } = data;
+  return responseData;
 };
 
 // 본인인증 SMS 재요청
@@ -145,9 +145,18 @@ export const authenticationNumberCheckApi = async (
 export const signUpApi = async (body: SignUpState) => {
   const { data } = await hmsRequest(ApiUrls.SIGN_UP_REQUEST, body);
   const { responseData } = data;
+  const { mbrId } = responseData;
+  //
+  console.log("signUp : ", data);
+  console.log("signUp responseData : ", responseData);
+  console.log("signUp mbrId : ", mbrId);
+  //
   await loginApi({
     loginID: body.lognId,
     mbrPW: body.lognPwd,
   });
-  return responseData;
+  //
+  console.log("mbrId 보내지는지???");
+  //
+  return mbrId;
 };

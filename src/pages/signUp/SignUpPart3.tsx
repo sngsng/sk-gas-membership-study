@@ -22,16 +22,22 @@ function SignInPark3() {
   // redux
   const userApiData = useAppSelector((state) => state.userApiData);
 
-  // SMS 인증문자 요청
+  console.log("userApiData : ", userApiData);
+
+  // SMS 전송요청
   const { mutateAsync: smsRequestPress, isLoading } = useMutation(
     RequestAuthentication
   );
 
   const RequestForSmsAuthentication = () => {
     //
-    // SMS 인증문자 요청
+    // SMS 전송요청
     smsRequestPress(userApiData).then((res) => {
+      console.log("----------------part3 res----------------");
+      console.log(res);
       const { check1, check2, check3, certNum, result } = res;
+
+      console.log("sms 전송 요청 part3 : ", res);
 
       if (result === "Y") {
         // api redex

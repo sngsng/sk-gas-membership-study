@@ -3,7 +3,11 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
-import { fetchPassAuthenticationTermsList, sendSMS } from "../../apis/signUp";
+import {
+  fetchPassAuthenticationTermsList,
+  RequestAuthentication,
+  sendSMS,
+} from "../../apis/signUp";
 import { Part2Data, Terms } from "../../apis/signUp/types/responses";
 import SelectForm from "../../components/signUp/SelectForm";
 import TermsList from "../../components/signUp/TermsList";
@@ -14,10 +18,14 @@ import Button from "../../elements/Button";
 import urls from "../../constants/urls";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signPart2DataAdd } from "../../store/modules/SignUp";
-import { signUpPart2ApiData } from "../../store/modules/ApiData";
+import {
+  signUpPart2ApiData,
+  signUpPart3ApiData,
+} from "../../store/modules/ApiData";
 import { SignPart2DataMapping } from "../../store/modules/MappingData";
 import string from "../../constants/string";
 import useModal from "../../hooks/useModal";
+import { InterceptorError } from "../../network/types/interface";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -93,7 +101,12 @@ function SignInPark2() {
     }
   }, []);
 
-  const { mutateAsync: NextSendData, isLoading } = useMutation(sendSMS);
+  const { mutateAsync: NextSendData, isLoading: sendSmsLoading } =
+    useMutation(sendSMS);
+
+  const { mutateAsync: smsRequest, isLoading: smsRequestLodging } = useMutation(
+    RequestAuthentication
+  );
 
   // console.log(
   // "----------------fetchPassAuthenticationTermsList()----------------"
@@ -160,39 +173,76 @@ function SignInPark2() {
       terms4chk: "Y", // <== 이거!!!!
     };
 
-    console.log("----------------body----------------");
-    console.log(body);
-
     // 본인인증 app 인증요청
     NextSendData(body).then((res) => {
-      const { certNum, trCert, check1, check2, result } = res;
+      const { certNum, trCert, check1, check2, result, smsFlag } = res;
+      // smsFlag ==> N 일 경우 그냥 평소 대로
 
-      console.log("----------------app 인증요청----------------");
+      console.log("----------------res----------------");
       console.log(res);
-      // app 요청 횟수 초과해도 F로 넘어오지 않는다!!
 
-      // 에러처리
-      if (result === "Y") {
-        // api redex
+      // 에러처리 -----------------
+      if (result === "Y" && smsFlag === "Y") {
+        //
+        //  // test용 if
+        // if (smsFlag === "Y") {
+        //
+        dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
+
+        // sms 인증번호 요청
+        smsRequest({ certNum, check1, trCert })
+          .then((res) => {
+            const { check1, check2, check3, certNum } = res;
+
+            //
+            dispatch(
+              signUpPart3ApiData({
+                check1,
+                check2,
+                check3,
+                certNum,
+              })
+            );
+
+            console.log("----------------sms 인증 번호 요청----------------");
+
+            console.log("sms 인증 번호 요청 : ", res);
+          })
+          .catch((err) => {
+            const error = err as InterceptorError;
+            showAlert({ title: `sms 인증번호 요청 : ${error.detailMsg}` });
+          });
+
+        navigate(urls.SignUpPart4);
+      } else if (result === "Y" && smsFlag === "N") {
+        //
+        //  // test용 if
+        // } else if (smsFlag === "N") {
+        //   // api redex
         dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
         //
         navigate(urls.SignUpPart3);
-        //
       } else if (result === "N") {
-        showAlert({ title: string.AuthFailed });
+        //
+        showAlert({
+          title: `app 인증요청 : ${string.AuthFailed}`,
+          message: "인증횟수 초과 가능성 있음!",
+        });
       } else if (result === "F") {
+        //
         showAlert({
           title: "인증 횟수 초과",
           message:
             "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
         });
       } else if (result === "E") {
+        //
         showAlert({
           title: string.Error,
           message: "인증횟수 초과 가능성 있음!",
         });
       }
-      //
+      //  ---------
     });
   };
 
@@ -297,7 +347,7 @@ function SignInPark2() {
           className="p-20"
           isBtnCheck={isValid && termsLengthComparison}
           disabled={!(isValid && termsLengthComparison)}
-          isLoading={isLoading}
+          isLoading={sendSmsLoading || smsRequestLodging}
           onClick={handleSubmit(onSubmit)}
         />
       </div>
