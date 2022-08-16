@@ -8,11 +8,11 @@ import {
   sendSMS,
 } from "../../apis/signUp";
 import { Terms } from "../../apis/signUp/types/responses";
-import SelectForm from "../../components/signUp/SelectForm";
-import TermsList from "../../components/signUp/TermsList";
-import LabelInput from "../../components/signUp/LabelInput";
+import SelectForm from "../../components/LabelBtn/SelectForm";
+import TermsList from "../../components/Terms/TermsList";
+import LabelInput from "../../components/LabelBtn/LabelInput";
 import Layout from "../../elements/Layout";
-import LabelSelectBtn from "../../components/signUp/LabelSelectBtn";
+import LabelSelectBtn from "../../components/LabelBtn/LabelSelectBtn";
 import Button from "../../elements/Button";
 import urls from "../../constants/urls";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
@@ -58,6 +58,11 @@ const phoneCorpOptions = [
   { value: "SKM", label: "SKT 알뜰폰" },
   { value: "KTM", label: "KT 알뜰폰" },
   { value: "LGM", label: "LG 알뜰폰" },
+];
+
+const selectGender = [
+  { label: "남자", value: "0" },
+  { label: "여자", value: "1" },
 ];
 
 function SignInPark2() {
@@ -259,9 +264,8 @@ function SignInPark2() {
               <LabelSelectBtn
                 name="gen"
                 label={string.Gen}
-                choice1={string.Man}
-                choice2={string.Woman}
                 setValue={setValue}
+                options={selectGender}
                 value={value}
               />
             );
