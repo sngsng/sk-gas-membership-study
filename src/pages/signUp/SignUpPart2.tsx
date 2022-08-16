@@ -8,7 +8,7 @@ import {
   RequestAuthentication,
   sendSMS,
 } from "../../apis/signUp";
-import { Part2Data, Terms } from "../../apis/signUp/types/responses";
+import { Terms } from "../../apis/signUp/types/responses";
 import SelectForm from "../../components/signUp/SelectForm";
 import TermsList from "../../components/signUp/TermsList";
 import LabelInput from "../../components/signUp/LabelInput";
@@ -26,6 +26,8 @@ import { SignPart2DataMapping } from "../../store/modules/MappingData";
 import string from "../../constants/string";
 import useModal from "../../hooks/useModal";
 import { InterceptorError } from "../../network/types/interface";
+import { RequestAppBody } from "../../apis/signUp/types/requests";
+import AuthErrorCheck from "../../util/AuthErrorCheck";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -36,6 +38,17 @@ export interface SignUpPart2SubmitType {
     label: string;
     value: string;
   };
+}
+
+interface CommonData {
+  name: string;
+  birthday: string;
+  phoneNo: string;
+  nation: "0";
+  terms1chk?: string;
+  terms2chk?: string;
+  terms3chk?: string;
+  terms4chk?: string;
 }
 
 const phoneCorpOptions = [
@@ -53,6 +66,7 @@ function SignInPark2() {
   //
   // 상태관리
   const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
+
   //
   // redux
   const singPart2MappingData = useAppSelector((state) => state.mappingData);
@@ -94,8 +108,6 @@ function SignInPark2() {
 
     // reset으로 MAPPIng 하는 방법 찾아보기
     if (termsCheckList.length > 0) {
-      console.log("part2 : 유효성 검사");
-
       trigger(["birthday", "name", "gen", "phoneNo", "phoneCorp"]);
       setTermsCheckList(termsCheckList);
     }
@@ -104,40 +116,26 @@ function SignInPark2() {
   const { mutateAsync: NextSendData, isLoading: sendSmsLoading } =
     useMutation(sendSMS);
 
-  const { mutateAsync: smsRequest, isLoading: smsRequestLodging } = useMutation(
+  const { mutateAsync: smsRequest, isLoading: requestSMSLoading } = useMutation(
     RequestAuthentication
   );
-
-  // console.log(
-  // "----------------fetchPassAuthenticationTermsList()----------------"
-  // );
-  // console.log(termsCheckList);
-  // console.log(fetchPassAuthenticationTermsList());
-
-  // let arr = [];
-  // for (let i = 1; i < termsCheckList.length; i++) {
-  //   let keyName = "terms" + i + "check";
-  //   // let count = Math.floor(Math.random() * 10);
-  //   let newTermsKey: any = new Object();
-  //   newTermsKey[keyName] = "Y";
-  //   arr.push(newTermsKey);
-  // }
-
-  // arr.forEach(function (value) {
-  //   console.log(value);
-  // });
-
-  // console.log(arr);
 
   // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
 
-    const commonData = {
+    const makeTermsData: { [index: string]: string } = {};
+
+    termsCheckList.forEach((terms) => {
+      makeTermsData[`terms${terms.cluCd}chk`] = "Y";
+    });
+
+    const commonData: CommonData = {
       name,
       birthday,
       phoneNo,
       nation: "0",
+      ...makeTermsData,
     };
 
     // mapping redux 넣기
@@ -147,10 +145,6 @@ function SignInPark2() {
         gen,
         phoneCorp,
         termsCheckList,
-        terms1chk: "Y",
-        terms2chk: "Y",
-        terms3chk: "Y",
-        terms4chk: "Y",
       })
     );
 
@@ -167,67 +161,50 @@ function SignInPark2() {
       ...commonData,
       gender: gen,
       phoneCorp: phoneCorp.value,
-      terms1chk: "Y",
-      terms2chk: "Y",
-      terms3chk: "Y",
-      terms4chk: "Y", // <== 이거!!!!
     };
 
     // 본인인증 app 인증요청
-    NextSendData(body).then((res) => {
-      const { certNum, trCert, check1, check2, result, smsFlag } = res;
-      // smsFlag ==> N 일 경우 그냥 평소 대로
+    NextSendData(body) //
+      .then((res) => {
+        const { certNum, trCert, check1, check2, result, smsFlag, resultCode } =
+          res;
 
-      if (result === "Y" && smsFlag === "Y") {
-        //
-        dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
+        console.log("res", res);
+        console.log("resultCode", resultCode);
 
-        // sms 인증번호 요청
-        smsRequest({ certNum, check1, trCert })
-          .then((res) => {
-            const { check1, check2, check3, certNum } = res;
-            //
-            dispatch(
-              signUpPart3ApiData({
-                check1,
-                check2,
-                check3,
-                certNum,
-              })
-            );
-          })
-          .catch((err) => {
-            const error = err as InterceptorError;
-            showAlert({ title: `sms 인증번호 요청 : ${error.detailMsg}` });
-          });
+        if (result === "Y" && smsFlag === "Y") {
+          //
+          dispatch(
+            signUpPart2ApiData({ certNum, trCert, check1, check2, smsFlag })
+          );
+          smsRequest({ certNum, check1, trCert })
+            .then((res) => {
+              const { check1, check2, check3, certNum } = res;
+              //
+              dispatch(
+                signUpPart3ApiData({
+                  check1,
+                  check2,
+                  check3,
+                  certNum,
+                })
+              );
+            })
+            .catch((err: InterceptorError) => {
+              showAlert({ title: `sms 인증번호 요청 : ${err.detailMsg}` });
+            });
 
-        navigate(urls.SignUpPart4);
-      } else if (result === "Y" && smsFlag === "N") {
-        //   // api redex
-        dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
-        //
-        navigate(urls.SignUpPart3);
-      } else if (result === "N") {
-        //
-        showAlert({
-          title: `app 인증요청 : ${string.AuthFailed}`,
-          message: "인증횟수 초과 가능성 있음!",
-        });
-      } else if (result === "F") {
-        //
-        showAlert({
-          title: "인증 횟수 초과",
-          message:
-            "하루 동안 인증 가능한 횟수를 초과하여 인증을 진행 할수 없습니다. 24시간 후 다시 시도해주세요.",
-        });
-      } else if (result === "E") {
-        //
-        showAlert({
-          title: string.Error,
-          message: "인증횟수 초과 가능성 있음!",
-        });
-      }
-    });
+          navigate(urls.SignUpPart4);
+        } else if (result === "Y" && smsFlag === "N") {
+          //   // api redex
+          dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
+          //
+          navigate(urls.SignUpPart3);
+        } else if (result === "N") {
+          //
+          showAlert(AuthErrorCheck(resultCode));
+        }
+      });
   };
 
   return (
@@ -330,8 +307,8 @@ function SignInPark2() {
           text={string.AgreeAndSignUp}
           className="p-20"
           isBtnCheck={isValid && termsLengthComparison}
-          disabled={!(isValid && termsLengthComparison)}
-          isLoading={sendSmsLoading || smsRequestLodging}
+          // disabled={!(isValid && termsLengthComparison)}
+          isLoading={sendSmsLoading || requestSMSLoading}
           onClick={handleSubmit(onSubmit)}
         />
       </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Back } from "../assets";
+import { useAppSelector } from "../store/hook";
 
 interface HeadTitle {
   title?: string;
@@ -9,6 +10,9 @@ interface HeadTitle {
 
 function Header({ title, backBtn }: HeadTitle) {
   const navigate = useNavigate();
+  const smsFlag = useAppSelector((state) => state.userApiData.smsFlag);
+
+  console.log(smsFlag);
 
   return (
     <header className="sticky top-0 z-10 flex items-center justify-center w-full bg-white border-b max-w-480 min-w-360 h-61 border-grey-200">
@@ -16,7 +20,7 @@ function Header({ title, backBtn }: HeadTitle) {
         <button
           className="absolute left-20"
           onClick={() => {
-            navigate(-1);
+            smsFlag ? navigate(-2) : navigate(-1);
           }}
           type="button"
         >

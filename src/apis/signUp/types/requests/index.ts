@@ -16,10 +16,10 @@ export interface RequestAppBody {
   gender: "0" | "1";
   phoneCorp: string;
   nation: string;
-  terms1chk: string;
-  terms2chk: string;
-  terms3chk: string;
-  terms4chk: string;
+  terms1chk?: string;
+  terms2chk?: string;
+  terms3chk?: string;
+  terms4chk?: string;
 }
 
 export interface RequestAuthenticationBody {

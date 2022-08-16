@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
@@ -7,30 +8,30 @@ import urls from "../../constants/urls";
 import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
 import useModal from "../../hooks/useModal";
+import { InterceptorError } from "../../network/types/interface";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
+import AuthErrorCheck from "../../util/AuthErrorCheck";
 
 function SignInPark3() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   //
+  // redux
+  const { certNum, check1, trCert } = useAppSelector(
+    (state) => state.userApiData
+  );
   // modal
   const { showAlert } = useModal();
   //
-  // redux
-  const userApiData = useAppSelector((state) => state.userApiData);
-
-  console.log("userApiData : ", userApiData);
-
-  // SMS 전송요청
-  const { mutateAsync: smsRequestPress, isLoading } = useMutation(
+  const { mutateAsync: smsRequest, isLoading: requestSMSLoading } = useMutation(
     RequestAuthentication
   );
 
   const RequestForSmsAuthentication = () => {
     //
     // SMS 전송요청
-    smsRequestPress(userApiData).then((res) => {
+    smsRequest({ certNum, check1, trCert }).then((res) => {
       console.log("----------------part3 res----------------");
       console.log(res);
       const { check1, check2, check3, certNum, result } = res;
@@ -87,7 +88,7 @@ function SignInPark3() {
           className="mb-10 btn-extra btn-line"
           text={string.AuthenticateWithPhone}
           isBtnCheck
-          isLoading={isLoading}
+          isLoading={requestSMSLoading}
           LoadingColor="blue"
           type="line"
           onClick={RequestForSmsAuthentication}

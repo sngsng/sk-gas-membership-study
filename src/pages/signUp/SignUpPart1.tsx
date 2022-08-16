@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import regex from "../../util/regex";
@@ -72,24 +73,28 @@ function SignUpPart1() {
   const idCheckHandle = () => {
     const userId = getValues().Id;
 
-    idCheckMutation({ lognId: userId }).then((res) => {
-      // 에러처리
-      if (res === "Y") {
-        setIdCheck(false);
-        //
-        showAlert({
-          title: string.DuplicateID,
-          message: "다른 아이디를 입력해 주세요",
-        });
-        //
-      } else if (res === "N") {
-        setIdCheck(true);
-        //
-        showAlert({
-          title: string.AvailableID,
-        });
-      }
-    });
+    idCheckMutation({ lognId: userId })
+      .then((res) => {
+        // 에러처리
+        if (res === "Y") {
+          setIdCheck(false);
+          //
+          showAlert({
+            title: string.DuplicateID,
+            message: "다른 아이디를 입력해 주세요",
+          });
+          //
+        } else if (res === "N") {
+          setIdCheck(true);
+          //
+          showAlert({
+            title: string.AvailableID,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("아이디 중복 체크 : ", err);
+      });
   };
 
   // pageMove Data

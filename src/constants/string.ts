@@ -2,7 +2,10 @@ export default {
   // header
   MobileMembershipRegistration: "행복충전모바일 회원가입",
 
-  // signUp
+  /**
+   * signUp
+   *  */
+
   // title
   AcceptTheFullTerms: "전체 약관에 동의합니다.",
   Authentication: "본인인증",
@@ -34,23 +37,18 @@ export default {
   Man: "남자",
   Woman: "여자",
 
-  // error 메세지
+  // INPUT ERROR 메세지
   IdErrorMessage: "영문 대소문자, 숫자를 조합하여 5글자 이상 입력해주세요.",
   PassWordErrorMessage:
     "영문 대소문자, 숫자, 특수문자를 포함하여 8이상 입력해주세요",
   PassWordsNotMatch: "비밀번호가 일치 하지 않습니다",
-
   CarErrorMessage: "형식이 올바르지 않습니다 (ex 00가0000)",
-
   EnterMoreThan2: "2글자 이상 입력해주세요",
-
   Enter8BirthDate: "생년월일 8자리를 입력해주세요",
-
   Enter11PhoneMessage: "휴대폰 11자리를 입력해주세요",
 
   // 중복 확인 메세지
   AvailableID: "사용가능한 아이디입니다.",
-
   DuplicateID: "중복된 아이디 입니다.",
 
   // button 메세지
@@ -72,4 +70,14 @@ export default {
   AuthFailed5: "일 5회 인증실패",
   Error: "오류",
   TryMessage: "다시 한번 확인 해주세요",
+
+  // 모달 에러 메세지
+  errorMsg101: "본인 인증에 실패하였습니다.",
+  errorSubMsg101: "입력 하신 정보를 확인해 주세요.",
+  errorMsg102: "일 5회 인증 실패로 재요청이 불가합니다",
+  errorSubMsg102: "내일 다시 시도해주세요.",
+  errorMsg103: "본인인증 필수약관에 동의해주세요.",
+  errorMsg104: "인증번호 재전송에 실패하였습니다.",
+  errorMsg105: "인증번호 재전송에 실패하였습니다.",
+  errorMsgEtc: "기타오류",
 };

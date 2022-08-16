@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../assets";
 import Layout from "../elements/Layout";
+import useModal from "../hooks/useModal";
 import { useAppDispatch } from "../store/hook";
 import { apiDataReset } from "../store/modules/ApiData";
 import { mappingDataReset } from "../store/modules/MappingData";
@@ -10,11 +11,13 @@ import { signDataReset } from "../store/modules/SignUp";
 function SignIn() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { closeModal } = useModal();
 
   useEffect(() => {
     dispatch(signDataReset());
     dispatch(apiDataReset());
     dispatch(mappingDataReset());
+    closeModal();
   }, []);
 
   return (

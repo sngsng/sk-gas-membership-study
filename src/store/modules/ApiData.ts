@@ -5,6 +5,7 @@ export interface SignPart2 {
   trCert?: string;
   check1: string;
   check2: string;
+  smsFlag?: string;
 }
 
 export interface SignPart3 extends SignPart2 {
@@ -17,6 +18,7 @@ const initialState: SignPart3 = {
   check1: "",
   check2: "",
   check3: "",
+  smsFlag: "",
 };
 
 export const UserApiData = createSlice({
@@ -28,6 +30,7 @@ export const UserApiData = createSlice({
       state.trCert = action.payload.trCert;
       state.check1 = action.payload.check1;
       state.check2 = action.payload.check2;
+      state.smsFlag = action.payload.smsFlag;
     },
     signUpPart3ApiData: (state, action: PayloadAction<SignPart3>) => {
       state.check1 = action.payload.check1;
