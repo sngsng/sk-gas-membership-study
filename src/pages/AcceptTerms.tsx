@@ -10,9 +10,10 @@ import { useAppSelector, useAppDispatch } from "../store/hook/index";
 import { addCluAgrList } from "../store/modules/SignUp";
 import Button from "../elements/Button";
 import { Terms } from "../apis/signUp/types/responses";
-import { fetchTermsList } from "../apis/signUp";
+import { fetchTermsDetail, fetchTermsList } from "../apis/signUp";
 import TermsList from "../components/signUp/TermsList";
 import string from "../constants/string";
+import { TermsDetailBody } from "../apis/signUp/types/requests";
 
 function AcceptTerms() {
   const navigate = useNavigate();
@@ -45,6 +46,17 @@ function AcceptTerms() {
     navigate(urls.SignUpPart1);
   };
 
+  // 약관 상세페이지 이동
+  const openTermsDetail = async (body: TermsDetailBody) => {
+    const cluTelgCtt = await fetchTermsDetail(body);
+
+    navigate(urls.AcceptTermsDetail, {
+      state: {
+        cluTelgCtt,
+      },
+    });
+  };
+
   return (
     <Layout isHeader title={string.MobileMembershipRegistration} backBtn>
       <div className="p-20">
@@ -63,6 +75,7 @@ function AcceptTerms() {
             termsListData={termsListData}
             termsCheckList={termsCheckList}
             setTermsCheckList={setTermsCheckList}
+            openTermsDetail={openTermsDetail}
           />
         )}
 

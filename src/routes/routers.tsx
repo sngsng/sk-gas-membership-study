@@ -1,5 +1,6 @@
 import urls from "../constants/urls";
 import AcceptTerms from "../pages/AcceptTerms";
+import AcceptTermsDetail from "../pages/AcceptTermsDetail";
 import FindId1 from "../pages/findId/FindId1";
 import FindId2 from "../pages/findId/FindId2";
 import FindId3 from "../pages/findId/FindId3";
@@ -52,6 +53,10 @@ export const NoAuth = [
   {
     path: urls.AcceptTerms,
     element: <AcceptTerms />,
+  },
+  {
+    path: urls.AcceptTermsDetail,
+    element: <AcceptTermsDetail />,
   },
   {
     path: urls.SignUpPart1,

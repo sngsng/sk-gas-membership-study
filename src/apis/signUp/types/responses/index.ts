@@ -12,6 +12,11 @@ export interface Terms {
   cluShrtCtt?: string;
 }
 
+export interface TermsDetail {
+  // 약관 상세 내용 (HTML 문자열)
+  cluTelgCtt: string;
+}
+
 export interface TermsIdCheck {
   // 아이디 중복 여부
   dupYn: "Y" | "N";

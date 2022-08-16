@@ -3,6 +3,11 @@ export interface TermsBody {
   svcCluFg: "01";
 }
 
+export interface TermsDetailBody {
+  cluCd?: string;
+  cluVer?: string;
+}
+
 export interface TermsIdCheckBody {
   // 아이디 중복 체크 조회
   lognId: string;

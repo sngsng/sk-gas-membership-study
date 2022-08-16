@@ -1,19 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
+import { TermsDetailBody } from "../../apis/signUp/types/requests";
 import { Terms } from "../../apis/signUp/types/responses";
 import { CheckBoxOff, CheckBoxOn, CheckOff, CheckOn } from "../../assets";
-import cls, { requiredLengthCheck } from "../../util";
+import cls from "../../util";
 
 interface TermsListCheckBoxProps {
   terms: Terms;
   termsCheckList: Terms[];
   setTermsCheckList: React.Dispatch<React.SetStateAction<Terms[]>>;
+  openTermsDetail: (body: TermsDetailBody) => any;
 }
 
 function TermsListCheckBox({
   terms,
   termsCheckList,
   setTermsCheckList,
+  openTermsDetail,
 }: TermsListCheckBoxProps) {
   // 체크 했는지 여부 체크
   const isChecked = () => {
@@ -55,7 +57,17 @@ function TermsListCheckBox({
           alt="체크버튼"
         />
       </label>
-      <p>{terms.cluShrtCtt}</p>
+      <div
+        onClick={() => {
+          openTermsDetail({
+            cluCd: terms.cluCd,
+            cluVer: terms.cluVer,
+          });
+        }}
+        aria-hidden="true"
+      >
+        <p>{terms.cluShrtCtt}</p>
+      </div>
     </>
   );
 }
@@ -66,6 +78,7 @@ interface TermsListProps {
   setTermsCheckList: React.Dispatch<React.SetStateAction<Terms[]>>;
   termsListData?: Terms[];
   termsCheckList: Terms[];
+  openTermsDetail: (body: TermsDetailBody) => any;
 }
 
 function TermsList({
@@ -74,6 +87,7 @@ function TermsList({
   termsListData,
   termsCheckList,
   setTermsCheckList,
+  openTermsDetail,
 }: TermsListProps) {
   //
   // allCheck 상태관리
@@ -128,6 +142,7 @@ function TermsList({
                 <TermsListCheckBox
                   termsCheckList={termsCheckList}
                   setTermsCheckList={setTermsCheckList}
+                  openTermsDetail={openTermsDetail}
                   terms={terms}
                 />
               </li>

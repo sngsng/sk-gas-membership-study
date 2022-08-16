@@ -6,6 +6,7 @@ import {
   AuthNumberCheckBody,
   RequestAppBody,
   RequestAuthenticationBody,
+  TermsDetailBody,
   TermsIdCheckBody,
 } from "./types/requests";
 import { Terms } from "./types/responses";
@@ -20,6 +21,17 @@ export const fetchTermsList = async () => {
     return cluList;
   } catch (err) {
     return console.log("fetchTermsList : ", err);
+  }
+};
+
+export const fetchTermsDetail = async (body: TermsDetailBody) => {
+  try {
+    const { data } = await hmsRequest(ApiUrls.TERMS_DETAIL_LIST, body);
+    const { responseData } = data;
+    const { cluTelgCtt } = responseData;
+    return cluTelgCtt;
+  } catch (err) {
+    return console.log("fetchTermsDetail : ", err);
   }
 };
 

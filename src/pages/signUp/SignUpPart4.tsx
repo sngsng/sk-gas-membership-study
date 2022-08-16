@@ -97,8 +97,6 @@ function SignInPark4() {
       cluAgrList,
     };
 
-    console.log(body);
-
     startSignUp(body)
       .then((mbrId) => {
         dispatch(
@@ -112,10 +110,8 @@ function SignInPark4() {
           })
         );
         navigate(urls.SignUpPart5, { replace: true });
-        console.log("part4 signUp data : ", mbrId);
       })
       .catch((err) => {
-        console.log("signUp : ", err);
         const error = err as InterceptorError;
         showAlert({ title: ` 회원가입 ${error.detailMsg}` });
       });
@@ -130,10 +126,6 @@ function SignInPark4() {
     };
     authenticationCheckPress(body).then((res) => {
       const { result } = res;
-      console.log(
-        "----------------authenticationNumberCheckApi----------------"
-      );
-      console.log(result);
       //
       // 에러처리
       if (result === "Y") {
@@ -169,7 +161,6 @@ function SignInPark4() {
         const { check1, check2, check3, certNum, result } = res;
 
         console.log("인증 재요청 : ", res);
-        //
         //
         // 에러처리
         if (result === "Y") {

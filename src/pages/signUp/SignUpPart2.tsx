@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -26,8 +25,9 @@ import { SignPart2DataMapping } from "../../store/modules/MappingData";
 import string from "../../constants/string";
 import useModal from "../../hooks/useModal";
 import { InterceptorError } from "../../network/types/interface";
-import { RequestAppBody } from "../../apis/signUp/types/requests";
+import { TermsDetailBody } from "../../apis/signUp/types/requests";
 import AuthErrorCheck from "../../util/AuthErrorCheck";
+import fetchTermsDetailPart2 from "../../util/fetchTermsDetailPart2";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -86,8 +86,9 @@ function SignInPark2() {
     formState: { errors, isValid },
     control,
     setValue,
+    getValues,
     trigger,
-    reset,
+    // reset,
   } = useForm<SignUpPart2SubmitType>({
     defaultValues: {
       // 초기값
@@ -119,6 +120,18 @@ function SignInPark2() {
   const { mutateAsync: smsRequest, isLoading: requestSMSLoading } = useMutation(
     RequestAuthentication
   );
+
+  // 약관 상세페이지 이동
+  const openTermsDetail = ({ cluCd }: TermsDetailBody) => {
+    const phoneCorp = getValues("phoneCorp.value");
+    if (!phoneCorp) {
+      showAlert({ title: "통신사를 선택해주세요." });
+    }
+
+    const url = fetchTermsDetailPart2(cluCd as string, phoneCorp);
+
+    return window.open(url, "_blank");
+  };
 
   // data 전송하는곳
   const onSubmit = (data: SignUpPart2SubmitType) => {
@@ -168,9 +181,6 @@ function SignInPark2() {
       .then((res) => {
         const { certNum, trCert, check1, check2, result, smsFlag, resultCode } =
           res;
-
-        console.log("res", res);
-        console.log("resultCode", resultCode);
 
         if (result === "Y" && smsFlag === "Y") {
           //
@@ -300,6 +310,7 @@ function SignInPark2() {
           termsListData={fetchPassAuthenticationTermsList()}
           termsCheckList={termsCheckList}
           setTermsCheckList={setTermsCheckList}
+          openTermsDetail={openTermsDetail}
         />
 
         {/* btn 컴포넌트 */}
@@ -307,7 +318,7 @@ function SignInPark2() {
           text={string.AgreeAndSignUp}
           className="p-20"
           isBtnCheck={isValid && termsLengthComparison}
-          // disabled={!(isValid && termsLengthComparison)}
+          disabled={!(isValid && termsLengthComparison)}
           isLoading={sendSmsLoading || requestSMSLoading}
           onClick={handleSubmit(onSubmit)}
         />
