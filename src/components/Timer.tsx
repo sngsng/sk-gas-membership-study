@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unused-prop-types */
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
-import cls from "../../util";
+import cls from "../util";
 
 interface TimerProps {
   className?: string;

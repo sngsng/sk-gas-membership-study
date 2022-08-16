@@ -8,8 +8,8 @@ import {
   signUpApi,
   smsRetryApi,
 } from "../../apis/signUp";
-import LabelInput from "../../components/signUp/LabelInput";
-import Timer from "../../components/signUp/Timer";
+import LabelInput from "../../components/LabelBtn/LabelInput";
+import Timer from "../../components/Timer";
 import string from "../../constants/string";
 import urls from "../../constants/urls";
 import Button from "../../elements/Button";

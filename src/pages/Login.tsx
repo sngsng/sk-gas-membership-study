@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Link } from "react-router-dom";
 import loginApi from "../apis/login";
-import LabelInput from "../components/signUp/LabelInput";
+import LabelInput from "../components/LabelBtn/LabelInput";
 import urls from "../constants/urls";
 import Button from "../elements/Button";
 import Layout from "../elements/Layout";

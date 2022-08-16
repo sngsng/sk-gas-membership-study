@@ -11,7 +11,7 @@ import { addCluAgrList } from "../store/modules/SignUp";
 import Button from "../elements/Button";
 import { Terms } from "../apis/signUp/types/responses";
 import { fetchTermsDetail, fetchTermsList } from "../apis/signUp";
-import TermsList from "../components/signUp/TermsList";
+import TermsList from "../components/Terms/TermsList";
 import string from "../constants/string";
 import { TermsDetailBody } from "../apis/signUp/types/requests";
 
