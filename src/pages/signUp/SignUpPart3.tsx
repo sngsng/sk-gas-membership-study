@@ -1,20 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useMutation } from "react-query";
-import { useNavigate } from "react-router-dom";
 import { RequestAuthentication } from "../../apis/signUp";
 import string from "../../constants/string";
 import urls from "../../constants/urls";
 import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
 import useModal from "../../hooks/useModal";
-import { InterceptorError } from "../../network/types/interface";
+import useRouter from "../../hooks/useRouter";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
-import AuthErrorCheck from "../../util/AuthErrorCheck";
 
 function SignInPark3() {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const dispatch = useAppDispatch();
   //
   // redux
@@ -32,11 +29,7 @@ function SignInPark3() {
     //
     // SMS 전송요청
     smsRequest({ certNum, check1, trCert }).then((res) => {
-      console.log("----------------part3 res----------------");
-      console.log(res);
       const { check1, check2, check3, certNum, result } = res;
-
-      console.log("sms 전송 요청 part3 : ", res);
 
       if (result === "Y") {
         // api redex
@@ -48,7 +41,7 @@ function SignInPark3() {
             certNum,
           })
         );
-        navigate(urls.SignUpPart4);
+        push(urls.SignUpPart4);
         //
       } else if (result === "N") {
         showAlert({ title: string.AuthFailed });

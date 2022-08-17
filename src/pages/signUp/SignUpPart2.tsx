@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { useMutation } from "react-query";
+import { shallowEqual } from "react-redux";
 import {
   fetchPassAuthenticationTermsList,
   RequestAuthentication,
@@ -28,6 +28,7 @@ import { InterceptorError } from "../../network/types/interface";
 import { TermsDetailBody } from "../../apis/signUp/types/requests";
 import AuthErrorCheck from "../../util/AuthErrorCheck";
 import fetchTermsDetailPart2 from "../../util/fetchTermsDetailPart2";
+import useRouter from "../../hooks/useRouter";
 
 export interface SignUpPart2SubmitType {
   name: string;
@@ -66,7 +67,7 @@ const selectGender = [
 ];
 
 function SignInPark2() {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const dispatch = useAppDispatch();
   //
   // 상태관리
@@ -74,7 +75,10 @@ function SignInPark2() {
 
   //
   // redux
-  const singPart2MappingData = useAppSelector((state) => state.mappingData);
+  const singPart2MappingData = useAppSelector(
+    (state) => state.mappingData,
+    shallowEqual
+  );
   //
   // 변수
   const termsDataLength = fetchPassAuthenticationTermsList().length;
@@ -209,12 +213,12 @@ function SignInPark2() {
               showAlert({ title: `sms 인증번호 요청 : ${err.detailMsg}` });
             });
 
-          navigate(urls.SignUpPart4);
+          push(urls.SignUpPart4);
         } else if (result === "Y" && smsFlag === "N") {
           //   // api redex
           dispatch(signUpPart2ApiData({ certNum, trCert, check1, check2 }));
           //
-          navigate(urls.SignUpPart3);
+          push(urls.SignUpPart3);
         } else if (result === "N") {
           //
           showAlert(AuthErrorCheck(resultCode));

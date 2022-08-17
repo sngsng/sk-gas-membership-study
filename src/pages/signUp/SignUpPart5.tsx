@@ -1,10 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Layout from "../../elements/Layout";
 import { Completion } from "../../assets";
+import useRouter from "../../hooks/useRouter";
 
 function SignUpPart5() {
-  const navigate = useNavigate();
+  const { replace } = useRouter();
   return (
     <Layout title="행복충전 회원가입">
       <div className="flex flex-col p-20 text-center">
@@ -23,7 +23,7 @@ function SignUpPart5() {
           className="btn btn-fill btn-extra"
           type="button"
           onClick={() => {
-            navigate("/", { replace: true });
+            replace("/");
           }}
         >
           홈으로

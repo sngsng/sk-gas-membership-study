@@ -39,6 +39,7 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
     requestData: body,
   };
 
+  // 에러처리
   const onFulfilled = (res: AxiosResponse) => {
     const { data } = res;
     const { resCode } = data;
@@ -50,8 +51,6 @@ const hmsRequest = (url: string, body: Record<string, any>) => {
   };
 
   axiosInstance.interceptors.response.use(onFulfilled);
-
-  console.log("baseBody : ", baseBody);
 
   return axiosInstance.post(url, baseBody, config);
 };

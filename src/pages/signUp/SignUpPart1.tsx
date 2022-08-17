@@ -14,6 +14,7 @@ import urls from "../../constants/urls";
 import string from "../../constants/string";
 import { idCheckAPI } from "../../apis/signUp";
 import useModal from "../../hooks/useModal";
+import useRouter from "../../hooks/useRouter";
 
 interface SignUpPart1SubmitType {
   Id: string;
@@ -36,8 +37,8 @@ function SignUpPart1() {
     reValidateMode: "onBlur",
   });
   //
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { push } = useRouter();
   const { showAlert } = useModal();
 
   //  state
@@ -107,7 +108,7 @@ function SignUpPart1() {
     };
 
     dispatch(signPart1DataAdd(part1Data));
-    navigate(urls.SignUpPart2);
+    push(urls.SignUpPart2);
   };
 
   return (

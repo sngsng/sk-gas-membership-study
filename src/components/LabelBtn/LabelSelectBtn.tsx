@@ -11,7 +11,6 @@ interface LabelSelectBtnProps {
     label: string;
     value: string;
   }[];
-  // onChange?: (...event: any[]) => void;
 }
 
 function LabelSelectBtn({

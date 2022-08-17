@@ -1,6 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Back } from "../assets";
+import useRouter from "../hooks/useRouter";
 import { useAppSelector } from "../store/hook";
 
 interface HeadTitle {
@@ -9,7 +9,7 @@ interface HeadTitle {
 }
 
 function Header({ title, backBtn }: HeadTitle) {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const smsFlag = useAppSelector((state) => state.userApiData.smsFlag);
 
   return (
@@ -18,7 +18,7 @@ function Header({ title, backBtn }: HeadTitle) {
         <button
           className="absolute left-20"
           onClick={() => {
-            smsFlag ? navigate(-2) : navigate(-1);
+            smsFlag ? push(-2) : push(-1);
           }}
           type="button"
         >

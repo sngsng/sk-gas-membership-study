@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { useNavigate } from "react-router-dom";
 import {
   authenticationNumberCheckApi,
   signUpApi,
@@ -15,6 +13,7 @@ import urls from "../../constants/urls";
 import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
 import useModal from "../../hooks/useModal";
+import useRouter from "../../hooks/useRouter";
 import { InterceptorError } from "../../network/types/interface";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { signUpPart3ApiData } from "../../store/modules/ApiData";
@@ -22,7 +21,7 @@ import { userSignUpData } from "../../store/modules/User";
 import regex from "../../util/regex";
 
 function SignInPark4() {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const dispatch = useAppDispatch();
   // redux
   const signApiData = useAppSelector((state) => state.userApiData);
@@ -32,11 +31,7 @@ function SignInPark4() {
   const { showAlert } = useModal();
   //
   // hook-Form
-  const {
-    register,
-    getValues,
-    formState: { isValid },
-  } = useForm({
+  const { register, getValues } = useForm({
     mode: "onChange",
   });
   //
@@ -109,7 +104,7 @@ function SignInPark4() {
             mbrID: mbrId,
           })
         );
-        navigate(urls.SignUpPart5, { replace: true });
+        push(urls.SignUpPart5, { replace: true });
       })
       .catch((err) => {
         const error = err as InterceptorError;

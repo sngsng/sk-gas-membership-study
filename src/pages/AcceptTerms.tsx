@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useQuery } from "react-query";
 import urls from "../constants/urls";
@@ -14,9 +12,10 @@ import { fetchTermsDetail, fetchTermsList } from "../apis/signUp";
 import TermsList from "../components/Terms/TermsList";
 import string from "../constants/string";
 import { TermsDetailBody } from "../apis/signUp/types/requests";
+import useRouter from "../hooks/useRouter";
 
 function AcceptTerms() {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const dispatch = useAppDispatch();
   // redux
   const userCheckedList = useAppSelector((state) => state.signUp.cluAgrList); // 다음 페이지로 갔다가 올때
@@ -43,14 +42,14 @@ function AcceptTerms() {
   const pageMoveHandle = () => {
     //
     dispatch(addCluAgrList(termsCheckList));
-    navigate(urls.SignUpPart1);
+    push(urls.SignUpPart1);
   };
 
   // 약관 상세페이지 이동
   const openTermsDetail = async (body: TermsDetailBody) => {
     const cluTelgCtt = await fetchTermsDetail(body);
 
-    navigate(urls.AcceptTermsDetail, {
+    push(urls.AcceptTermsDetail, {
       state: {
         cluTelgCtt,
       },
