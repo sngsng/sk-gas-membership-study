@@ -1,10 +1,27 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { ReactElement } from "react";
+import string from "../../constants/string";
 import urls from "../../constants/urls";
+import Button from "../../elements/Button";
 import Layout from "../../elements/Layout";
+import useRouter from "../../hooks/useRouter";
+
+interface FindId {
+  lognId?: string;
+  joinDt?: string;
+}
 
 function FindIdResult() {
-  const navigate = useNavigate();
+  const { state, replace } = useRouter();
+
+  const { lognId, joinDt } = (state || { lognId: "", joinDt: "" }) as FindId;
+
+  //
+  // 가입일
+  const year = joinDt?.slice(0, 4);
+  const month = joinDt?.slice(4, 6);
+  const day = joinDt?.slice(6);
+
   return (
     <Layout title="아이디 찾기">
       <div className="p-20 text-center">
@@ -12,25 +29,32 @@ function FindIdResult() {
         <p className="text-gray500 text-b1 mb-30">고객님의 아이디입니다.</p>
         <div className="flex flex-col items-center justify-center mb-20 rounded bg-gray150 min-h-170">
           <p className="mb-6">아이디</p>
-          <p className="pb-16">blabla</p>
+          <p className="pb-16">{lognId || ""}</p>
 
           <p className="text-gray500 text-b3">
-            가입일 <span>2022-00-00</span>
+            가입일{" "}
+            <span>
+              {year || ""}-{month || ""}-{day || ""}
+            </span>
           </p>
         </div>
-        <div className="flex">
-          <button
-            type="button"
-            className="flex-1 btn btn-fill btn-extra"
+        <div className="flex max-h-60">
+          <Button
+            text="로그인"
+            className="p-20"
+            isBtnCheck
             onClick={() => {
-              navigate(urls.Login);
+              replace(urls.Login);
             }}
-          >
-            로그인
-          </button>
-          <button type="button" className="flex-1 ml-10 btn btn-fill btn-extra">
-            비밀번호 재설정
-          </button>
+          />
+          <Button
+            text="비밀번호 재설정"
+            className="p-20 ml-10"
+            isBtnCheck
+            onClick={() => {
+              console.log("비밀번호 재설정 링크");
+            }}
+          />
         </div>
       </div>
     </Layout>

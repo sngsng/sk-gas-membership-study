@@ -14,6 +14,8 @@ import string from "../constants/string";
 import { TermsDetailBody } from "../apis/signUp/types/requests";
 import useRouter from "../hooks/useRouter";
 
+// 약관 상세페이지 이동
+
 function AcceptTerms() {
   const { push } = useRouter();
   const dispatch = useAppDispatch();
@@ -45,8 +47,8 @@ function AcceptTerms() {
     push(urls.SignUpPart1);
   };
 
-  // 약관 상세페이지 이동
   const openTermsDetail = async (body: TermsDetailBody) => {
+    const { push } = useRouter();
     const cluTelgCtt = await fetchTermsDetail(body);
 
     push(urls.AcceptTermsDetail, {

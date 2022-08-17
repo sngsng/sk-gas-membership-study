@@ -21,6 +21,9 @@ const ApiUrls = {
 
   // 로그인
   LOGIN: "/comm/reqLogin",
+
+  // 아이디 찾기
+  FIND_ID: "/mbr/findId",
 };
 
 export default ApiUrls;

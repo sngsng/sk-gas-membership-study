@@ -12,8 +12,12 @@
   }
 }
 
+.center {
+  @apply flex items-center justify-center;
+}
+
 .btn {
-  @apply w-full text-center rounded cursor-pointer border-1;
+  @apply flex items-center justify-center w-full text-center rounded cursor-pointer border-1;
 }
 
 .btn-left {
@@ -33,7 +37,7 @@
 }
 
 .btn-fill-disabled {
-  @apply text-black bg-gray250 border-gray250;
+  @apply text-gray-500 bg-gray250 border-gray250;
 }
 
 .btn-line-disabled {

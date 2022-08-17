@@ -58,7 +58,7 @@ function SelectForm({
   };
 
   return (
-    <label htmlFor={HtmlFor} className="block mb-20 text-b3">
+    <label htmlFor={HtmlFor} className="block mb-20 text-b3 ">
       <p className="mb-8 font-bold">{label}</p>
       <Select
         id={HtmlFor}
@@ -67,7 +67,7 @@ function SelectForm({
         styles={styles}
         isSearchable={false}
         placeholder={placeholder}
-        className={cls("font-normal text-b1", className)}
+        className={cls("font-normal text-b1 text-black", className)}
         defaultValue={defaultValue.label === "" ? placeholder : defaultValue}
       />
       {errors && <p className="mt-8 font-normal error">{errors}</p>}

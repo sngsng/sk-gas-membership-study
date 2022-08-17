@@ -1,127 +1,64 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { shallowEqual } from "react-redux";
 import {
   fetchPassAuthenticationTermsList,
   RequestAuthentication,
   sendSMS,
-} from "../../apis/signUp";
-import { Terms } from "../../apis/signUp/types/responses";
-import SelectForm from "../../components/LabelBtn/SelectForm";
-import TermsList from "../../components/Terms/TermsList";
-import LabelInput from "../../components/LabelBtn/LabelInput";
-import Layout from "../../elements/Layout";
-import LabelSelectBtn from "../../components/LabelBtn/LabelSelectBtn";
-import Button from "../../elements/Button";
-import urls from "../../constants/urls";
-import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { signPart2DataAdd } from "../../store/modules/SignUp";
+} from "../apis/signUp";
+import { TermsDetailBody } from "../apis/signUp/types/requests";
+import { Terms } from "../apis/signUp/types/responses";
+import string from "../constants/string";
+import urls from "../constants/urls";
+import Button from "../elements/Button";
+import useModal from "../hooks/useModal";
+import useRouter from "../hooks/useRouter";
+import { InterceptorError } from "../network/types/interface";
+import {
+  CommonData,
+  phoneCorpOptions,
+  SignUpPart2SubmitType,
+} from "../pages/signUp/SignUpPart2";
+import { useAppDispatch } from "../store/hook";
 import {
   signUpPart2ApiData,
   signUpPart3ApiData,
-} from "../../store/modules/ApiData";
-import { SignPart2DataMapping } from "../../store/modules/MappingData";
-import string from "../../constants/string";
-import useModal from "../../hooks/useModal";
-import { InterceptorError } from "../../network/types/interface";
-import { TermsDetailBody } from "../../apis/signUp/types/requests";
-import AuthErrorCheck from "../../util/AuthErrorCheck";
-import fetchTermsDetailPart2 from "../../util/fetchTermsDetailPart2";
-import useRouter from "../../hooks/useRouter";
+} from "../store/modules/ApiData";
+import { SignPart2DataMapping } from "../store/modules/MappingData";
+import { signPart2DataAdd } from "../store/modules/SignUp";
+import AuthErrorCheck from "../util/AuthErrorCheck";
+import fetchTermsDetailPart2 from "../util/fetchTermsDetailPart2";
+import LabelInput from "./LabelBtn/LabelInput";
+import LabelSelectBtn from "./LabelBtn/LabelSelectBtn";
+import SelectForm from "./LabelBtn/SelectForm";
+import TermsList from "./Terms/TermsList";
 
-export interface SignUpPart2SubmitType {
-  name: string;
-  birthday: string;
-  gen: "0" | "1";
-  phoneNo: string;
-  phoneCorp: {
-    label: string;
-    value: string;
-  };
-}
-
-export interface CommonData {
-  name: string;
-  birthday: string;
-  phoneNo: string;
-  nation: "0";
-  terms1chk?: string;
-  terms2chk?: string;
-  terms3chk?: string;
-  terms4chk?: string;
-}
-
-export const phoneCorpOptions = [
-  { value: "SKT", label: "SK텔레콤" },
-  { value: "KTF", label: "KT" },
-  { value: "LGT", label: "LG U+" },
-  { value: "SKM", label: "SKT 알뜰폰" },
-  { value: "KTM", label: "KT 알뜰폰" },
-  { value: "LGM", label: "LG 알뜰폰" },
-];
-
-const selectGender = [
+const options = [
   { label: "남자", value: "0" },
   { label: "여자", value: "1" },
 ];
 
-function SignInPark2() {
-  const { push } = useRouter();
-  const dispatch = useAppDispatch();
-  //
-  // 상태관리
-  const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
-
-  //
-  // redux
-  const singPart2MappingData = useAppSelector(
-    (state) => state.mappingData,
-    shallowEqual
-  );
-  //
-  // 변수
-  const termsDataLength = fetchPassAuthenticationTermsList().length;
-  const termsCheckListLength = termsCheckList.length;
-  const termsLengthComparison = termsCheckListLength === termsDataLength;
-  //
-  // modal
-  const { showAlert } = useModal();
-
-  // useForm
+export default function SelfAuth() {
   const {
     register,
-    handleSubmit,
-    formState: { errors, isValid },
-    control,
     setValue,
+    control,
     getValues,
-    trigger,
-    // reset,
+    formState: { errors, isValid },
+    handleSubmit,
   } = useForm<SignUpPart2SubmitType>({
+    mode: "onChange",
     defaultValues: {
-      // 초기값
       gen: "0",
     },
-    mode: "onChange",
   });
-
-  // data mapping
-  useEffect(() => {
-    const { birthday, gen, name, phoneCorp, phoneNo, termsCheckList } =
-      singPart2MappingData;
-    setValue("birthday", birthday || "");
-    setValue("name", name || "");
-    setValue("gen", gen || "");
-    setValue("phoneNo", phoneNo || "");
-    setValue("phoneCorp", phoneCorp || "");
-
-    // reset으로 MAPPIng 하는 방법 찾아보기
-    if (termsCheckList.length > 0) {
-      trigger(["birthday", "name", "gen", "phoneNo", "phoneCorp"]);
-      setTermsCheckList(termsCheckList);
-    }
-  }, []);
+  const dispatch = useAppDispatch();
+  const { showAlert } = useModal();
+  const { push } = useRouter();
+  const [termsCheckList, setTermsCheckList] = useState<Terms[]>([]);
+  const termsLengthComparison =
+    termsCheckList.length === fetchPassAuthenticationTermsList().length;
 
   const { mutateAsync: NextSendData, isLoading: sendSmsLoading } =
     useMutation(sendSMS);
@@ -134,7 +71,7 @@ function SignInPark2() {
   const openTermsDetail = ({ cluCd }: TermsDetailBody) => {
     const phoneCorp = getValues("phoneCorp.value");
     if (!phoneCorp) {
-      showAlert({ title: "통신사를 선택해주세요." });
+      return showAlert({ title: "통신사를 선택해주세요." });
     }
 
     const url = fetchTermsDetailPart2(cluCd as string, phoneCorp);
@@ -142,7 +79,7 @@ function SignInPark2() {
     return window.open(url, "_blank");
   };
 
-  // data 전송하는곳
+  // 다음버튼
   const onSubmit = (data: SignUpPart2SubmitType) => {
     const { birthday, name, gen, phoneCorp, phoneNo } = data;
 
@@ -225,10 +162,9 @@ function SignInPark2() {
         }
       });
   };
-
   return (
-    <Layout title={string.MobileMembershipRegistration}>
-      <form className="p-20">
+    <>
+      <form className="py-20">
         <p className="mb-30 text-h2">{string.Authentication}</p>
 
         {/* 이름 */}
@@ -255,6 +191,7 @@ function SignInPark2() {
           register={register("birthday", {
             required: string.EnterBirth,
             minLength: { value: 8, message: string.Enter8BirthDate },
+            // pattern:
           })}
           errors={errors?.birthday?.message}
         />
@@ -269,7 +206,7 @@ function SignInPark2() {
                 name="gen"
                 label={string.Gen}
                 setValue={setValue}
-                options={selectGender}
+                options={options}
                 value={value}
               />
             );
@@ -290,7 +227,7 @@ function SignInPark2() {
                 onChange={onChange}
                 options={phoneCorpOptions}
                 errors={errors?.phoneCorp?.message}
-                defaultValue={singPart2MappingData.phoneCorp}
+                defaultValue={{ label: "", value: "" }}
               />
             );
           }}
@@ -312,7 +249,7 @@ function SignInPark2() {
       </form>
 
       {/* 약관 */}
-      <div className="p-20">
+      <div className="">
         <TermsList
           allCheckTitle={string.FullyAgreeTerms}
           termsListData={fetchPassAuthenticationTermsList()}
@@ -327,12 +264,10 @@ function SignInPark2() {
           className="p-20"
           isBtnCheck={isValid && termsLengthComparison}
           disabled={!(isValid && termsLengthComparison)}
-          isLoading={sendSmsLoading || requestSMSLoading}
+          // isLoading={sendSmsLoading || requestSMSLoading}
           onClick={handleSubmit(onSubmit)}
         />
       </div>
-    </Layout>
+    </>
   );
 }
-
-export default SignInPark2;
